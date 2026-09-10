@@ -59,9 +59,14 @@
         .gb-key.space{flex:5 1 0;font-size:.85em;color:#555}
         .gb-key.sym{background:#f1f3f4}
         .gb-key.clear{color:#d93025}
-        .kbd-pop{position:absolute;display:flex;gap:3px;background:#303134;border-radius:8px;padding:5px;z-index:50;box-shadow:0 4px 12px rgba(0,0,0,.4)}
-        .kbd-pop button{width:38px;height:42px;border:none;border-radius:6px;background:#202124;color:#fff;font-size:1.15em;cursor:pointer;font-family:'Noto Sans Ethiopic',sans-serif}
-        .kbd-pop button:hover{background:#5f6368}
+        .kbd-pop{position:absolute;display:flex;gap:3px;background:#fff;border-radius:10px;padding:6px;z-index:60;box-shadow:0 6px 18px rgba(0,0,0,.28),0 1px 3px rgba(0,0,0,.18);animation:kbdPop .12s ease}
+        @keyframes kbdPop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+        .kbd-pop button{width:44px;height:50px;border:none;border-radius:8px;background:#e8eaed;color:#202124;font-size:1.25em;cursor:pointer;font-family:'Noto Sans Ethiopic',sans-serif;transition:background .08s}
+        .kbd-pop button:hover{background:#dadce0}
+        .kbd-pop button.base{background:#1a73e8;color:#fff;font-weight:700}
+        .kbd-tr-bar{background:#e8eaed;color:#202124;font-size:.85em;line-height:1.35;padding:5px 10px;border-radius:8px;margin:0 2px 8px;min-height:24px;word-break:break-word;font-family:'Noto Sans Ethiopic','Segoe UI',sans-serif}
+        .kbd-tr-bar.hidden{display:none}
+        .kbd-tr-bar b{color:#1a73e8}
         .hidden{display:none!important}
         @media(max-width:600px){
             .dual{flex-direction:column}
@@ -76,7 +81,7 @@
             <span>ChatGPT-style, Amharic only</span>
         </div>
         <label class="trs-toggle" title="Side-by-side English translation">
-            <input type="checkbox" id="trsToggle">
+            <input type="checkbox" id="trsToggle" onchange="liveTranslate()">
             <span class="pill">
                 EN &#x21C4; አማ
                 <span class="yn"></span>
@@ -109,8 +114,7 @@ const LETTERS = ['ሀ','ለ','ሐ','መ','ሠ','ረ','ሰ','ሸ','ቀ','በ','�
 const ORDER_LABELS = ['1','u','i','a','e','ə','o'];
 const PUNCT = ['።','፣','፧','፨','?','!','«','»','(',')'];
 const SYMS = ['፩','፪','፫','፬','፭','፮','፯','፰','፱','፲','1','2','3','4','5','6','7','8','9','0','@','#','$','%','&','*','+','-','=','/','\\',':',';','"',"'",',','.','[',']','{','}'];
-let currentOrder = 0, showSymbols = false, keyboardOpen = false;
-let kbFired = false;
+let showSymbols = false, keyboardOpen = false;
 
 const charFor = (letter, order) => String.fromCodePoint(letter.codePointAt(0) + order);
 
@@ -130,41 +134,52 @@ function backspace(){
 function clearAll(){
     const inp=document.getElementById('chatInput');inp.value='';updateSuggestions();
 }
-function switchOrder(dir){
-    currentOrder=(currentOrder+dir+7)%7;
-    buildKeyboard();
-}
-
-/* ---------- Gboard-style key popover (long-press shows the 7 vowel orders) ---------- */
-function showOrders(btn, letter){
+/* ---------- Google-keyboard-style: tapping a letter opens ALL 7 vowel children as options ---------- */
+function showChildLetters(btn, letter){
     hideOrders();
     if(showSymbols)return;
     const pop=document.createElement('div');pop.className='kbd-pop';
     for(let o=0;o<7;o++){
         const b=document.createElement('button');
         b.textContent=charFor(letter,o);
-        b.style.opacity=(o===currentOrder)?1:0.75;
-        b.onmouseenter=()=>{b.style.opacity=1};
-        b.onmouseleave=()=>{b.style.opacity=(o===currentOrder)?1:0.75};
+        if(o===0)b.className='base';
+        b.setAttribute('aria-label',orderLabel(letter,o));
         b.onclick=(e)=>{e.stopPropagation();insertChar(charFor(letter,o));hideOrders();};
         pop.appendChild(b);
     }
     const row=btn.parentElement;row.style.position='relative';
-    pop.style.left=Math.max(2,Math.min(btn.offsetLeft,row.clientWidth-260))+'px';
-    pop.style.top='-60px';
+    const popW=7*44+6*3+12-2;
+    pop.style.top='-68px';
+    pop.style.left=Math.max(2,Math.min(btn.offsetLeft-(popW-56)/2,row.clientWidth-popW))+'px';
     row.appendChild(pop);
 }
+function orderLabel(letter,o){return letter+(ORDER_LABELS[o]==='1'?' (base)':' ('+ORDER_LABELS[o]+')')}
 function hideOrders(){document.querySelectorAll('.kbd-pop').forEach(p=>p.remove())}
-function keyDown(btn, letter){
-    kbFired=false;
-    clearTimeout(btn._t);
-    btn._t=setTimeout(()=>{kbFired=true;showOrders(btn,letter);},380);
-}
-function keyUp(btn, letter){
-    clearTimeout(btn._t);
-    setTimeout(()=>{if(!kbFired){insertChar(charFor(letter,currentOrder));}kbFired=false;},0);
-}
+document.addEventListener('pointerdown',(e)=>{if(!e.target.closest('.kbd-pop')&&!e.target.closest('.gb-key.char'))hideOrders();});
+document.addEventListener('click',(e)=>{if(!e.target.closest('.kbd-pop')&&!e.target.closest('.gb-key.char'))hideOrders();});
 function enterPressed(){sendMsg()}
+
+/* live Amharic->English translation bar fed by the keyboard (EN toggle ON) */
+let kbTrsTimer=null;
+function liveTranslate(){
+    const bar=document.getElementById('kbdTrs');
+    if(!bar)return;
+    const on=document.getElementById('trsToggle').checked;
+    const inp=document.getElementById('chatInput').value.trim();
+    if(!on||!inp){bar.classList.add('hidden');bar.textContent='';return;}
+    bar.classList.remove('hidden');
+    bar.textContent='EN: …';
+    clearTimeout(kbTrsTimer);
+    kbTrsTimer=setTimeout(()=>{
+        try{
+            fetch('/api/translate?text='+encodeURIComponent(inp)+'&to=en')
+                .then(r=>r.json())
+                .then(d=>{bar.innerHTML='<b>EN:</b> '+escapeHtml(d.translated);})
+                .catch(()=>{bar.textContent='EN: —';});
+        }catch(e){bar.textContent='EN: —';}
+    },500);
+}
+function escapeHtml(s){return (s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 
 /* ---------- Build keyboard ---------- */
 function buildKeyboard(){
@@ -172,6 +187,10 @@ function buildKeyboard(){
     if(kb.dataset.page === (showSymbols?'S':'L'))return;
     kb.innerHTML='';
     kb.dataset.page=showSymbols?'S':'L';
+
+    /* live-translation bar (Amharic -> English, only when EN toggle is ON) */
+    const trs=document.createElement('div');trs.className='kbd-tr-bar hidden';trs.id='kbdTrs';
+    kb.appendChild(trs);
 
     /* suggestion strip */
     const sug=document.createElement('div');sug.className='kbd-suggest';sug.id='kbdSuggest';
@@ -203,11 +222,9 @@ function buildKeyboard(){
         chunk(LETTERS).forEach((group)=>{
             const row=document.createElement('div');row.className='gb-row';
             group.forEach(letter=>{
-                const b=document.createElement('button');b.className='gb-key';
-                b.textContent=charFor(letter,currentOrder);
-                b.onpointerdown=(e)=>{e.preventDefault();keyDown(b,letter)};
-                b.onpointerup=(e)=>{e.preventDefault();keyUp(b,letter)};
-                b.onpointerleave=()=>{clearTimeout(b._t);hideOrders()};
+                const b=document.createElement('button');b.className='gb-key char';
+                b.textContent=charFor(letter,0);
+                b.onclick=(e)=>{e.preventDefault();e.stopPropagation();showChildLetters(b,letter);};
                 row.appendChild(b);
             });
             rows.appendChild(row);
@@ -216,8 +233,6 @@ function buildKeyboard(){
         const row=document.createElement('div');row.className='gb-row';
         const sym=document.createElement('button');sym.className='gb-key fn';sym.textContent='?123';
         sym.onclick=()=>{showSymbols=true;hideOrders();buildKeyboard()};row.appendChild(sym);
-        const ord=document.createElement('button');ord.className='gb-key fn';ord.textContent='\u25CC '+ORDER_LABELS[currentOrder];
-        ord.onclick=()=>{switchOrder(1);hideOrders();};row.appendChild(ord);
         const com=document.createElement('button');com.className='gb-key fn';com.textContent='፣';
         com.onclick=()=>insertChar('፣');row.appendChild(com);
         const sp2=document.createElement('button');sp2.className='gb-key space';sp2.textContent=' SPACE ';
@@ -234,6 +249,7 @@ function buildKeyboard(){
     }
     kb.appendChild(rows);
     updateSuggestions();
+    liveTranslate();
 }
 function toggleKeyboard(){
     keyboardOpen=!keyboardOpen;
@@ -248,6 +264,7 @@ function updateSuggestions(){
     const val=inp.value||'';
     const box=document.getElementById('kbdSuggest');
     if(!box)return;
+    liveTranslate();
     const cur=val.split(/[\s\u1362\u1363\u1365\u1361]+/).pop()||'';
     const hits=cur?WORDLIST.filter(w=>w.startsWith(cur)&&w!==cur).slice(0,3):WORDLIST.slice(0,3);
     box.querySelectorAll('.sug-word').forEach(b=>b.remove());
@@ -323,6 +340,7 @@ function showSuggestions(){
 showSuggestions();
 
 document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
+document.getElementById('chatInput').addEventListener('input',()=>{updateSuggestions();liveTranslate();});
 
 async function sendMsg(){
     const inp=document.getElementById('chatInput');

@@ -18,9 +18,11 @@ Amharic NLP toolkit. Think *ChatGPT that only speaks Amharic*:
 - **Side-by-side EN translator** — flip the *EN ⇄ አማ* toggle and every
   message (yours and ሕሳር's) is translated to English using a free, keyless
   translation API (**MyMemory**, with Google Translate as fallback).
-- **Gboard-style screen keyboard** — light Google-style keys, a predictive
-  word strip, long-press any letter to pick the 7 vowel orders, backspace
-  (long-press to clear), symbols & Amharic-numerals page, and an Enter key.
+- **Google-keyboard-style screen keyboard** — light Google-like keys; tap a
+  letter to reveal *all 7 of its vowel children* (ሀ ሁ ሂ ሃ ሄ ህ ሆ …) as on-screen
+  options, predictive word strip, backspace (long-press to clear), symbols &
+  Amharic-numerals page, and an Enter key. With the *EN ⇄ አማ* toggle on, a live
+  translation bar above the keyboard shows your typing in English as you type.
 - **Remembers your name** — «ስሜ አበበ ነው» makes greetings personal.
 - **Amharic only** — English input gets a polite Amharic-only reminder
   (except programming-language code requests).
