@@ -1,19 +1,32 @@
 # ሕሳር — Amharic AI (ChatGPT-style, Amharic only)
 
-A pure-Python, dependency-free Amharic conversational AI ("ጃንዲ ምሳሌ") plus a
-complete Amharic NLP toolkit. Think *ChatGPT that only speaks Amharic*:
+A pure-Python, dependency-free Amharic conversational AI plus a complete
+Amharic NLP toolkit. Think *ChatGPT that only speaks Amharic*:
 
-- **Ask anything** — general knowledge (science, technology, AI, Ethiopia,
-  Africa, health, food, coffee, friendship, life, and more) answered in Amharic.
-- **Math** — `5 ጠቅላላ 7`, `17*4`, `አምስት ሲደመር ሦስት` → answers in digits **and**
-  Amharic number words.
-- **Dictionary** — ask «ኢንጄራ» ምን ማለት ነው? and get Amharic definitions.
-- **Remembers your name** — «ስሜ አበበ ነው» and greetings become personal.
-- **Amharic only** — English input gets a polite Amharic-only reminder.
-- Web chat UI with a full **Ge'ez on-screen keyboard** (30 base × 7 vowel orders).
+- **Ask anything** — 50+ topics (programming, book/story writing, science,
+  physics/biology/chemistry, business & economy, geography, Ethiopia, health,
+  music, sports, Amharic grammar, learning tips, and much more).
+- **Code writes code** — built-in snippet generator: ask «ፓይቶን ኮድ ጻፍልኝ»
+  or *"write a python function to sort a list"* and get working Python,
+  JavaScript, HTML, CSS, JSON or Bash examples.
+- **Deep learning engine** — the assistant *remembers facts you teach it*
+  («አስታውስ የማርያም ቡና ጥቁር ነው»), answers follow-up questions
+  («እና ታዲያ?»), and keeps ~10 turns of conversation context.
+- **Math** — `5 ጠቅላላ 7`, `17*4`, `አምስት ሲደመር ሦስት` → digits **and**
+  Amharic number words (100+ number words supported).
+- **Dictionary** — «ኢንጄራ» ምን ማለት ነው? → 46 Amharic definitions.
+- **Side-by-side EN translator** — flip the *EN ⇄ አማ* toggle and every
+  message (yours and ሕሳር's) is translated to English using a free, keyless
+  translation API (**MyMemory**, with Google Translate as fallback).
+- **Gboard-style screen keyboard** — light Google-style keys, a predictive
+  word strip, long-press any letter to pick the 7 vowel orders, backspace
+  (long-press to clear), symbols & Amharic-numerals page, and an Enter key.
+- **Remembers your name** — «ስሜ አበበ ነው» makes greetings personal.
+- **Amharic only** — English input gets a polite Amharic-only reminder
+  (except programming-language code requests).
 
-No numpy. No sklearn. No flask. No network model. Just Python 3.8+ stdlib and
-intelligent vector-based intent matching.
+No numpy. No sklearn. No flask. No network model. Just Python 3.8+ stdlib +
+one free HTTP translate call when the translator is switched on.
 
 ## Features
 
@@ -22,23 +35,30 @@ intelligent vector-based intent matching.
 - `AmharicTokenizer` — Ge'ez word segmentation (letters only, punctuation-safe).
 - `AmharicStemmer` — prefixes/suffixes stripping (እንደ/ወደ/ስለ…, ዎች/ሮች/ኣት/ኣን…).
 - `StopWordFilter` — Amharic function words (`data/stopwords.txt`).
-- `SentenceSplitter` — splits on Amharic punctuation, ። ፡ ፧ ፨.
+- `SentenceSplitter` — splits on Amharic punctuation ። ፡ ፧ ፨.
 - `TfidfVectorizer` + `DocumentIndex` — TF-IDF, cosine similarity (pure stdlib).
-- `BibleCorpus` — *optional* Amharic Bible retrieval tool for the toolkit
+- `BibleCorpus` — *optional* Amharic Bible retrieval tool for researchers
   (bring your own `data/amharic_bible.json` if you want it; **not used** by the
   chat assistant).
 
 ### Conversation engine (`chatbot.py`)
 - `AmharicAssistant` — vector-based intent matching over `data/knowledge_base.json`
-  (25+ intents, ~70 Amharic patterns and responses).
+  (54 intents, ~120 Amharic patterns & responses).
+- Teachable long-term memory persisted to `data/user_memory.json`.
+- Multi-turn follow-ups and conversational context.
+- Mini code-snippet generator (Python / JavaScript / HTML / CSS / JSON / Bash).
 - Arithmetic in Arabic digits or Amharic number words.
-- Built-in Amharic dictionary (~30 words).
-- Conversational memory: remembers the user's name.
-- Honest, helpful fallbacks — never preachy, never religious.
+- Word definitions via the built-in dictionary.
+
+### Translation (`translator.py`)
+- `translate(text, src, dst)` — free, keyless Amharic ⇄ English.
+- MyMemory primary engine, Google Translate (gtx) fallback, in-memory cache.
+- Works offline (`online=False`) when the network is unavailable.
 
 ### Web chat (`chat_app.py` + `templates/chat.html`)
-- `GET /` — chat UI with Ge'ez on-screen keyboard & Amharic font.
+- `GET /` — chat UI with the Gboard-style keyboard & Amharic font.
 - `GET /api/chat?text=…` — JSON `{reply, source, confidence, elapsed_ms}`.
+- `GET /api/translate?text=…&to=en|am` — JSON `{translated}`.
 - `GET /api/health` — health check.
 
 ## Run it
@@ -57,24 +77,28 @@ python3 chatbot.py
 
 ## Try these
 
-| You type (Amharic) | Source | You get |
-|---|---|---|
-| ሰላም | intent | Amharic greeting |
-| ስሜ አበበ ነው | name | remembers your name |
-| AI ምንድን ነው? | intent | plain-language definition |
-| ሰማይ ለምን ሰማያዊ ነው | intent | physics explanation |
-| 5 ጠቅላላ 7 | math | መልሱ፡ 12 — አስራ ሁለት |
-| አምስት ሲደመር ሦስት | math | መልሱ፡ 8 — ስምንት |
-| «ኢንጄራ» ምን ማለት ነው? | dictionary | Amharic definition |
-| Hello! | language_gate | polite Amharic-only reply |
-| ደህና ሁን | intent | farewell |
+| You type | What happens |
+|---|---|
+| ሰላም | Amharic greeting |
+| ስሜ አበበ ነው | remembers your name |
+| AI ምንድን ነው? | plain-language definition |
+| ፕሮግራም ምንድን ነው? | programming intro |
+| ፓይቶን ኮድ ጻፍልኝ | Python code sample |
+| መጽሐፍ መጻፍ እንዴት | book-writing structure |
+| 5 ጠቅላላ 7 | math → መልሱ፡ 12 — አስራ ሁለት |
+| «ኢንጄራ» ምን ማለት ነው? | Amharic definition |
+| አስታውስ የማርያም ቡና ጥቁር ነው | saves a fact; later «ማርያም» recalls it |
+| ስለ ኢትዮጵያ ንገረኝ · እና ታዲያ? | answer + follow-up |
+| Hello! | polite Amharic-only reminder |
+| *EN ⇄ አማ toggle ON* | every message also in English |
 
 ## Data
 
-- `data/knowledge_base.json` — conversational intents, Amharic responses, dictionary.
+- `data/knowledge_base.json` — conversational intents, responses, dictionary.
 - `data/stopwords.txt` — Amharic stop words.
-- *(Optional)* `data/amharic_bible.json` — Amharic Bible, used only by the
-  toolkit's optional `BibleCorpus` for researchers, never by the chatbot.
+- `data/user_memory.json` — facts taught to the assistant (created at runtime).
+- *(Optional)* `data/amharic_bible.json` — Amharic Bible, only for the toolkit's
+  optional `BibleCorpus`, never for the chatbot.
 
 ## License
 

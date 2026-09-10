@@ -4,7 +4,8 @@ chat_app.py — lightweight HTTP server for the Amharic AI Chat.
 
 Routes:
   GET  /            → chat.html
-  GET  /api/chat    → JSON {reply, source, confidence}
+  GET  /api/chat     → JSON {reply, source, confidence}
+  GET  /api/translate?text=&to=en|am  → JSON {translated}
   GET  /api/health  → health check
 
 Pure stdlib. No dependencies.
@@ -43,6 +44,8 @@ class ChatHandler(BaseHTTPRequestHandler):
             self._serve_chat_html()
         elif path == '/api/chat':
             self._handle_chat(qs)
+        elif path == '/api/translate':
+            self._handle_translate(qs)
         elif path == '/api/health':
             self._json_response({'status': 'ok'}, code=200)
         else:
@@ -71,6 +74,23 @@ class ChatHandler(BaseHTTPRequestHandler):
         result = a.respond(text)
         result['elapsed_ms'] = round((time.time() - start) * 1000)
         self._json_response(result)
+
+    def _handle_translate(self, qs):
+        text = qs.get('text', [''])[0].strip()
+        to = qs.get('to', ['en'])[0].lower()
+        if not text:
+            self._json_response({'translated': '', 'error': 'empty'})
+            return
+        from translator import translate
+        src = 'am' if to != 'am' else 'en'
+        start = time.time()
+        translated = translate(text, src, to)
+        self._json_response({
+            'translated': translated,
+            'src': src,
+            'to': to,
+            'elapsed_ms': round((time.time() - start) * 1000),
+        })
 
     def _json_response(self, data, code=200):
         body = json.dumps(data, ensure_ascii=False, indent=2).encode('utf-8')

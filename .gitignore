@@ -5,3 +5,4 @@ nohup.out
 .DS_Store
 data/bible_index.json
 data/amharic_bible.json
+data/user_memory.json
