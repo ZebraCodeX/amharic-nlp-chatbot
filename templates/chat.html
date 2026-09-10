@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>የአማርኛ AI ውይይት</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',Tahoma,sans-serif;background:#1a1a2e;color:#e0e0e0;height:100vh;display:flex;flex-direction:column}
+        header{background:#16213e;padding:14px 20px;border-bottom:1px solid #0f3460;display:flex;align-items:center;gap:12px}
+        header h1{font-size:1.2em;color:#e94560}
+        header span{color:#888;font-size:.85em}
+        .chat-container{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+        .msg{max-width:85%;padding:12px 16px;border-radius:12px;line-height:1.6;white-space:pre-wrap;word-wrap:break-word}
+        .msg.user{align-self:flex-end;background:#0f3460;border-bottom-right-radius:4px}
+        .msg.ai{align-self:flex-start;background:#16213e;border:1px solid #0f3460;border-bottom-left-radius:4px}
+        .msg.ai .ref{color:#e94560;font-weight:600;display:block;margin-bottom:6px}
+        .input-area{background:#16213e;border-top:1px solid #0f3460;padding:12px 16px}
+        .chat-input-row{display:flex;gap:8px;margin-bottom:10px}
+        #chatInput{flex:1;padding:12px 16px;font-size:1.2em;border:2px solid #0f3460;border-radius:8px;background:#1a1a2e;color:#fff;outline:none;font-family:'Noto Sans Ethiopic',sans-serif;line-height:1.6}
+        #chatInput:focus{border-color:#e94560}
+        #sendBtn{padding:12px 28px;background:#e94560;color:#fff;border:none;border-radius:8px;font-size:1em;cursor:pointer;font-weight:600}
+        #sendBtn:hover{background:#c73652}
+        .keyboard-toggle{display:flex;align-items:center;gap:8px;margin-bottom:8px;color:#888;font-size:.85em;cursor:pointer;user-select:none}
+        .keyboard-toggle .dot{width:8px;height:8px;border-radius:50%;background:#4ecdc4}
+        .keyboard-section{display:none;border-top:1px solid #0f3460;padding-top:10px}
+        .keyboard-section.open{display:block}
+        .key-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;justify-content:center}
+        .key{width:40px;height:40px;border:1px solid #0f3460;border-radius:5px;background:#1a1a2e;color:#fff;font-size:1.1em;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;font-family:'Noto Sans Ethiopic',sans-serif;user-select:none}
+        .key:hover{background:#e94560;border-color:#e94560;transform:scale(1.06)}
+        .key:active{transform:scale(.94)}
+        .key.space{width:110px;font-size:.7em}
+        .key.backspace{width:70px;font-size:.72em;color:#e94560}
+        .key.order-switch{width:60px;font-size:.68em;color:#e94560}
+        .suggestions{display:flex;flex-wrap:wrap;gap:6px;padding:6px 0}
+        .sug-btn{padding:4px 12px;background:#1a1a2e;border:1px solid #0f3460;border-radius:14px;color:#aaa;font-size:.85em;cursor:pointer;font-family:'Noto Sans Ethiopic',sans-serif}
+        .sug-btn:hover{background:#0f3460;color:#fff}
+        .hidden{display:none!important}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>&#x1230;&#x1295;&#x121B;&#x122B;&#x1235;&#x121D; AI</h1>
+        <span>Amharic Neural Chat Assistant</span>
+    </header>
+
+    <div class="chat-container" id="chat">
+        <div class="msg ai">
+            ሰላም! እኔ የአማርኛ AI ረዳት ነኝ። አማርኛን መረዳት፣ መጻሕፍ ቅዱስ ጥቅሶችን መፈለግ እና ጥያቄዎችን መመለስ እችላለሁ።<br><br>
+            በአማርኛ ጻፍልኝ ወይም ከኪቦርዱ ተጠቀም!
+        </div>
+    </div>
+
+    <div class="input-area">
+        <div class="chat-input-row">
+            <input type="text" id="chatInput" placeholder="በአማርኛ ጻፍልኝ..." autofocus>
+            <button id="sendBtn" onclick="sendMsg()">&#x1F4E4; Send</button>
+        </div>
+        <div class="suggestions" id="suggestions"></div>
+        <label class="keyboard-toggle" onclick="toggleKeyboard()">
+            <span class="dot"></span> &#x2328;&#xFE0F; Amharic Keyboard
+        </label>
+        <div class="keyboard-section" id="keyboard"></div>
+    </div>
+
+<script>
+const BASE = [
+    '\u1200','\u1201','\u1202','\u1203','\u1204','\u1205','\u1206',
+    '\u1210','\u1211','\u1212','\u1213','\u1214','\u1215','\u1216',
+    '\u1218','\u1219','\u121A','\u121B','\u121C','\u121D','\u121E',
+    '\u1220','\u1221','\u1222','\u1223','\u1224','\u1225','\u1226',
+    '\u1228','\u1229','\u122A','\u122B','\u122C','\u122D','\u122E',
+    '\u1230','\u1231','\u1232','\u1233','\u1234','\u1235','\u1236',
+    '\u1238','\u1239','\u123A','\u123B','\u123C','\u123D','\u123E',
+    '\u1240','\u1241','\u1242','\u1243','\u1244','\u1245','\u1246',
+    '\u1248','\u1249','\u124A','\u124B','\u124C','\u124D','\u124E',
+    '\u1260','\u1261','\u1262','\u1263','\u1264','\u1265','\u1266',
+    '\u1268','\u1269','\u126A','\u126B','\u126C','\u126D','\u126E',
+    '\u1270','\u1271','\u1272','\u1273','\u1274','\u1275','\u1276',
+    '\u1278','\u1279','\u127A','\u127B','\u127C','\u127D','\u127E',
+    '\u1280','\u1281','\u1282','\u1283','\u1284','\u1285','\u1286',
+    '\u1290','\u1291','\u1292','\u1293','\u1294','\u1295','\u1296',
+    '\u1298','\u1299','\u129A','\u129B','\u129C','\u129D','\u129E',
+    '\u12A0','\u12A1','\u12A2','\u12A3','\u12A4','\u12A5','\u12A6',
+    '\u12A8','\u12A9','\u12AA','\u12AB','\u12AC','\u12AD','\u12AE',
+    '\u12B0','\u12B1','\u12B2','\u12B3','\u12B4','\u12B5','\u12B6',
+    '\u12B8','\u12B9','\u12BA','\u12BB','\u12BC','\u12BD','\u12BE',
+    '\u12C0','\u12C1','\u12C2','\u12C3','\u12C4','\u12C5','\u12C6',
+    '\u12C8','\u12C9','\u12CA','\u12CB','\u12CC','\u12CD','\u12CE',
+    '\u12D0','\u12D1','\u12D2','\u12D3','\u12D4','\u12D5','\u12D6',
+    '\u12D8','\u12D9','\u12DA','\u12DB','\u12DC','\u12DD','\u12DE',
+    '\u12E0','\u12E1','\u12E2','\u12E3','\u12E4','\u12E5','\u12E6',
+    '\u12E8','\u12E9','\u12EA','\u12EB','\u12EC','\u12ED','\u12EE',
+    '\u12F0','\u12F1','\u12F2','\u12F3','\u12F4','\u12F5','\u12F6',
+    '\u12F8','\u12F9','\u12FA','\u12FB','\u12FC','\u12FD','\u12FE',
+    '\u1300','\u1301','\u1302','\u1303','\u1304','\u1305','\u1306',
+    '\u1308','\u1309','\u130A','\u130B','\u130C','\u130D','\u130E',
+];
+const PUNCT = ['\u1362','\u1363','\u1365','\u1361'];
+const ORDER_LABELS = ['1ኛ','2ኛ','3ኛ','4ኛ','5ኛ','6ኛ','7ኛ'];
+let currentOrder = 0;
+let keyboardOpen = false;
+let lastResults = [];
+let chatHistory = [];
+let currentIdx = 0;
+
+function insertChar(ch){
+    const inp = document.getElementById('chatInput');
+    const pos = inp.selectionStart;
+    inp.value = inp.value.slice(0,pos)+ch+inp.value.slice(pos);
+    inp.focus();
+    inp.setSelectionRange(pos+1,pos+1);
+}
+function backspace(){
+    const inp = document.getElementById('chatInput');
+    const pos = inp.selectionStart;
+    if(pos>0){inp.value=inp.value.slice(0,pos-1)+inp.value.slice(pos);inp.setSelectionRange(pos-1,pos-1)}
+}
+function switchOrder(dir){
+    currentOrder = (currentOrder+dir+7)%7;
+    buildKeyboard();
+}
+
+function buildKeyboard(){
+    const kb = document.getElementById('keyboard');
+    if(kb.childNodes.length){ /* rebuild key text only */
+        const keys = kb.querySelectorAll('.key.char-key');
+        keys.forEach((k,i)=>{k.textContent=BASE[i*7+currentOrder]});
+        kb.querySelector('.key.order-switch').textContent=ORDER_LABELS[currentOrder];
+        return;
+    }
+    const ROWS = [10,10,10];
+    let idx = 0;
+    for(let r=0;r<ROWS.length;r++){
+        const row = document.createElement('div');row.className='key-row';
+        for(let c=0;c<ROWS[r]&&idx<BASE.length;c++,idx++){
+            const btn = document.createElement('button');
+            btn.className='key char-key';
+            btn.textContent=BASE[idx*7+currentOrder];
+            btn.onclick=()=>insertChar(BASE[idx*7+currentOrder]);
+            row.appendChild(btn);
+        }
+        kb.appendChild(row);
+    }
+    const pRow = document.createElement('div');pRow.className='key-row';
+    PUNCT.forEach(ch=>{const b=document.createElement('button');b.className='key';b.textContent=ch;b.onclick=()=>insertChar(ch);pRow.appendChild(b)});
+    const sw = document.createElement('button');sw.className='key order-switch';sw.textContent=ORDER_LABELS[currentOrder];
+    sw.onclick=()=>switchOrder(1);pRow.appendChild(sw);
+    const sp = document.createElement('button');sp.className='key space';sp.textContent=' SPACE ';sp.onclick=()=>insertChar(' ');pRow.appendChild(sp);
+    const bk = document.createElement('button');bk.className='key backspace';bk.textContent=' ← ማጥፋት ';bk.onclick=backspace;pRow.appendChild(bk);
+    kb.appendChild(pRow);
+}
+
+function toggleKeyboard(){
+    keyboardOpen=!keyboardOpen;
+    document.getElementById('keyboard').classList.toggle('open',keyboardOpen);
+}
+
+function addMessage(text, isUser){
+    const chat = document.getElementById('chat');
+    const div = document.createElement('div');
+    div.className='msg '+(isUser?'user':'ai');
+    div.textContent = text;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function renderBibleReply(text){
+    const chat = document.getElementById('chat');
+    const div = document.createElement('div');
+    div.className='msg ai';
+    const parts = text.split('\n\n');
+    parts.forEach((part,i)=>{
+        if(part.match(/^[\u1200-\u137f].*\d+:\d+/)){
+            const ref = document.createElement('div');ref.className='ref';ref.textContent=part;div.appendChild(ref);
+        } else {
+            const body = document.createElement('div');body.textContent=part;div.appendChild(body);
+            if(i<parts.length-1){const hr=document.createElement('hr');hr.style.cssText='border:0;border-top:1px solid #0f3460;margin:8px 0';div.appendChild(hr)}
+        }
+    });
+    chat.appendChild(div);
+    chat.scrollTop=chat.scrollHeight;
+}
+
+function showSuggestions(){
+    const box = document.getElementById('suggestions');box.innerHTML='';
+    const defaults=['ሰላም','ስለ ፍቅር ምን ይላል','እምነት ምንድን ነው','ምን ትሰራለህ','ማን ነህ','ተጨማሪ'];
+    defaults.forEach(t=>{const b=document.createElement('button');b.className='sug-btn';b.textContent=t;b.onclick=()=>{document.getElementById('chatInput').value=t;sendMsg()};box.appendChild(b)});
+}
+showSuggestions();
+
+document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
+
+async function sendMsg(){
+    const inp = document.getElementById('chatInput');
+    const text = inp.value.trim();
+    if(!text)return;
+    inp.value='';
+    addMessage(text,true);
+    const thinking = document.createElement('div');thinking.className='msg ai';thinking.textContent='...';document.getElementById('chat').appendChild(thinking);document.getElementById('chat').scrollTop=99999;
+    try{
+        const resp = await fetch('/api/chat?text='+encodeURIComponent(text));
+        const data = await resp.json();
+        thinking.remove();
+        if(data.source && data.source.startsWith('bible') && data.reply.includes('\n\n')){
+            renderBibleReply(data.reply);
+        } else {
+            addMessage(data.reply,false);
+        }
+    }catch(e){thinking.remove();addMessage('የተለመደ ስህተት ተፈጥሯል። እንደገና ሞክር።',false)}
+}
+buildKeyboard();
+</script>
+</body>
+</html>
