@@ -23,6 +23,13 @@ Amharic NLP toolkit. Think *ChatGPT that only speaks Amharic*:
   options, predictive word strip, backspace (long-press to clear), symbols &
   Amharic-numerals page, and an Enter key. With the *EN ⇄ አማ* toggle on, a live
   translation bar above the keyboard shows your typing in English as you type.
+- **Spelling dictionary** — a 1,500+ correctly-spelled Amharic word dictionary
+  (`data/amharic_words.json`, served via `GET /api/words`) is searched as you
+  type: pick any seed word's child-letter order, the assistant's `fold()`
+  matcher (vowel-order + homophone-insensitive, mirroring `AmharicNormalizer`)
+  still finds the right word and offers up to 3 correctly-spelled options in
+  the suggestion strip; tap to insert. Falls back to an embedded mini-list
+  when offline.
 - **Remembers your name** — «ስሜ አበበ ነው» makes greetings personal.
 - **Amharic only** — English input gets a polite Amharic-only reminder
   (except programming-language code requests).

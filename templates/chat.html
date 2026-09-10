@@ -257,31 +257,91 @@ function toggleKeyboard(){
     if(keyboardOpen){buildKeyboard();document.getElementById('chatInput').focus();}
 }
 
-/* ---------- Word predictions (Gboard-style suggestion strip) ---------- */
+/* ---------- Word predictions (dictionary-driven suggestion strip) ---------- */
 const WORDLIST = ['ሰላም','እንዴት','ነህ','ደህና','ሁን','አመሰግናለሁ','እባክህ','ምንድን','ነው','ማለት','ስለ','ተጨማሪ','ንገረኝ','እችላለሁ','አይቻልም','ፍቅር','ደስታ','ጤና','ትምህርት','ሳይንስ','ቴክኖሎጂ','ኮምፒውተር','ማሽን መማር','ኢንተርኔት','ኢትዮጵያ','አዲስ አበባ','አፍሪካ','ቡና','ኢንጄራ','በርበሬ','እና','ታዲያ','ግን','ምክንያቱም','ስለዚህ','እንደ','ማን','ምን','የት','መቼ','ለምን','ጻፍልኝ','ጠይቀኝ','አስታውስ','ትዝ','ኮድ','ፕሮግራም','ፓይቶን','ጃቫስክሪፕት','መጽሐፍ','ታሪክ','ግጥም','ሙዚቃ','ባህል','ቋንቋ','አማርኛ','እንግሊዝኛ','ትርጉም','ቀለም','ሰማይ','ውሃ','ህይወት','መማር','ስራ','ገንዘብ','ገበያ','ኢኮኖሚ','ቤተሰብ','ጓደኛ','ማህበረሰብ'];
+const SEED = ['ሰላም','እንዴት','አስታውስ'];
+
+/* fold(): spelling-invariant key — collapses vowel orders to their base
+   letter and maps homophones (ሐ/ኀ→ሀ, ሠ→ሰ, ኣ→አ, ፀ→ጸ), ported from AmharicNormalizer. */
+const FOLD = (()=>{
+    const m={};
+    for(const L of LETTERS){
+        const base=L.codePointAt(0);
+        for(let o=0;o<7;o++)m[String.fromCodePoint(base+o)]=L;
+    }
+    const ho={'ሐ':'ሀ','ሑ':'ሁ','ሒ':'ሂ','ሓ':'ሃ','ሔ':'ሄ','ሕ':'ህ','ሖ':'ሆ',
+        'ኀ':'ሀ','ኁ':'ሁ','ኂ':'ሂ','ኃ':'ሃ','ኄ':'ሄ','ኅ':'ህ','ኆ':'ሆ',
+        'ሠ':'ሰ','ሡ':'ሱ','ሢ':'ሲ','ሣ':'ሳ','ሤ':'ሴ','ሥ':'ስ','ሦ':'ሶ',
+        'ኣ':'አ','ፀ':'ጸ','ፁ':'ጹ','ፂ':'ጺ','ፃ':'ጻ','ፄ':'ጼ','ፅ':'ጽ','ፆ':'ጾ'};
+    Object.assign(m,ho);
+    return m;
+})();
+function fold(s){
+    let out='';
+    for(const c of s)out+=(FOLD[c]||c);
+    return out;
+}
+const TOK_RE=/[\s\u1362\u1363\u1365\u1361]+/;
+
+/* lazy-loaded dictionary of correctly-spelled Amharic words */
+let DICT=null;
+let DICT_LOAD_FAILED=false;
+function loadDict(cb){
+    if(DICT)return cb&&cb();
+    if(DICT_LOAD_FAILED)return cb&&cb();
+    fetch('/api/words').then(r=>r.json()).then(d=>{
+        DICT=Array.isArray(d.words)?d.words:[];
+        cb&&cb();
+    }).catch(()=>{DICT_LOAD_FAILED=true;cb&&cb();});
+}
+function dictSuggest(){
+    const inp=document.getElementById('chatInput');
+    const val=inp.value||'';
+    const cur=val.split(TOK_RE).pop()||'';
+    if(!cur)return SEED.map(w=>({w}));
+    const fc=fold(cur);
+    if(!fc)return [];
+    return DICT
+        .filter(e=>{
+            const fw=fold(e.w);
+            return fw.length>fc.length && fw.startsWith(fc);
+        })
+        .sort((a,b)=>a.w.length-b.w.length||(b.n||0)-(a.n||0))
+        .slice(0,3);
+}
 function updateSuggestions(){
     const inp=document.getElementById('chatInput');
     const val=inp.value||'';
     const box=document.getElementById('kbdSuggest');
     if(!box)return;
     liveTranslate();
-    const cur=val.split(/[\s\u1362\u1363\u1365\u1361]+/).pop()||'';
-    const hits=cur?WORDLIST.filter(w=>w.startsWith(cur)&&w!==cur).slice(0,3):WORDLIST.slice(0,3);
+    const cur=val.split(TOK_RE).pop()||'';
     box.querySelectorAll('.sug-word').forEach(b=>b.remove());
-    if(hits.length===0){
-        box.querySelector('.sp').textContent=cur?'—':'አስተካክል ጠቃሚ ቃላት…';
-        return;
+    if(DICT){
+        dictSuggest().forEach(e=>{
+            const b=document.createElement('button');b.className='sug-word';b.textContent=e.w;
+            b.onclick=()=>{
+                const parts=(inp.value||'').split(TOK_RE);parts[parts.length-1]=e.w;
+                inp.value=parts.join(' ')+' ';
+                inp.focus();updateSuggestions();
+            };
+            box.appendChild(b);
+        });
+    }else{
+        const hits=cur?WORDLIST.filter(w=>w.startsWith(cur)&&w!==cur).slice(0,3):SEED;
+        hits.forEach(w=>{
+            const b=document.createElement('button');b.className='sug-word';b.textContent=w;
+            b.onclick=()=>{
+                const parts=(inp.value||'').split(TOK_RE);parts[parts.length-1]=w;
+                inp.value=parts.join(' ')+' ';
+                inp.focus();updateSuggestions();
+            };
+            box.appendChild(b);
+        });
     }
-    box.querySelector('.sp').textContent='';
-    hits.forEach(w=>{
-        const b=document.createElement('button');b.className='sug-word';b.textContent=w;
-        b.onclick=()=>{
-            const parts=(inp.value||'').split(/[\s\u1362\u1363\u1365\u1361]+/);parts[parts.length-1]=w;
-            inp.value=parts.join(' ')+' ';
-            inp.focus();updateSuggestions();
-        };
-        box.appendChild(b);
-    });
+    const shown=box.querySelectorAll('.sug-word').length;
+    if(shown===0)box.querySelector('.sp').textContent=cur?'—':'አስተካክል ጠቃሚ ቃላት…';
+    else box.querySelector('.sp').textContent='';
 }
 
 /* ---------- Messages ---------- */
@@ -362,6 +422,7 @@ async function sendMsg(){
     }catch(e){thinking.remove();addMessage('የተለመደ ስህተት ተፈጥሯል። እንደገና ሞክር።',false)}
 }
 buildKeyboard();
+loadDict(()=>{try{updateSuggestions();}catch(e){}});
 </script>
 </body>
 </html>

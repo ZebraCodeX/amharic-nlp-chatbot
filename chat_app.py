@@ -23,6 +23,7 @@ HOST = os.environ.get('HOST', '0.0.0.0')
 
 templates_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 assistant = None
+_words_cache = None
 
 
 def get_assistant():
@@ -46,6 +47,8 @@ class ChatHandler(BaseHTTPRequestHandler):
             self._handle_chat(qs)
         elif path == '/api/translate':
             self._handle_translate(qs)
+        elif path == '/api/words':
+            self._handle_words()
         elif path == '/api/health':
             self._json_response({'status': 'ok'}, code=200)
         else:
@@ -91,6 +94,17 @@ class ChatHandler(BaseHTTPRequestHandler):
             'to': to,
             'elapsed_ms': round((time.time() - start) * 1000),
         })
+
+    def _handle_words(self):
+        global _words_cache
+        if _words_cache is None:
+            path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'amharic_words.json')
+            try:
+                with open(path, encoding='utf-8') as f:
+                    _words_cache = json.load(f)
+            except FileNotFoundError:
+                _words_cache = {'words': []}
+        self._json_response(_words_cache)
 
     def _json_response(self, data, code=200):
         body = json.dumps(data, ensure_ascii=False, indent=2).encode('utf-8')
