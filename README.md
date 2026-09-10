@@ -1,78 +1,84 @@
-# የአማርኛ AI (Amharic NLP & Chat System)
+# ሕሳር — Amharic AI (ChatGPT-style, Amharic only)
 
-A pure-Python, dependency-free deep-Amharic natural language toolkit plus a
-conversational **chat-lite** assistant ("ጌና AI") that:
+A pure-Python, dependency-free Amharic conversational AI ("ጃንዲ ምሳሌ") plus a
+complete Amharic NLP toolkit. Think *ChatGPT that only speaks Amharic*:
 
-1. **Understands Amharic only** — everyone else gets a polite Amharic reminder.
-2. **Minds the full Amharic Bible** (66 books, ~30,000 verses) using TF-IDF
-   retrieval — ask topics like *«ስለ ፍቅር ምን ይላል?»* and get real verses back.
-3. **Knows the fundamentals** — greetings, goodbyes, thanks, self-introduction,
-   capabilities, help, and light conversation memory ("ተጨማሪ" shows more).
-4. Comes with a **web chat UI** including a full Ge'ez on-screen keyboard.
+- **Ask anything** — general knowledge (science, technology, AI, Ethiopia,
+  Africa, health, food, coffee, friendship, life, and more) answered in Amharic.
+- **Math** — `5 ጠቅላላ 7`, `17*4`, `አምስት ሲደመር ሦስት` → answers in digits **and**
+  Amharic number words.
+- **Dictionary** — ask «ኢንጄራ» ምን ማለት ነው? and get Amharic definitions.
+- **Remembers your name** — «ስሜ አበበ ነው» and greetings become personal.
+- **Amharic only** — English input gets a polite Amharic-only reminder.
+- Web chat UI with a full **Ge'ez on-screen keyboard** (30 base × 7 vowel orders).
 
-No numpy. No sklearn. No flask. No GPU. Just Python 3.8+ standard library.
+No numpy. No sklearn. No flask. No network model. Just Python 3.8+ stdlib and
+intelligent vector-based intent matching.
 
 ## Features
 
-### NLP Toolkit (`amharic_nlp.py`)
-- `AmharicNormalizer` — collapses homophone letters (ሀ/ሐ/ኀ→ሀ, ሠ→ሰ, ኣ→አ, ፀ→ጸ).
-- `AmharicTokenizer` — Ge'ez-aware word segmentation (letters only, punctuation-safe).
-- `AmharicStemmer` — rule-based prefix/suffix stripping (እንደ/ወደ/ስለ…, ዎች/ሮች/ኣት/ኣን…) with min-length guards.
-- `StopWordFilter` — Amharic function-word removal (`data/stopwords.txt`, ~190 words).
-- `SentenceSplitter` — splits on Amharic punctuation ። ፡ ፧ ፨.
-- `TfidfVectorizer` + `DocumentIndex` — cosine similarity over Amharic docs.
-- `BibleCorpus` — loads the Bible JSON, builds an inverted index, and searches it
-  in **milliseconds**. Index is cached to `data/bible_index.json`.
+### NLP toolkit (`amharic_nlp.py`)
+- `AmharicNormalizer` — collapses homophones (ሀ/ሐ/ኀ→ሀ, ሠ→ሰ, ኣ→አ, ፀ→ጸ).
+- `AmharicTokenizer` — Ge'ez word segmentation (letters only, punctuation-safe).
+- `AmharicStemmer` — prefixes/suffixes stripping (እንደ/ወደ/ስለ…, ዎች/ሮች/ኣት/ኣን…).
+- `StopWordFilter` — Amharic function words (`data/stopwords.txt`).
+- `SentenceSplitter` — splits on Amharic punctuation, ። ፡ ፧ ፨.
+- `TfidfVectorizer` + `DocumentIndex` — TF-IDF, cosine similarity (pure stdlib).
+- `BibleCorpus` — *optional* Amharic Bible retrieval tool for the toolkit
+  (bring your own `data/amharic_bible.json` if you want it; **not used** by the
+  chat assistant).
 
-### Conversational engine (`chatbot.py`)
-- `AmharicAssistant.respond(text)` → `{reply, source, confidence, elapsed_ms}`.
-- Intent recognition over `data/knowledge_base.json` (Amharic-only responses).
-- TF-IDF Bible retrieval with confidence scoring.
-- Context memory via "ተጨማሪ"/"ሌላ" (more verses from the last search).
+### Conversation engine (`chatbot.py`)
+- `AmharicAssistant` — vector-based intent matching over `data/knowledge_base.json`
+  (25+ intents, ~70 Amharic patterns and responses).
+- Arithmetic in Arabic digits or Amharic number words.
+- Built-in Amharic dictionary (~30 words).
+- Conversational memory: remembers the user's name.
+- Honest, helpful fallbacks — never preachy, never religious.
 
 ### Web chat (`chat_app.py` + `templates/chat.html`)
 - `GET /` — chat UI with Ge'ez on-screen keyboard & Amharic font.
-- `GET /api/chat?text=…` — JSON reply.
+- `GET /api/chat?text=…` — JSON `{reply, source, confidence, elapsed_ms}`.
 - `GET /api/health` — health check.
 
 ## Run it
 
 ```bash
-python3 chat_app.py            # defaults to http://0.0.0.0:8080
+python3 chat_app.py            # http://0.0.0.0:8080
 # or
 PORT=9000 python3 chat_app.py
 ```
 
-First startup builds the Bible index (a few seconds) — afterwards `data/bible_index.json`
-makes it ~1s.
-
-Try it in the browser, or via CLI:
+Command-line demo:
 
 ```bash
-python3 chatbot.py    # interactive Amharic chat in the terminal
+python3 chatbot.py
 ```
 
 ## Try these
 
-| You type (Amharic) | You get |
-|---|---|
-| ሰላም | greeting |
-| ተጨማሪ | more of the last Bible verses |
-| ስለ ፍቅር ምን ይላል | 1 Corinthians 13:4 ✓ |
-| እምነት ምንድን ነው | faith verses |
-| Hello | polite "Amharic only" reply |
-| ደህና ሁን | goodbye |
+| You type (Amharic) | Source | You get |
+|---|---|---|
+| ሰላም | intent | Amharic greeting |
+| ስሜ አበበ ነው | name | remembers your name |
+| AI ምንድን ነው? | intent | plain-language definition |
+| ሰማይ ለምን ሰማያዊ ነው | intent | physics explanation |
+| 5 ጠቅላላ 7 | math | መልሱ፡ 12 — አስራ ሁለት |
+| አምስት ሲደመር ሦስት | math | መልሱ፡ 8 — ስምንት |
+| «ኢንጄራ» ምን ማለት ነው? | dictionary | Amharic definition |
+| Hello! | language_gate | polite Amharic-only reply |
+| ደህና ሁን | intent | farewell |
 
 ## Data
 
-- `data/amharic_bible.json` — Amharic Bible (from `magna25/amharic-bible-json`).
-- `data/knowledge_base.json` — conversational intents & Amharic responses.
+- `data/knowledge_base.json` — conversational intents, Amharic responses, dictionary.
 - `data/stopwords.txt` — Amharic stop words.
-- `data/bible_index.json` — generated TF-IDF inverted index (cache).
+- *(Optional)* `data/amharic_bible.json` — Amharic Bible, used only by the
+  toolkit's optional `BibleCorpus` for researchers, never by the chatbot.
 
 ## License
 
-Unlicense — public domain. Do whatever you want with it.
+Unlicense — public domain.
 
 ## Author
 

@@ -86,7 +86,7 @@ class ChatHandler(BaseHTTPRequestHandler):
 
 
 def main():
-    print(f'Loading Amharic AI assistant (first load builds Bible index, ~5s)...')
+    print('Loading ሕሳር (Amharic AI)…')
     get_assistant()
     print(f'Amharic AI Chat running on http://{HOST}:{PORT}')
     server = HTTPServer((HOST, PORT), ChatHandler)

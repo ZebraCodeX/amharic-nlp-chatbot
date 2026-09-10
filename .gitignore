@@ -4,3 +4,4 @@ __pycache__/
 nohup.out
 .DS_Store
 data/bible_index.json
+data/amharic_bible.json

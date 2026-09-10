@@ -48,8 +48,8 @@
 
     <div class="chat-container" id="chat">
         <div class="msg ai">
-            ሰላም! እኔ የአማርኛ AI ረዳት ነኝ። አማርኛን መረዳት፣ መጻሕፍ ቅዱስ ጥቅሶችን መፈለግ እና ጥያቄዎችን መመለስ እችላለሁ።<br><br>
-            በአማርኛ ጻፍልኝ ወይም ከኪቦርዱ ተጠቀም!
+            ሰላም! እኔ ሕሳር ነኝ — እንደ ChatGPT የማወያይ የአማርኛ AI ረዳትህ።<br><br>
+            ማንኛውንም ጥያቄ በአማርኛ ጠይቀኝ፣ ሂሳብ አስላ («5 ጠቅላላ 7»)፣ ወይም የአማርኛ ቃል ፍቺ ጠይቅ («ኢንጄራ» ምን ማለት ነው?)።
         </div>
     </div>
 
@@ -185,10 +185,10 @@ function renderBibleReply(text){
 }
 
 function showSuggestions(){
-    const box = document.getElementById('suggestions');box.innerHTML='';
-    const defaults=['ሰላም','ስለ ፍቅር ምን ይላል','እምነት ምንድን ነው','ምን ትሰራለህ','ማን ነህ','ተጨማሪ'];
-    defaults.forEach(t=>{const b=document.createElement('button');b.className='sug-btn';b.textContent=t;b.onclick=()=>{document.getElementById('chatInput').value=t;sendMsg()};box.appendChild(b)});
-}
+        const box = document.getElementById('suggestions');box.innerHTML='';
+        const defaults=['ሰላም','AI ምንድን ነው?','ስለ ቴክኖሎጂ ንገረኝ','5 ጠቅላላ 7','«ኢንጄራ» ምን ማለት ነው?','ሰማይ ለምን ሰማያዊ ነው','ቀልድ ንገረኝ'];
+        defaults.forEach(t=>{const b=document.createElement('button');b.className='sug-btn';b.textContent=t;b.onclick=()=>{document.getElementById('chatInput').value=t;sendMsg()};box.appendChild(b)});
+    }
 showSuggestions();
 
 document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
@@ -204,7 +204,7 @@ async function sendMsg(){
         const resp = await fetch('/api/chat?text='+encodeURIComponent(text));
         const data = await resp.json();
         thinking.remove();
-        if(data.source && data.source.startsWith('bible') && data.reply.includes('\n\n')){
+        if(data.reply && data.reply.includes('\n\n')){
             renderBibleReply(data.reply);
         } else {
             addMessage(data.reply,false);
