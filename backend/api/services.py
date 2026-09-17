@@ -207,14 +207,19 @@ def speech_status():
     return zer_speech.status()
 
 
+def speech_voices():
+    import zer_speech
+    return zer_speech.voices()
+
+
 def transcribe(data, filename='audio.webm', language=None):
     import zer_speech
     return zer_speech.transcribe_bytes(data, filename=filename, language=language)
 
 
-def synthesize(text, lang='am'):
+def synthesize(text, lang='am', **params):
     import zer_speech
-    return zer_speech.synthesize(text, lang)
+    return zer_speech.synthesize(text, lang, **params)
 
 
 # ---------------------------------------------------------------------------

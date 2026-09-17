@@ -50,6 +50,81 @@ def _espeak_bin():
     return shutil.which('espeak-ng') or shutil.which('espeak')
 
 
+# Default tunable parameters per language. `rate` = words/min, `pitch` 0..99,
+# `volume` 0..200, `gap` = extra word gap (ms * 10) — all eSpeak NG options.
+DEFAULT_PARAMS = {
+    'am': {'voice': 'am', 'rate': 145, 'pitch': 45, 'volume': 130, 'gap': 0},
+    'en': {'voice': 'en-us', 'rate': 165, 'pitch': 50, 'volume': 120, 'gap': 0},
+}
+
+# eSpeak NG vocal variants, so users can pick a different "voice type".
+_VARIANTS = [
+    ('+m1', 'male 1'), ('+m2', 'male 2'), ('+m3', 'male 3'),
+    ('+f1', 'female 1'), ('+f2', 'female 2'), ('+f3', 'female 3'),
+    ('+f4', 'female 4'), ('+croak', 'croak'), ('+whisper', 'whisper'),
+]
+
+_LANG_LABEL = {'am': 'አማርኛ', 'en': 'English'}
+
+
+def voices():
+    """Available TTS voices + tunable ranges for the client's voice settings."""
+    found = []
+    binary = _espeak_bin()
+    if binary:
+        try:
+            out = subprocess.run([binary, '--voices'], capture_output=True,
+                                 text=True, timeout=10).stdout
+            for line in out.splitlines()[1:]:
+                parts = line.split()
+                if len(parts) < 4:
+                    continue
+                lang = parts[1]
+                if lang.split('-')[0] not in SUPPORTED_LANGS:
+                    continue
+                found.append({'value': lang, 'lang': lang.split('-')[0],
+                              'label': lang})
+        except Exception:
+            found = []
+
+    # Guarantee a usable list even without eSpeak (client falls back gracefully).
+    base = {v['value'] for v in found}
+    for value in ('am', 'en-us', 'en-gb', 'en'):
+        if value not in base:
+            found.append({'value': value, 'lang': value.split('-')[0], 'label': value})
+
+    # Add vocal variants for the English voices (and Amharic where supported).
+    expanded = []
+    for v in found:
+        expanded.append(v)
+        if v['lang'] == 'en':
+            for suffix, label in _VARIANTS:
+                expanded.append({'value': f"{v['value']}{suffix}", 'lang': 'en',
+                                 'label': f"{v['value']} {label}"})
+
+    ordered = sorted(expanded, key=lambda v: (v['lang'] != 'am', v['value']))
+    return {
+        'voices': ordered,
+        'defaults': DEFAULT_PARAMS,
+        'ranges': {
+            'rate': [80, 300],
+            'pitch': [0, 99],
+            'volume': [0, 200],
+            'gap': [0, 20],
+        },
+        'engine': 'mms' if tts_available() and os.environ.get('ZER_TTS', 'auto') in ('auto', 'mms') and _has_mms() else ('espeak' if _espeak_bin() else 'none'),
+    }
+
+
+def _has_mms():
+    try:
+        import torch  # noqa: F401
+        import transformers  # noqa: F401
+        return True
+    except Exception:
+        return False
+
+
 def _mms_ids(lang):
     return 'facebook/mms-tts-amh' if lang == 'am' else 'facebook/mms-tts-eng'
 
@@ -137,7 +212,26 @@ def transcribe_bytes(data, filename='audio.webm', language=None):
 # ---------------------------------------------------------------------------
 # text-to-speech
 # ---------------------------------------------------------------------------
-def _synthesize_mms(text, lang):
+def _resample_pcm(pcm, factor):
+    """Speed up (factor>1) or slow down (factor<1) 16-bit mono PCM."""
+    if not pcm or abs(factor - 1.0) < 1e-3:
+        return pcm
+    import array
+    src = array.array('h')
+    src.frombytes(pcm[:len(pcm) - (len(pcm) % 2)])
+    if not src:
+        return pcm
+    n = max(1, int(len(src) / factor))
+    out = array.array('h', bytes(2 * n))
+    for i in range(n):
+        pos = i * factor
+        j = int(pos)
+        frac = pos - j
+        out[i] = int(src[j] * (1 - frac) + src[j + 1] * frac) if j + 1 < len(src) else src[-1]
+    return out.tobytes()
+
+
+def _synthesize_mms(text, lang, rate=None, volume=None):
     global _mms_failed
     if _mms_failed:
         return None
@@ -161,7 +255,10 @@ def _synthesize_mms(text, lang):
             inputs = tokenizer(text, return_tensors='pt')
             with torch.no_grad():
                 waveform = model(**inputs).waveform[0].cpu().numpy()
-            pcm = (waveform * 32767).astype('<i2').tobytes()
+            gain = 1.0 if not volume else max(0.0, min(2.0, float(volume) / 100.0))
+            pcm = (waveform * 32767 * gain).clip(-32768, 32767).astype('<i2').tobytes()
+            if rate:
+                pcm = _resample_pcm(pcm, max(0.5, min(2.5, float(rate) / 150.0)))
             buf = io.BytesIO()
             with wave.open(buf, 'wb') as wf:
                 wf.setnchannels(1)
@@ -173,16 +270,24 @@ def _synthesize_mms(text, lang):
             return None
 
 
-def _synthesize_espeak(text, lang):
+def _synthesize_espeak(text, lang, voice=None, rate=None, pitch=None,
+                       volume=None, gap=None):
     binary = _espeak_bin()
     if not binary:
         return None
-    voice = 'am' if lang == 'am' else 'en-us'
+    defaults = DEFAULT_PARAMS.get(lang, DEFAULT_PARAMS['am'])
+    voice = voice or defaults['voice']
+    rate = defaults['rate'] if rate is None else rate
+    pitch = defaults['pitch'] if pitch is None else pitch
+    volume = defaults['volume'] if volume is None else volume
+    gap = defaults['gap'] if gap is None else gap
     tmp = None
     try:
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as fh:
             tmp = fh.name
-        subprocess.run([binary, '-v', voice, '-s', '155', '-p', '45', '-w', tmp, text],
+        subprocess.run([binary, '-v', str(voice), '-s', str(int(rate)),
+                        '-p', str(int(pitch)), '-a', str(int(volume)),
+                        '-g', str(int(gap)), '-w', tmp, text],
                        check=True, capture_output=True, timeout=30)
         with open(tmp, 'rb') as fh:
             return fh.read(), 'audio/wav', f'espeak-ng:{voice}'
@@ -207,8 +312,13 @@ def _placeholder_wav():
     return buf.getvalue()
 
 
-def synthesize(text, lang='am'):
-    """Return (audio_bytes, mimetype, provider) or (None, None, None)."""
+def synthesize(text, lang='am', voice=None, rate=None, pitch=None,
+               volume=None, gap=None):
+    """Return (audio_bytes, mimetype, provider) or (None, None, None).
+
+    ``rate`` (words/min), ``pitch`` (0-99), ``volume`` (0-200) and ``gap`` let
+    the caller tune the voice; ``voice`` picks a specific eSpeak voice/variant.
+    """
     text = (text or '').strip()
     if not text:
         return _placeholder_wav(), 'audio/wav', 'silence'
@@ -216,11 +326,12 @@ def synthesize(text, lang='am'):
     choice = os.environ.get('ZER_TTS', 'auto').lower()
 
     if choice in ('auto', 'mms'):
-        result = _synthesize_mms(text, lang)
+        result = _synthesize_mms(text, lang, rate=rate, volume=volume)
         if result:
             return result
     if choice in ('auto', 'espeak'):
-        result = _synthesize_espeak(text, lang)
+        result = _synthesize_espeak(text, lang, voice=voice, rate=rate,
+                                    pitch=pitch, volume=volume, gap=gap)
         if result:
             return result
     return None, None, None

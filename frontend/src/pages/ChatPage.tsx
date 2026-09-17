@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../api/client';
-import type { ChatTurn, SpeechStatus } from '../api/types';
+import type { ChatTurn, SpeechStatus, VoicesResponse } from '../api/types';
 import { AmharicKeyboardPanel } from '../components/AmharicKeyboardPanel';
 import { Composer } from '../components/Composer';
 import { Message, type MessageData } from '../components/Message';
+import { VoicePanel } from '../components/VoicePanel';
 import {
   base64ToBlobUrl,
   createWakeWord,
@@ -12,6 +13,14 @@ import {
   type Recorder,
   type WakeWord,
 } from '../lib/audio';
+import {
+  DEFAULT_VOICE,
+  loadVoicePrefs,
+  paramsFor,
+  saveVoicePrefs,
+  turnParams,
+  type VoicePrefs,
+} from '../lib/voice';
 
 const STARTERS = [
   { text: 'AI ምንድን ነው?', hint: 'በዝርዝር ማብራሪያ' },
@@ -21,6 +30,15 @@ const STARTERS = [
   { text: 'ስለ ቡና ግጥም ጻፍልኝ', hint: 'ፈጠራ' },
   { text: 'ስንት ሰዓት ነው?', hint: 'ቀንና ሰዓት' },
 ];
+
+type Phase = 'idle' | 'listening' | 'thinking' | 'speaking';
+
+const PHASE_LABEL: Record<Phase, string> = {
+  idle: '',
+  listening: '🎧 በማዳመጥ ላይ…',
+  thinking: '🤔 ዘር እያሰበ ነው…',
+  speaking: '🔊 ዘር ይናገራል…',
+};
 
 let seq = 1;
 
@@ -32,18 +50,33 @@ export function ChatPage() {
   const [speakReplies, setSpeakReplies] = useState(true);
   const [recording, setRecording] = useState(false);
   const [listening, setListening] = useState(false);
+  const [live, setLive] = useState(false);
+  const [phase, setPhase] = useState<Phase>('idle');
+  const [panelOpen, setPanelOpen] = useState(false);
   const [speech, setSpeech] = useState<SpeechStatus | null>(null);
+  const [voices, setVoices] = useState<VoicesResponse | null>(null);
+  const [prefs, setPrefs] = useState<VoicePrefs>(() => loadVoicePrefs());
   const [voiceError, setVoiceError] = useState<string | null>(null);
-  const [lastLang, setLastLang] = useState<string>('');
+  const [lastLang, setLastLang] = useState('');
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const recorderRef = useRef<Recorder | null>(null);
   const wakeRef = useRef<WakeWord | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const liveRef = useRef(false);
+  const messagesRef = useRef<MessageData[]>([]);
+
+  messagesRef.current = messages;
 
   useEffect(() => {
     api.speechStatus().then(setSpeech).catch(() => setSpeech(null));
+    api.speechVoices().then(setVoices).catch(() => setVoices(null));
+  }, []);
+
+  const updatePrefs = useCallback((next: VoicePrefs) => {
+    setPrefs(next);
+    saveVoicePrefs(next);
   }, []);
 
   const scrollDown = useCallback(() => {
@@ -66,31 +99,35 @@ export function ChatPage() {
     [],
   );
 
-  const playUrl = useCallback((url: string) => {
+  const playUrl = useCallback((url: string, onEnd?: () => void) => {
     audioRef.current?.pause();
     const a = new Audio(url);
     audioRef.current = a;
-    a.play().catch(() => {});
+    if (onEnd) {
+      a.onended = onEnd;
+      a.onerror = onEnd;
+    }
+    a.play().catch(() => onEnd?.());
   }, []);
 
   /** Zer talks back in the user's language (server TTS, else the browser voice). */
   const speakReply = useCallback(
-    async (text: string, lang: string | undefined) => {
+    async (text: string, lang: string | undefined, onEnd?: () => void) => {
       const l = lang === 'en' ? 'en' : 'am';
       if (speech?.tts?.available) {
         try {
-          const blob = await api.synthesize(text, l);
+          const blob = await api.synthesize(text, l, paramsFor(prefs, l));
           if (blob) {
-            playUrl(URL.createObjectURL(blob));
+            playUrl(URL.createObjectURL(blob), onEnd);
             return;
           }
         } catch {
-          /* fall through to the browser voice */
+          /* fall through */
         }
       }
-      speak(text, l);
+      speak(text, l, onEnd);
     },
-    [speech, playUrl],
+    [speech, prefs, playUrl],
   );
 
   const translate = useCallback(
@@ -104,9 +141,10 @@ export function ChatPage() {
       const text = (forced ?? el?.value ?? '').trim();
       if (!text || sending) return;
       if (el && !forced) el.value = '';
-      const snapshot = messages;
+      const snapshot = messagesRef.current;
       addMsg({ role: 'user', text });
       setSending(true);
+      setPhase('thinking');
       scrollDown();
       try {
         const res = await api.chat(text, history(snapshot));
@@ -123,88 +161,163 @@ export function ChatPage() {
         addMsg({ role: 'ai', text: 'ይቅርታ፣ ስህተት ተፈጥሯል። እንደገና ሞክር።', source: 'error' });
       } finally {
         setSending(false);
+        setPhase('idle');
         inputRef.current?.focus();
         scrollDown();
       }
     },
-    [messages, sending, addMsg, history, scrollDown, speakReplies, speakReply],
+    [sending, addMsg, history, scrollDown, speakReplies, speakReply],
   );
 
-  const sendAudio = useCallback(
-    async (blob: Blob) => {
+  /** One voice turn; returns after the reply audio starts playing. */
+  const doVoiceTurn = useCallback(
+    async (blob: Blob, onDone?: () => void) => {
       setSending(true);
+      setPhase('thinking');
       setVoiceError(null);
-      scrollDown();
       try {
-        const res = await api.voiceTurn(blob, { history: history(messages) });
+        const res = await api.voiceTurn(blob, {
+          history: history(messagesRef.current),
+          voice: turnParams(prefs),
+        });
+        setSending(false);
         if (!res.transcript) {
-          setVoiceError('ድምጽ አልተሰማም። እንደገና ተናገር። / I did not catch that.');
+          setVoiceError('ድምጽ አልተሰማም። እንደገና ተናገር።');
+          onDone?.();
           return;
         }
         setLastLang(res.language || '');
         addMsg({ role: 'user', text: res.transcript, lang: res.language });
         addMsg({ role: 'ai', text: res.reply, source: res.source, followups: res.followups });
-        if (res.audio_b64) playUrl(base64ToBlobUrl(res.audio_b64, res.audio_mime || 'audio/wav'));
-        else await speakReply(res.reply, res.language);
+        setPhase('speaking');
+        const next = () => {
+          setPhase('idle');
+          onDone?.();
+        };
+        if (res.audio_b64) playUrl(base64ToBlobUrl(res.audio_b64, res.audio_mime || 'audio/wav'), next);
+        else await speakReply(res.reply, res.language, next);
       } catch {
-        setVoiceError('የድምጽ ስህተት / voice error');
-      } finally {
         setSending(false);
-        scrollDown();
+        setVoiceError('የድምጽ ስህተት / voice error');
+        onDone?.();
       }
     },
-    [messages, addMsg, history, scrollDown, speakReply, playUrl],
+    [prefs, addMsg, history, playUrl, speakReply],
   );
 
-  const sendBrowserVoice = useCallback(() => {
+  /* ---------------- Live (Gemini-style) conversation loop ---------------- */
+  const scheduleLive = useCallback(() => {
+    if (liveRef.current) setTimeout(() => liveCycleRef.current?.(), 300);
+  }, []);
+
+  const liveCycleRef = useRef<(() => void) | null>(null);
+
+  const browserLiveTurn = useCallback(() => {
     const Ctor =
       (window as unknown as { SpeechRecognition?: any; webkitSpeechRecognition?: any })
         .SpeechRecognition ||
       (window as unknown as { webkitSpeechRecognition?: any }).webkitSpeechRecognition;
     if (!Ctor) {
-      setVoiceError('Browser speech recognition is unavailable — use Chrome, Edge or Safari.');
+      setVoiceError('Live mode needs a browser with speech recognition (Chrome/Edge).');
+      stopLive();
       return;
     }
     const rec = new Ctor();
     rec.lang = 'am-ET';
     rec.interimResults = false;
-    rec.maxAlternatives = 1;
     rec.onresult = async (e: any) => {
       const text = String(e.results[0][0].transcript || '');
       addMsg({ role: 'user', text });
       setSending(true);
+      setPhase('thinking');
       try {
-        const reply = await api.chat(text, history(messages));
-        addMsg({ role: 'ai', text: reply.reply, source: reply.source, followups: reply.followups });
+        const reply = await api.chat(text, history(messagesRef.current));
+        addMsg({ role: 'ai', text: reply.reply, source: reply.source });
         setLastLang(reply.lang || '');
-        await speakReply(reply.reply, reply.lang);
-      } catch {
-        setVoiceError('error contacting Zer');
-      } finally {
         setSending(false);
+        setPhase('speaking');
+        await speakReply(reply.reply, reply.lang, scheduleLive);
+      } catch {
+        setSending(false);
+        scheduleLive();
       }
     };
-    rec.onerror = () => {
-      setSending(false);
-      setVoiceError('microphone error');
-    };
+    rec.onerror = () => scheduleLive();
     rec.start();
-    setSending(true);
-  }, [messages, addMsg, history, speakReply]);
+  }, [addMsg, history, speakReply, scheduleLive]);
 
+  const liveCycle = useCallback(async () => {
+    if (!liveRef.current) return;
+    setPhase('listening');
+    if (speech?.stt?.available) {
+      let rec: Recorder;
+      try {
+        rec = await startRecording(1300, 15000);
+      } catch {
+        setVoiceError('Microphone permission was denied.');
+        stopLive();
+        return;
+      }
+      if (!liveRef.current) {
+        rec.cancel();
+        return;
+      }
+      recorderRef.current = rec;
+      setRecording(true);
+      const blob = await rec.done;
+      recorderRef.current = null;
+      setRecording(false);
+      if (!liveRef.current) return;
+      if (blob.size < 1200) {
+        liveCycleRef.current?.();
+        return;
+      }
+      await doVoiceTurn(blob, scheduleLive);
+    } else {
+      browserLiveTurn();
+    }
+  }, [speech, doVoiceTurn, scheduleLive, browserLiveTurn]);
+  liveCycleRef.current = liveCycle;
+
+  const startLive = useCallback(() => {
+    liveRef.current = true;
+    setLive(true);
+    setVoiceError(null);
+    wakeRef.current?.stop();
+    setListening(false);
+    liveCycleRef.current?.();
+  }, []);
+
+  const stopLive = useCallback(() => {
+    liveRef.current = false;
+    setLive(false);
+    setPhase('idle');
+    recorderRef.current?.cancel();
+    recorderRef.current = null;
+    setRecording(false);
+    audioRef.current?.pause();
+    window.speechSynthesis?.cancel();
+  }, []);
+
+  const toggleLive = useCallback(() => {
+    if (live) stopLive();
+    else startLive();
+  }, [live, startLive, stopLive]);
+
+  /* ---------------- push-to-talk ---------------- */
   const startListening = useCallback(async () => {
-    if (sending) return;
+    if (sending || live) return;
     if (speech?.stt?.available) {
       try {
-        recorderRef.current = await startRecording(1900);
+        recorderRef.current = await startRecording(1900, 20000);
         setRecording(true);
       } catch {
         setVoiceError('Microphone permission was denied.');
       }
     } else {
-      sendBrowserVoice();
+      browserLiveTurn();
     }
-  }, [sending, speech, sendBrowserVoice]);
+  }, [sending, live, speech, browserLiveTurn]);
 
   const stopListening = useCallback(async () => {
     const r = recorderRef.current;
@@ -212,9 +325,9 @@ export function ChatPage() {
     recorderRef.current = null;
     setRecording(false);
     const blob = await r.stop();
-    if (blob.size > 1200) await sendAudio(blob);
+    if (blob.size > 1200) await doVoiceTurn(blob);
     else setVoiceError('አጭር ድምጽ ነው / clip too short');
-  }, [sendAudio]);
+  }, [doVoiceTurn]);
 
   const toggleMic = useCallback(() => {
     if (recording) stopListening();
@@ -243,6 +356,11 @@ export function ChatPage() {
     setVoiceError(null);
   }, [listening, startListening]);
 
+  const testVoice = useCallback(() => {
+    const sample = 'ሰላም! እኔ ዘር ነኝ። ይህ የድምጼ ሙከራ ነው።';
+    speakReply(sample, 'am');
+  }, [speakReply]);
+
   useEffect(
     () => () => {
       wakeRef.current?.stop();
@@ -260,8 +378,8 @@ export function ChatPage() {
           <span className="eyebrow">ዘር · Zer</span>
           <h1>ሰላም! እኔ ዘር ነኝ። ምን ልርዳህ?</h1>
           <p>
-            በአማርኛ ወይም በእንግሊዝኛ ጻፍ ወይም <b>🎙 ተናገር</b> — ዘር ቋንቋህን ለይቶ በዚያ ቋንቋ
-            መልሶ ይናገራል። <b>“Hey Zer”</b> ብለህም መጥራት ትችላለህ።
+            በአማርኛ ወይም በእንግሊዝኛ ጻፍ፣ <b>🎙 ተናገር</b>፣ ወይም <b>🔴 ቀጥታ ውይይት</b> አብርተህ
+            እንደ ስልክ ንግግር ደጋግመህ ተነጋገር — ዘር ቋንቋህን ለይቶ በዚያ ቋንቋ ይመልስልሃል።
           </p>
           <div className="starter-grid">
             {STARTERS.map((s) => (
@@ -301,6 +419,18 @@ export function ChatPage() {
         </div>
       )}
 
+      {phase !== 'idle' && <div className={`voice-phase ${phase}`}>{PHASE_LABEL[phase]}</div>}
+
+      {panelOpen && (
+        <VoicePanel
+          voices={voices}
+          prefs={prefs}
+          onChange={updatePrefs}
+          onTest={testVoice}
+          onReset={() => updatePrefs({ ...DEFAULT_VOICE })}
+        />
+      )}
+
       <Composer
         inputRef={inputRef}
         onSend={() => sendText()}
@@ -318,6 +448,11 @@ export function ChatPage() {
         voiceAvailable={!!speech?.stt?.available}
         lastLang={lastLang}
         voiceError={voiceError}
+        live={live}
+        onToggleLive={toggleLive}
+        panelOpen={panelOpen}
+        onTogglePanel={() => setPanelOpen((v) => !v)}
+        phase={phase}
       />
 
       {keyboardOpen && (

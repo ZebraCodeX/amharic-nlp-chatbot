@@ -219,6 +219,21 @@ class SpeechApiTest(ApiTestBase):
         resp = self.client.post('/api/voice/turn/', {}, format='multipart')
         self.assertEqual(resp.status_code, 400)
 
+    def test_voices_endpoint_exposes_controls(self):
+        resp, data = self.get_json('/api/speech/voices/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('voices', data)
+        self.assertIn('defaults', data)
+        self.assertIn('ranges', data)
+        self.assertIn('voice', data['defaults']['am'])
+        self.assertIn('rate', data['ranges'])
+
+    def test_synthesize_accepts_voice_tuning(self):
+        resp, _ = self.post_json('/api/speech/synthesize/', {
+            'text': 'ሰላም', 'lang': 'am', 'rate': 120, 'pitch': 30, 'volume': 80})
+        # No TTS engine in CI → 503, but the params must validate (not 400).
+        self.assertIn(resp.status_code, (200, 503))
+
 
 class DictionaryApiTest(ApiTestBase):
     def test_letter_index(self):

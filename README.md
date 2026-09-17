@@ -41,12 +41,29 @@ Python stdlib and is reused unchanged behind the API.
 
 ## Live voice conversation (Zer)
 
-Voice is built into the chat: press the **🎙 mic** in the composer (or toggle
-**Hey Zer** for hands-free). Zer detects whether you spoke Amharic or English and
-**talks back in that same language**. One round trip is
-`audio → STT → language detection → Zer → TTS → audio`, all open source.
-The app has a single page (chat) plus **ትርጉም / Review** — the Amharic keyboard
-(⌨) and voice live inside the chat composer.
+Voice is built into the chat. Three ways to talk:
+
+- **🔴 ቀጥታ ውይይት (Live)** — a Gemini-style continuous conversation: it listens,
+  auto-detects when you stop, answers out loud, then listens again — speak back
+  and forth like a phone call.
+- **🎙 mic** — push-to-talk for one turn.
+- **Hey Zer** — wake word for hands-free listening.
+
+Zer detects whether you spoke Amharic or English and **talks back in that same
+language**. One round trip is `audio → STT → language detection → Zer → TTS →
+audio`, all open source.
+
+**🎛 Voice settings** — pick the voice type per language (eSpeak NG voices and
+vocal variants, or the MMS neural voice when enabled) and tune **speed, pitch
+and volume**; settings persist locally.
+
+**Connection status** — the header shows a green **በመስረር ላይ · online** pill when
+the Zer server is reachable (polled every 30 s), and an amber **offline** pill
+otherwise; a separate ✦ chip indicates a generative model is connected. The
+installed PWA/native apps keep working offline (the UI, Amharic keyboard,
+dictionary and review data are cached) and reconnect automatically. The app has
+a single page (chat) plus **ትርጉም / Review**; the Amharic keyboard (⌨) lives in
+the composer.
 
 | Stage | Library | Notes |
 | --- | --- | --- |

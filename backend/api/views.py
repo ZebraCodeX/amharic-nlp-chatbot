@@ -150,6 +150,21 @@ class LlmStatusView(APIView):
         return Response(services.llm_status())
 
 
+def _voice_params(data):
+    """Extract the optional TTS tuning parameters from a request body."""
+    out = {}
+    if data.get('voice'):
+        out['voice'] = str(data.get('voice'))
+    for key in ('rate', 'pitch', 'volume', 'gap'):
+        raw = data.get(key)
+        if raw not in (None, ''):
+            try:
+                out[key] = int(float(raw))
+            except (TypeError, ValueError):
+                pass
+    return out
+
+
 class SpeechStatusView(APIView):
     """Which open-source STT/TTS providers are available in this deployment."""
 
@@ -159,6 +174,16 @@ class SpeechStatusView(APIView):
         except Exception as exc:
             return Response({'stt': {'available': False}, 'tts': {'available': False},
                              'error': str(exc)})
+
+
+class SpeechVoicesView(APIView):
+    """Available voices + tunable ranges (rate/pitch/volume/gap)."""
+
+    def get(self, request):
+        try:
+            return Response(services.speech_voices())
+        except Exception as exc:
+            return Response({'voices': [], 'error': str(exc)})
 
 
 class TranscribeView(APIView):
@@ -191,7 +216,8 @@ class SynthesizeView(APIView):
         lang = (request.data.get('lang') or 'am').lower()
         if not text:
             return Response({'error': 'text required'}, status=status.HTTP_400_BAD_REQUEST)
-        audio, mime, provider = services.synthesize(text, lang)
+        audio, mime, provider = services.synthesize(
+            text, lang, **_voice_params(request.data))
         if audio is None:
             return Response({'error': 'text-to-speech unavailable'},
                             status=status.HTTP_503_SERVICE_UNAVAILABLE)
@@ -236,7 +262,13 @@ class VoiceTurnView(APIView):
                 history = None
 
         reply = services.chat(transcript, history, lang=language)
-        audio, mime, provider = services.synthesize(reply.get('reply', ''), language)
+        params = _voice_params(request.data)
+        # Per-language voice choice: the language is only known after STT.
+        chosen = request.data.get('voice_am' if language == 'am' else 'voice_en')
+        if chosen:
+            params['voice'] = str(chosen)
+        audio, mime, provider = services.synthesize(
+            reply.get('reply', ''), language, **params)
 
         return Response({
             'transcript': transcript,

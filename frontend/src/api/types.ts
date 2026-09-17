@@ -78,6 +78,33 @@ export interface LetterCount {
   count: number;
 }
 
+export interface VoiceOption {
+  value: string;
+  lang: string;
+  label: string;
+}
+
+export interface VoiceSettings {
+  voice?: string;
+  rate?: number;
+  pitch?: number;
+  volume?: number;
+  gap?: number;
+}
+
+export interface VoicesResponse {
+  voices: VoiceOption[];
+  defaults: Record<string, VoiceSettings>;
+  ranges: Record<string, [number, number]>;
+  engine: string;
+}
+
+export interface Health {
+  status: string;
+  llm?: LlmStatus;
+  translations?: number;
+}
+
 export interface LearningStats {
   learned: number;
   recent: { am: string; en: string }[];

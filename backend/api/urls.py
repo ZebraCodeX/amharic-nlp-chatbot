@@ -37,6 +37,8 @@ urlpatterns = [
     path('speech/transcribe', views.TranscribeView.as_view()),
     path('speech/synthesize/', views.SynthesizeView.as_view(), name='speech-synthesize'),
     path('speech/synthesize', views.SynthesizeView.as_view()),
+    path('speech/voices/', views.SpeechVoicesView.as_view(), name='speech-voices'),
+    path('speech/voices', views.SpeechVoicesView.as_view()),
     path('voice/turn/', views.VoiceTurnView.as_view(), name='voice-turn'),
     path('voice/turn', views.VoiceTurnView.as_view()),
 

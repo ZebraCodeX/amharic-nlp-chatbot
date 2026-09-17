@@ -8,12 +8,18 @@ export function base64ToBlobUrl(b64: string, mime = 'audio/wav'): string {
 }
 
 export interface Recorder {
+  /** Resolves whenever recording ends — by silence, max duration, or stop(). */
+  done: Promise<Blob>;
   stop(): Promise<Blob>;
   cancel(): void;
 }
 
-/** Record the mic to webm/opus, optionally auto-stopping after silence. */
-export async function startRecording(autoStopMs = 0): Promise<Recorder> {
+/**
+ * Record the mic to webm/opus.
+ * - `autoStopMs`: stop after this much silence once speech was heard (0 = never)
+ * - `maxMs`: hard stop after this long
+ */
+export async function startRecording(autoStopMs = 0, maxMs = 15000): Promise<Recorder> {
   const stream = await navigator.mediaDevices.getUserMedia({
     audio: { echoCancellation: true, noiseSuppression: true },
   });
@@ -25,20 +31,35 @@ export async function startRecording(autoStopMs = 0): Promise<Recorder> {
   rec.ondataavailable = (e) => {
     if (e.data.size) chunks.push(e.data);
   };
-  rec.start(250);
 
-  let closed = false;
+  let finished = false;
+  let resolveDone: (b: Blob) => void = () => {};
+  const done = new Promise<Blob>((res) => {
+    resolveDone = res;
+  });
+
   let raf = 0;
+  let maxTimer = 0;
   let ctx: AudioContext | null = null;
   const silenceTimer = { id: 0 as number };
+
   const cleanup = () => {
-    if (closed) return;
-    closed = true;
     cancelAnimationFrame(raf);
+    clearTimeout(maxTimer);
     clearTimeout(silenceTimer.id);
     stream.getTracks().forEach((t) => t.stop());
     ctx?.close().catch(() => {});
   };
+  const finish = () => {
+    if (finished) return;
+    finished = true;
+    cleanup();
+    resolveDone(new Blob(chunks, { type: mime }));
+  };
+  rec.onstop = finish;
+
+  rec.start(250);
+  if (maxMs > 0) maxTimer = window.setTimeout(() => rec.state !== 'inactive' && rec.stop(), maxMs);
 
   if (autoStopMs > 0) {
     ctx = new AudioContext();
@@ -47,11 +68,10 @@ export async function startRecording(autoStopMs = 0): Promise<Recorder> {
     ctx.createMediaStreamSource(stream).connect(analyser);
     const data = new Uint8Array(analyser.frequencyBinCount);
     let spoke = false;
-    let lastLoud = Date.now();
     const resetTimer = () => {
       clearTimeout(silenceTimer.id);
       silenceTimer.id = window.setTimeout(() => {
-        if (spoke) rec.state !== 'inactive' && rec.stop();
+        if (spoke && rec.state !== 'inactive') rec.stop();
       }, autoStopMs);
     };
     const tick = () => {
@@ -64,7 +84,6 @@ export async function startRecording(autoStopMs = 0): Promise<Recorder> {
       const rms = Math.sqrt(sum / data.length);
       if (rms > 0.02) {
         spoke = true;
-        lastLoud = Date.now();
         resetTimer();
       }
       raf = requestAnimationFrame(tick);
@@ -73,41 +92,37 @@ export async function startRecording(autoStopMs = 0): Promise<Recorder> {
     tick();
   }
 
-  const stop = () =>
-    new Promise<Blob>((resolve) => {
-      const finish = () => {
-        cleanup();
-        resolve(new Blob(chunks, { type: mime }));
-      };
-      if (rec.state === 'inactive') finish();
-      else {
-        rec.onstop = finish;
-        rec.stop();
-      }
-    });
-
   return {
-    stop,
+    done,
+    stop: async () => {
+      if (rec.state !== 'inactive') rec.stop();
+      return done;
+    },
     cancel() {
-      try {
-        if (rec.state !== 'inactive') rec.stop();
-      } catch {
-        /* ignore */
-      }
+      if (rec.state !== 'inactive') rec.stop();
       cleanup();
+      if (!finished) {
+        finished = true;
+        resolveDone(new Blob([], { type: mime }));
+      }
     },
   };
 }
 
-/** Speak text with the browser voice (fallback when server TTS is unavailable). */
-export function speak(text: string, lang: 'am' | 'en'): void {
-  if (!('speechSynthesis' in window) || !text) return;
+/** Speak with the browser voice; resolves when it finishes. */
+export function speak(text: string, lang: 'am' | 'en', onEnd?: () => void): void {
+  if (!('speechSynthesis' in window) || !text) {
+    onEnd?.();
+    return;
+  }
   const u = new SpeechSynthesisUtterance(text);
   const target = lang === 'am' ? ['am', 'am-et'] : ['en-us', 'en-gb', 'en'];
   u.lang = lang === 'am' ? 'am-ET' : 'en-US';
   const voices = window.speechSynthesis.getVoices();
   const voice = voices.find((v) => target.some((t) => v.lang.toLowerCase().startsWith(t)));
   if (voice) u.voice = voice;
+  u.onend = () => onEnd?.();
+  u.onerror = () => onEnd?.();
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(u);
 }
@@ -117,7 +132,7 @@ export interface WakeWord {
   stop(): void;
 }
 
-/** 'Hey Zer' wake word via the browser SpeechRecognition (Chrome/Edge/Safari). */
+/** 'Hey Zer' wake word via the browser SpeechRecognition. */
 export function createWakeWord(onWake: () => void): WakeWord | null {
   const Ctor =
     (window as unknown as { SpeechRecognition?: unknown }).SpeechRecognition ||

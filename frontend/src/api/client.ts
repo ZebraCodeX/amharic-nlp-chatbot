@@ -1,6 +1,7 @@
 import type {
   ChatReply,
   ChatTurn,
+  Health,
   LearningStats,
   LettersList,
   LlmStatus,
@@ -10,6 +11,8 @@ import type {
   SpeechStatus,
   TranslateResult,
   VerifyResult,
+  VoiceSettings,
+  VoicesResponse,
   VoiceTurn,
 } from './types';
 
@@ -134,27 +137,48 @@ export const api = {
     return request<SpeechStatus>('/speech/status/');
   },
 
+  speechVoices(): Promise<VoicesResponse> {
+    return request<VoicesResponse>('/speech/voices/');
+  },
+
+  health(): Promise<Health> {
+    return request<Health>('/health/');
+  },
+
   /** One hands-free round trip: audio in → transcript + reply + spoken reply. */
   async voiceTurn(
     audio: Blob,
-    opts: { lang?: string; history?: ChatTurn[] } = {},
+    opts: {
+      lang?: string;
+      history?: ChatTurn[];
+      voice?: Record<string, string | number | undefined>;
+    } = {},
   ): Promise<VoiceTurn> {
     const form = new FormData();
     form.append('audio', audio, 'clip.webm');
     if (opts.lang) form.append('lang', opts.lang);
     if (opts.history) form.append('history', JSON.stringify(opts.history));
+    if (opts.voice) {
+      Object.entries(opts.voice).forEach(([k, v]) => {
+        if (v !== undefined && v !== null && v !== '') form.append(k, String(v));
+      });
+    }
     // No explicit Content-Type: the browser must set the multipart boundary.
     const res = await fetch(`${BASE}/voice/turn/`, { method: 'POST', body: form });
     if (!res.ok) throw new Error(`${res.status} ${await res.text().catch(() => '')}`);
     return (await res.json()) as VoiceTurn;
   },
 
-  /** Server-side open-source TTS → a playable Blob. */
-  async synthesize(text: string, lang = 'am'): Promise<Blob | null> {
+  /** Server-side open-source TTS → a playable Blob (voice is tunable). */
+  async synthesize(
+    text: string,
+    lang = 'am',
+    voice?: Record<string, string | number | undefined>,
+  ): Promise<Blob | null> {
     const res = await fetch(`${BASE}/speech/synthesize/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, lang }),
+      body: JSON.stringify({ text, lang, ...(voice || {}) }),
     });
     if (!res.ok) return null;
     return res.blob();

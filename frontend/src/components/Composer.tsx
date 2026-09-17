@@ -17,6 +17,11 @@ interface Props {
   voiceAvailable: boolean;
   lastLang: string;
   voiceError: string | null;
+  live: boolean;
+  onToggleLive: () => void;
+  panelOpen: boolean;
+  onTogglePanel: () => void;
+  phase: 'idle' | 'listening' | 'thinking' | 'speaking';
 }
 
 export function Composer({
@@ -36,6 +41,11 @@ export function Composer({
   voiceAvailable,
   lastLang,
   voiceError,
+  live,
+  onToggleLive,
+  panelOpen,
+  onTogglePanel,
+  phase,
 }: Props) {
   function onKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -72,6 +82,22 @@ export function Composer({
         </div>
 
         <div className="composer-tools">
+          <button
+            className={`tool-toggle${live ? ' on' : ''}`}
+            onClick={onToggleLive}
+            type="button"
+            title="Live conversation — speak back and forth continuously"
+          >
+            <span className="dot" /> 🔴 ቀጥታ ውይይት
+          </button>
+          <button
+            className={`tool-toggle${panelOpen ? ' on' : ''}`}
+            onClick={onTogglePanel}
+            type="button"
+            title="Voice type, speed, pitch and volume"
+          >
+            <span className="dot" /> 🎛 ድምጽ
+          </button>
           <button className={`tool-toggle${listening ? ' on' : ''}`} onClick={onToggleWake} type="button">
             <span className="dot" /> Hey Zer
           </button>

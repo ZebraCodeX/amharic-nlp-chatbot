@@ -1,18 +1,12 @@
-import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { api } from '../api/client';
-import type { LlmStatus } from '../api/types';
 import { useInstallPrompt } from '../hooks/useInstallPrompt';
+import { useOnline } from '../hooks/useOnline';
 
 export function AppShell() {
-  const [llm, setLlm] = useState<LlmStatus | null>(null);
   const { canInstall, install } = useInstallPrompt();
+  const { online, llm } = useOnline();
   const location = useLocation();
   const onReview = location.pathname.startsWith('/review');
-
-  useEffect(() => {
-    api.llmStatus().then(setLlm).catch(() => setLlm(null));
-  }, []);
 
   return (
     <div className="app-shell">
@@ -26,8 +20,7 @@ export function AppShell() {
         </NavLink>
 
         {onReview ? (
-          // The review page is a pure translation-teaching surface: no chat
-          // chrome, just a way back to the assistant.
+          // The review page is a pure translation-teaching surface: no chat chrome.
           <nav className="nav">
             <NavLink to="/" className="nav-link">
               ← ወደ ውይይት
@@ -40,10 +33,18 @@ export function AppShell() {
                 ⬇ ጫን
               </button>
             )}
-            <span className={`status-pill${llm?.available ? ' on' : ''}`} title="LLM brain status">
+            <span
+              className={`status-pill${online ? ' on' : ' off'}`}
+              title={online ? 'Connected to Zer' : 'Offline — the installed app still works'}
+            >
               <span className="dot" />
-              {llm?.available ? `✦ ${llm.model || 'AI አእምሮ'}` : 'offline AI'}
+              {online ? 'በመስመር ላይ · online' : 'ከመስመር ውጭ · offline'}
             </span>
+            {online && llm?.available && (
+              <span className="brain-pill" title={`Generative model: ${llm.model || ''}`}>
+                ✦ AI አእምሮ
+              </span>
+            )}
             <NavLink
               to="/review"
               className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
