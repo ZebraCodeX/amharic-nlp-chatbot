@@ -18,11 +18,12 @@
         untranslated: { label: 'ትርጉም የለውም', cls: 'st-none' }
     };
 
+    // Only < 90% confidence translations are queued for review by default.
+    var THRESHOLD = 0.90;
     var FILTERS = [
-        ['review', 'ማረጋገጫ'],
+        ['review', 'እምነት <90%'],
         ['untranslated', 'ያልተተረጎሙ'],
-        ['verified', 'የተረጋገጡ/የተስተካከሉ'],
-        ['all', 'ሁሉም']
+        ['verified', 'የተረጋገጡ/የተስተካከሉ']
     ];
 
     var listEl, statsEl, moreBtn, searchEl, filtersEl, toastEl;
@@ -49,7 +50,7 @@
             if (!statsEl) return;
             var cells = [
                 ['ጠቅላላ', d.total, ''],
-                ['ማረጋገጫ የሚፈልጉ', d.review, 'st-review'],
+                ['እምነት <90%', d.low_confidence, 'st-review'],
                 ['ያልተተረጎሙ', d.untranslated, 'st-none'],
                 ['የተረጋገጡ', d.verified, 'st-verified'],
                 ['የተስተካከሉ', d.corrected, 'st-corrected']
@@ -117,8 +118,21 @@
         var badge = document.createElement('span');
         badge.className = 'badge ' + meta.cls;
         badge.textContent = meta.label + (it.endorsed ? ' · ' + it.endorsed + '✓' : '');
+        var conf = document.createElement('span');
+        conf.className = 'badge';
+        function paintConfidence(c) {
+            it.confidence = c;
+            var pct = Math.round((c || 0) * 100);
+            conf.className = 'badge ' + (c < THRESHOLD ? 'st-low' : 'st-verified');
+            conf.textContent = 'እምነት ' + pct + '%';
+        }
+        paintConfidence(it.confidence || 0);
+        var badges = document.createElement('div');
+        badges.className = 'badges';
+        badges.appendChild(badge);
+        badges.appendChild(conf);
         mid.appendChild(input);
-        mid.appendChild(badge);
+        mid.appendChild(badges);
 
         var actions = document.createElement('div');
         actions.className = 'actions';
@@ -153,9 +167,14 @@
                     var m = STATUS[it.status] || STATUS.verified;
                     badge.className = 'badge ' + m.cls;
                     badge.textContent = m.label + (it.endorsed ? ' · ' + it.endorsed + '✓' : '');
+                    paintConfidence(it.status === 'corrected' ? 0.95 : 1.0);
                     row.classList.add('saved');
                     toast('✓ ተቀምጧል — የመላው መተግበሪያ ትርጉም ተሻሽሏል', true);
                     loadStats();
+                    if (state.status === 'review' && it.confidence >= THRESHOLD) {
+                        row.classList.add('resolved');
+                        setTimeout(function () { row.remove(); }, 700);
+                    }
                 } else {
                     toast('ተቀምጦ አልተቻለም', false);
                 }

@@ -336,11 +336,13 @@ class ChatHandler(BaseHTTPRequestHandler):
         """Paginated Amharic↔English review catalogue for the /review UI."""
         from translator import list_translations
         q = qs.get('q', [''])[0]
-        status = qs.get('status', ['all'])[0].lower()
+        status = qs.get('status', ['review'])[0].lower()
         limit = qs.get('limit', ['100'])[0]
         offset = qs.get('offset', ['0'])[0]
+        max_conf = qs.get('max_confidence', [None])[0]
         self._json_response(list_translations(query=q, status=status,
-                                              limit=limit, offset=offset))
+                                              limit=limit, offset=offset,
+                                              max_confidence=max_conf))
 
     def _handle_words(self):
         global _words_cache

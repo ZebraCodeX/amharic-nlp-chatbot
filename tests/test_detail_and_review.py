@@ -132,19 +132,41 @@ class TranslationReviewTest(unittest.TestCase):
         t._CORR_REV += 1
         t._CACHE.clear()
 
-    def test_catalogue_has_glossary_rows(self):
-        d = self.translator.list_translations(status='review', limit=5)
+    def test_review_shows_only_below_threshold(self):
+        d = self.translator.list_translations(status='review', limit=10)
         self.assertGreater(d['total'], 10)
-        first = d['items'][0]
-        for key in ('am', 'en', 'status', 'source'):
-            self.assertIn(key, first)
-        self.assertEqual(first['status'], 'suggested')
+        self.assertEqual(d['threshold'], self.translator.CONFIDENCE_THRESHOLD)
+        for item in d['items']:
+            self.assertLess(item['confidence'], 0.90)
+            for key in ('am', 'en', 'status', 'source', 'confidence'):
+                self.assertIn(key, item)
+        # sorted most-uncertain first
+        confs = [i['confidence'] for i in d['items']]
+        self.assertEqual(confs, sorted(confs))
+
+    def test_high_confidence_rows_are_hidden_from_review(self):
+        # a curated, unambiguous glossary word scores >= 90% and is not queued
+        rows = self.translator.list_translations(status='all')['items']
+        high = [p for p in rows if p['confidence'] >= 0.90]
+        self.assertTrue(high, 'expected some >=90% rows')
+        review_ams = {i['am'] for i in
+                      self.translator.list_translations(status='review', limit=500)['items']}
+        self.assertTrue(all(p['am'] not in review_ams for p in high))
 
     def test_stats_counts(self):
         stats = self.translator.translation_stats()
         self.assertGreater(stats['glossary'], 50)
         self.assertGreater(stats['review'], 0)
+        self.assertGreater(stats['low_confidence'], 0)
         self.assertEqual(stats['verified'], 0)
+        self.assertEqual(stats['low_confidence'] + stats['high_confidence'],
+                         stats['total'])
+
+    def test_correction_raises_confidence_above_threshold(self):
+        self.translator.store_verification('ሰላም', 'am', 'en', 'hello',
+                                           correction='Greetings')
+        row = self.translator.list_translations(query='ሰላም', status='all')['items'][0]
+        self.assertGreaterEqual(row['confidence'], 0.90)
 
     def test_correction_moves_row_to_corrected(self):
         self.translator.store_verification('ሰላም', 'am', 'en', 'hello',

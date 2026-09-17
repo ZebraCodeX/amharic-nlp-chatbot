@@ -196,6 +196,8 @@ _PAIRS_LOCK = threading.Lock()
 _STOPWORDS_PATH = os.path.join(DATA_DIR, 'stopwords.txt')
 _WORDS_PATH = os.path.join(DATA_DIR, 'amharic_words.json')
 _REVIEW_WORD_LIMIT = 1200   # frequent non-stop words offered for translation
+# Only translations below this confidence are queued for human checking.
+CONFIDENCE_THRESHOLD = 0.90
 
 
 def _corr_key(src, dst, text):
@@ -343,6 +345,37 @@ def _pair_status(rec, suggested):
     return 'suggested' if suggested else 'untranslated'
 
 
+def _pair_confidence(rec, suggested, am, en, glosses=()):
+    """Heuristic 0..1 confidence that a word's English translation is correct.
+
+    * human-verified / corrected pairs score on endorsements (>= 0.90),
+    * curated single-glossary entries sit at 0.92 (trusted, hidden from review),
+    * ambiguous multi-glossary words fall below the 0.90 review threshold,
+    * untranslated words score 0.0.
+    """
+    en = _collapse(en)
+    if not en:
+        return 0.0
+    if rec is not None:
+        original = _collapse(rec.get('original') or '')
+        corrected = _collapse(rec.get('corrected') or '')
+        endorsed = rec.get('endorsed', 0) or 0
+        if corrected and corrected == original:
+            return round(min(0.99, 0.90 + 0.02 * endorsed), 3)
+        return 0.95
+    if not suggested or _collapse(suggested) != en:
+        return 0.4                       # an unsourced / odd suggestion
+    conf = 0.92
+    if len(glosses) > 1:
+        conf -= 0.06                     # several valid readings → ambiguous
+    am_words = max(1, len(am.split()))
+    en_words = max(1, len(en.split()))
+    ratio = en_words / am_words
+    if ratio < 0.5 or ratio > 3.0:
+        conf -= 0.1
+    return round(max(0.05, min(0.99, conf)), 3)
+
+
 def _build_pairs():
     """Build (once per correction revision) the catalogue the review UI shows."""
     global _PAIRS, _PAIRS_REV
@@ -360,13 +393,14 @@ def _build_pairs():
     for am, ens in _LEX.items():
         suggested = ens[0] if ens else ''
         rec = rec_by_text.get(am)
-        en = (rec.get('corrected') or rec.get('original')) if rec else suggested
+        en = _collapse((rec.get('corrected') or rec.get('original')) if rec else suggested)
         pairs.append({
-            'am': am, 'en': _collapse(en or suggested),
+            'am': am, 'en': en or suggested,
             'status': _pair_status(rec, suggested),
             'source': 'glossary' if not rec else 'user',
             'endorsed': rec.get('endorsed', 0) if rec else 0,
             'verified': rec is not None,
+            'confidence': _pair_confidence(rec, suggested, am, en or suggested, ens),
         })
         seen.add(am)
 
@@ -381,6 +415,7 @@ def _build_pairs():
             'source': 'user',
             'endorsed': r.get('endorsed', 0),
             'verified': True,
+            'confidence': _pair_confidence(r, '', am, em),
         })
         seen.add(am)
 
@@ -388,7 +423,8 @@ def _build_pairs():
         if w in seen:
             continue
         pairs.append({'am': w, 'en': '', 'status': 'untranslated',
-                      'source': 'dictionary', 'endorsed': 0, 'verified': False})
+                      'source': 'dictionary', 'endorsed': 0, 'verified': False,
+                      'confidence': 0.0})
         seen.add(w)
 
     with _PAIRS_LOCK:
@@ -406,18 +442,35 @@ def _ensure_pairs():
     return _PAIRS
 
 
-def list_translations(query='', status='all', limit=100, offset=0):
+def list_translations(query='', status='all', limit=100, offset=0,
+                      max_confidence=None):
     """Paginated catalogue for the review UI.
 
     status ∈ {'all', 'review', 'verified', 'corrected', 'untranslated'}.
+    'review' shows only translations scored below CONFIDENCE_THRESHOLD (90%);
+    pass ``max_confidence`` to override the threshold for any status.
     """
     items = _ensure_pairs()
-    if status == 'review':
-        items = [p for p in items if p['status'] == 'suggested']
-    elif status in ('verified', 'corrected'):
+    if status in ('verified', 'corrected'):
         items = [p for p in items if p['status'] in ('verified', 'corrected')]
     elif status == 'untranslated':
         items = [p for p in items if p['status'] == 'untranslated']
+
+    # 'review' = everything the scorer is less than 90% sure about.
+    threshold = None
+    if status == 'review':
+        threshold = CONFIDENCE_THRESHOLD
+    if max_confidence is not None:
+        try:
+            threshold = float(max_confidence)
+        except (TypeError, ValueError):
+            pass
+    if threshold is not None:
+        items = [p for p in items if p['confidence'] < threshold]
+        if status == 'review':
+            # most uncertain first — the words that most need a human
+            items = sorted(items, key=lambda p: p.get('confidence', 0.0))
+
     q = _collapse(query)
     if q:
         ql = q.lower()
@@ -430,6 +483,7 @@ def list_translations(query='', status='all', limit=100, offset=0):
         offset, limit = 0, 100
     return {
         'total': total, 'offset': offset, 'limit': limit,
+        'threshold': (threshold if threshold is not None else CONFIDENCE_THRESHOLD),
         'items': [dict(p) for p in items[offset:offset + limit]],
     }
 
@@ -437,7 +491,9 @@ def list_translations(query='', status='all', limit=100, offset=0):
 def translation_stats():
     items = _ensure_pairs()
     stats = {'total': len(items), 'verified': 0, 'corrected': 0,
-             'review': 0, 'untranslated': 0, 'glossary': len(_LEX)}
+             'review': 0, 'untranslated': 0, 'glossary': len(_LEX),
+             'threshold': CONFIDENCE_THRESHOLD, 'low_confidence': 0,
+             'high_confidence': 0}
     for p in items:
         st = p['status']
         if st == 'verified':
@@ -448,6 +504,10 @@ def translation_stats():
             stats['review'] += 1
         elif st == 'untranslated':
             stats['untranslated'] += 1
+        if p.get('confidence', 0.0) < CONFIDENCE_THRESHOLD:
+            stats['low_confidence'] += 1
+        else:
+            stats['high_confidence'] += 1
     return stats
 
 
