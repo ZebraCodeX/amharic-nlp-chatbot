@@ -1,0 +1,32 @@
+# fly.toml — Fly.io config for ሕሳር (Amharic AI).
+# Deploy:  flyctl deploy --remote-only
+app = "hisar-amharic-ai"
+primary_region = "sjc"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  HOST = "0.0.0.0"
+  PORT = "8080"
+  HISAR_USERDATA_DIR = "/app/userdata"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+# Persist crowd corrections (data/user_translations.json) and taught facts
+# (user_memory.json) across restarts. Create with:
+#   flyctl volumes create hisar_data --region sjc --size 1
+[mounts]
+  source = "hisar_data"
+  destination = "/app/userdata"
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

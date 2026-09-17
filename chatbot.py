@@ -36,9 +36,12 @@ from et_calendar import (
 )
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+# User-generated data lives in a writable dir (a Fly volume can persist it);
+# read-only learned artifacts stay in DATA_DIR.
+USER_DATA_DIR = os.environ.get('HISAR_USERDATA_DIR') or DATA_DIR
 KB_FILE = os.path.join(DATA_DIR, 'knowledge_base.json')
 RICH_FILE = os.path.join(DATA_DIR, 'rich_answers.json')
-MEMORY_FILE = os.path.join(DATA_DIR, 'user_memory.json')
+MEMORY_FILE = os.path.join(USER_DATA_DIR, 'user_memory.json')
 
 # Tags whose answers stay short on purpose — chit-chat, identity, courtesy.
 SHORT_TAGS = {
@@ -299,6 +302,7 @@ class AmharicAssistant:
 
     def _save_memory(self):
         try:
+            os.makedirs(os.path.dirname(MEMORY_FILE) or '.', exist_ok=True)
             with open(MEMORY_FILE, 'w', encoding='utf-8') as f:
                 json.dump(self.memory, f, ensure_ascii=False, indent=2)
         except OSError:

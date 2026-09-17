@@ -32,7 +32,10 @@ import urllib.request
 USER_AGENT = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) HisarBot/1.0'}
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
-CORRECTIONS_PATH = os.path.join(DATA_DIR, 'user_translations.json')
+# User-generated data (corrections) lives in a writable dir so a Fly volume can
+# persist it; read-only learned artifacts stay in DATA_DIR.
+USER_DATA_DIR = os.environ.get('HISAR_USERDATA_DIR') or DATA_DIR
+CORRECTIONS_PATH = os.path.join(USER_DATA_DIR, 'user_translations.json')
 
 _CACHE = {}
 _CACHE_LOCK = threading.Lock()
@@ -224,7 +227,7 @@ def _load_corrections():
 
 def _save_corrections():
     try:
-        os.makedirs(DATA_DIR, exist_ok=True)
+        os.makedirs(os.path.dirname(CORRECTIONS_PATH) or '.', exist_ok=True)
         tmp = CORRECTIONS_PATH + '.tmp'
         with open(tmp, 'w', encoding='utf-8') as f:
             json.dump({'translations': _CORR,

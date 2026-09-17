@@ -1,5 +1,11 @@
 # ሕሳር — Amharic AI (ChatGPT-style, Amharic only)
 
+[![Live on Fly.io](https://img.shields.io/badge/live-hisar--amharic--ai.fly.dev-e94560)](https://hisar-amharic-ai.fly.dev)
+
+**▶ Live app: <https://hisar-amharic-ai.fly.dev>** — the chat, the Amharic
+keyboard and the translation review UI at
+[`/review`](https://hisar-amharic-ai.fly.dev/review), deployed on Fly.io.
+
 A pure-Python, dependency-free Amharic conversational AI plus a complete
 Amharic NLP toolkit. Think *ChatGPT that only speaks Amharic*:
 
@@ -228,6 +234,23 @@ Command-line demo:
 ```bash
 python3 chatbot.py
 ```
+
+### Deploy to Fly.io
+
+The live app runs on [Fly.io](https://fly.io): <https://hisar-amharic-ai.fly.dev>.
+The repo ships a `Dockerfile`, `.dockerignore` and `fly.toml`, so redeploying is:
+
+```bash
+flyctl apps create hisar-amharic-ai          # once
+flyctl volumes create hisar_data --region sjc --size 1   # once
+flyctl deploy --remote-only --ha=false       # build + release
+```
+
+The `hisar_data` volume is mounted at `/app/userdata` and persists crowd
+corrections (`user_translations.json`) and taught facts (`user_memory.json`)
+across restarts (see `HISAR_USERDATA_DIR`). Set an LLM backend with
+`flyctl secrets set LLM_BASE_URL=… LLM_API_KEY=… LLM_MODEL=…` to make the
+deployed app generative.
 
 ### Turn ሕሳር into a full LLM (optional)
 

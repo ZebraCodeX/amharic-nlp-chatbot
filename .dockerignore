@@ -1,0 +1,17 @@
+.git
+.gitignore
+__pycache__
+**/__pycache__
+*.pyc
+*.log
+nohup.out
+.venv
+venv
+tests
+tools
+amharic_nlp/corpora
+data/user_memory.json
+data/user_translations.json
+Dockerfile
+.dockerignore
+fly.toml
