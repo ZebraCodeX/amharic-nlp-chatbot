@@ -151,3 +151,77 @@ class SpaView(View):
             return HttpResponse(index.read_text(encoding='utf-8'),
                                 content_type='text/html; charset=utf-8')
         return HttpResponse(_DEV_PAGE, content_type='text/html; charset=utf-8')
+
+
+# ---------------------------------------------------------------------------
+# PWA root assets (must live at the origin root to scope the service worker)
+# ---------------------------------------------------------------------------
+_MANIFEST = {
+    'name': 'ሕሳር — Amharic AI',
+    'short_name': 'ሕሳር',
+    'description': 'የአማርኛ AI ረዳት፣ የግዕዝ ኪቦርድና የትርጉም ማስተካከያ።',
+    'start_url': '/',
+    'scope': '/',
+    'display': 'standalone',
+    'background_color': '#f7f3e9',
+    'theme_color': '#14532d',
+    'categories': ['education', 'productivity', 'utilities'],
+    'icons': [
+        {'src': '/static/spa/icon-192.png', 'sizes': '192x192', 'type': 'image/png'},
+        {'src': '/static/spa/icon-512.png', 'sizes': '512x512', 'type': 'image/png',
+         'purpose': 'any maskable'},
+        {'src': '/static/spa/icon.svg', 'sizes': 'any', 'type': 'image/svg+xml'},
+    ],
+}
+
+
+class ManifestView(View):
+    def get(self, request):
+        return HttpResponse(json.dumps(_MANIFEST, ensure_ascii=False),
+                            content_type='application/manifest+json; charset=utf-8')
+
+
+class ServiceWorkerView(View):
+    def get(self, request):
+        sw = settings.SPA_DIR / 'sw.js'
+        if not sw.exists():
+            return HttpResponse('// not built', content_type='application/javascript')
+        return HttpResponse(sw.read_text(encoding='utf-8'),
+                            content_type='application/javascript; charset=utf-8',
+                            headers={'Service-Worker-Allowed': '/'})
+
+
+class RobotsView(View):
+    def get(self, request):
+        body = ('User-agent: *\nAllow: /\n'
+                'Sitemap: https://hisar-amharic-ai.fly.dev/sitemap.xml\n')
+        return HttpResponse(body, content_type='text/plain; charset=utf-8')
+
+
+_PRIVACY = """<!doctype html><html lang="am"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>የግላዊነት መግለጫ · ሕሳር</title>
+<style>body{font-family:system-ui,'Noto Sans Ethiopic',sans-serif;background:#f7f3e9;color:#241f1a;
+margin:0;padding:40px 18px;line-height:1.7}.p{max-width:720px;margin:0 auto;background:#fffdf7;
+border:1px solid #e6ddc8;border-radius:16px;padding:32px}h1{color:#14532d;margin-top:0}
+h2{color:#14532d;font-size:1.1rem;margin-bottom:4px}a{color:#9c3b1b}</style></head><body><div class="p">
+<h1>የግላዊነት መግለጫ — ሕሳር (Amharic AI)</h1>
+<p>የመጨረሻ ማሻሻያ፦ 2026።</p>
+<h2>የምንሰበስበው መረጃ</h2>
+<p>ሕሳር መለያ (account) አይጠይቅም። የምትልካቸው መልእክቶች ለAI ምላሽ ብቻ ያገለግላሉ። የመልእክት ታሪክ
+በአገልጋዩ ላይ አይቀመጥም።</p>
+<h2>የትርጉም ማስተካከያ</h2>
+<p>በ«ትርጉም ማስተካከያ» ገጽ የምታስተካክላቸው ትርጉሞች የሁሉም ተጠቃሚዎችን ትርጉም ለማሻሻል ይቀመጣሉ፤
+ከግል መረጃ ጋር አይታሰሩም።</p>
+<h2>አገልግሎት ሰጪዎች</h2>
+<p>አማራጭ የእንግሊዝኛ ትርጉም ነጻ የማሽን ትርጉም አገልግሎቶችን (MyMemory / Google Translate)
+ሊጠቀም ይችላል። AI ምላሾች በራሳቸው አምራች (generative) ሞዴሎች ሊሰጡ ይችላሉ።</p>
+<h2>መብቶችህ</h2>
+<p>ማንኛውም ጥያቄ ካለህ በGitHub ጉዳይ (issue) አሳውቀን፦
+<a href="https://github.com/ZebraCodeX/amharic-nlp-chatbot">github.com/ZebraCodeX/amharic-nlp-chatbot</a></p>
+<p><a href="/">← ወደ መተግበሪያው</a></p></div></body></html>"""
+
+
+class PrivacyView(View):
+    def get(self, request):
+        return HttpResponse(_PRIVACY, content_type='text/html; charset=utf-8')

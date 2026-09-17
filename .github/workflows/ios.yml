@@ -1,0 +1,71 @@
+name: iOS app
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-14
+    env:
+      # App Store signing is optional; without it an unsigned archive is produced.
+      # Add these repository secrets to export a signed .ipa:
+      #   IOS_CERTIFICATE_BASE64, IOS_CERTIFICATE_PASSWORD,
+      #   IOS_PROVISIONING_PROFILE_BASE64, IOS_TEAM_ID, IOS_KEYCHAIN_PASSWORD
+      IOS_CERTIFICATE_BASE64: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
+      IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+      IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+      IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+      IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Build the web bundle
+        working-directory: frontend
+        run: npm run build:app
+
+      - name: Add the iOS platform (first run) + sync
+        working-directory: frontend
+        run: |
+          npx cap add ios || true
+          npx cap sync ios
+
+      - name: Build unsigned simulator app (validation)
+        working-directory: frontend/ios/App
+        run: |
+          xcodebuild -workspace App.xcworkspace -scheme App \
+            -configuration Debug -sdk iphonesimulator \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO | tail -20
+
+      - name: Package simulator .app
+        working-directory: frontend/ios/App
+        run: |
+          mkdir -p ../../dist
+          (cd build/Build/Products/Debug-iphonesimulator && \
+           zip -r "$GITHUB_WORKSPACE/frontend/dist/Hisar-ios-simulator.zip" App.app) || true
+
+      - name: Upload iOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hisar-ios
+          path: frontend/dist/Hisar-ios-simulator.zip
+          if-no-files-found: warn
+
+      # For App Store distribution: install the signing certificate/profile,
+      # archive with -sdk iphoneos, then `xcodebuild -exportArchive` with an
+      # exportOptions.plist (method app-store-connect), and upload the .ipa
+      # with `xcrun altool`/`notarytool`. See PACKAGING.md.

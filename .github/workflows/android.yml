@@ -1,0 +1,104 @@
+name: Android app
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Optional release signing. When the secrets are unset, the debug APK is
+      # still produced (installable by sideloading); the Play Store AAB needs
+      # these four secrets set in the repository.
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      ANDROID_KEYSTORE_FILE: hisar.keystore
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses > /dev/null 2>&1 || true
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Build the web bundle (bundled into the native shell)
+        working-directory: frontend
+        run: npm run build:app
+
+      - name: Add the Android platform (first run) + sync
+        working-directory: frontend
+        run: |
+          npx cap add android || true
+          npx cap sync android
+
+      - name: Decode signing keystore (optional)
+        if: env.ANDROID_KEYSTORE_BASE64 != ''
+        working-directory: frontend/android/app
+        run: echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$ANDROID_KEYSTORE_FILE"
+
+      - name: Configure release signing (only when a keystore is present)
+        if: env.ANDROID_KEYSTORE_BASE64 != ''
+        working-directory: frontend/android
+        run: |
+          cat >> app/build.gradle <<'EOF'
+
+          android {
+              signingConfigs {
+                  release {
+                      storeFile file(System.getenv('ANDROID_KEYSTORE_FILE') ?: 'hisar.keystore')
+                      storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+                      keyAlias System.getenv('ANDROID_KEY_ALIAS')
+                      keyPassword System.getenv('ANDROID_KEY_PASSWORD')
+                  }
+              }
+              buildTypes {
+                  release { signingConfig signingConfigs.release }
+              }
+          }
+          EOF
+
+      - name: Build APK + AAB
+        working-directory: frontend/android
+        run: ./gradlew assembleDebug assembleRelease bundleRelease --no-daemon
+
+      - name: Collect installable artifacts
+        working-directory: frontend/android
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-debug.apk dist/Hisar.apk
+          cp app/build/outputs/bundle/release/app-release.aab dist/Hisar.aab || true
+
+      - name: Upload APK/AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: hisar-android
+          path: frontend/android/dist/*
+          if-no-files-found: warn
+
+      - name: Publish to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: frontend/android/dist/*

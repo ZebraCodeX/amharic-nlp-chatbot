@@ -1,12 +1,18 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// The build lands inside the Django project so one container can serve both.
+/**
+ * Two builds from one config:
+ *  - web   (default): base `/static/spa/`, output `../backend/static/spa`
+ *    → served by Django / the Fly container.
+ *  - app   (`npm run build:app`): base `./`, output `dist`
+ *    → bundled into the Capacitor (Android/iOS) and Electron (desktop) shells.
+ */
 export default defineConfig({
   plugins: [react()],
-  base: '/static/spa/',
+  base: process.env.VITE_BASE || '/static/spa/',
   build: {
-    outDir: '../backend/static/spa',
+    outDir: process.env.VITE_OUTDIR || '../backend/static/spa',
     emptyOutDir: true,
     assetsDir: 'assets',
     sourcemap: false,

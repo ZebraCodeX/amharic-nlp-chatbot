@@ -57,6 +57,25 @@ class HealthTest(ApiTestBase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn('ሕሳር', resp.content.decode('utf-8'))
 
+    def test_manifest_at_root(self):
+        resp = self.client.get('/manifest.webmanifest')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('manifest+json', resp['Content-Type'])
+        data = resp.json()
+        self.assertEqual(data['name'], 'ሕሳር — Amharic AI')
+        self.assertEqual(data['start_url'], '/')
+
+    def test_service_worker_scope_header(self):
+        resp = self.client.get('/sw.js')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp['Service-Worker-Allowed'], '/')
+        self.assertIn('application/javascript', resp['Content-Type'])
+
+    def test_privacy_page_for_stores(self):
+        resp = self.client.get('/privacy')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('የግላዊነት', resp.content.decode('utf-8'))
+
 
 class ChatApiTest(ApiTestBase):
     def test_math(self):

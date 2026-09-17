@@ -19,3 +19,11 @@ backend/staticfiles/
 backend/static/spa/
 backend/db.sqlite3
 backend/userdata/
+
+# native / desktop packaging
+frontend/android/
+frontend/ios/
+desktop/node_modules/
+desktop/release/
+desktop/web/
+*.keystore

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { api } from '../api/client';
 import type { LlmStatus } from '../api/types';
+import { useInstallPrompt } from '../hooks/useInstallPrompt';
 
 const LINKS = [
   { to: '/', label: 'ውይይት', end: true },
@@ -11,6 +12,7 @@ const LINKS = [
 
 export function AppShell() {
   const [llm, setLlm] = useState<LlmStatus | null>(null);
+  const { canInstall, install } = useInstallPrompt();
 
   useEffect(() => {
     api.llmStatus().then(setLlm).catch(() => setLlm(null));
@@ -39,6 +41,12 @@ export function AppShell() {
             </NavLink>
           ))}
         </nav>
+
+        {canInstall && (
+          <button className="btn btn-gold btn-sm" onClick={install} title="Install this app">
+            ⬇ ጫን
+          </button>
+        )}
 
         <span className={`status-pill${llm?.available ? ' on' : ''}`} title="LLM brain status">
           <span className="dot" />

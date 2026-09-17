@@ -9,7 +9,33 @@ import type {
   VerifyResult,
 } from './types';
 
-const BASE = '/api';
+declare global {
+  interface Window {
+    hisar?: { apiBase?: string };
+    Capacitor?: { isNativePlatform?: () => boolean };
+  }
+}
+
+const HOSTED_API = 'https://hisar-amharic-ai.fly.dev';
+const strip = (s: string) => s.replace(/\/+$/, '');
+
+/**
+ * Resolve the API origin for every runtime we ship:
+ *  - Electron sets `window.hisar.apiBase` (preload)
+ *  - the Capacitor (Android/iOS) apps talk to the hosted backend
+ *  - the web build uses the same origin (Django serves both)
+ */
+function resolveOrigin(): string {
+  if (typeof window !== 'undefined') {
+    if (window.hisar?.apiBase) return strip(window.hisar.apiBase);
+    if (window.Capacitor?.isNativePlatform?.()) return HOSTED_API;
+  }
+  const env = (import.meta.env.VITE_API_BASE as string | undefined) || '';
+  return strip(env);
+}
+
+const ORIGIN = resolveOrigin();
+const BASE = `${ORIGIN}/api`;
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {

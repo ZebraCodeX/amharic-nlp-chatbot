@@ -11,6 +11,8 @@ primary_region = "sjc"
   DJANGO_ALLOWED_HOSTS = "*"
   CSRF_TRUSTED_ORIGINS = "https://hisar-amharic-ai.fly.dev"
   HISAR_USERDATA_DIR = "/app/userdata"
+  # The bundled Android/iOS/desktop apps call this API from their own origins.
+  CORS_ALLOW_ALL = "1"
 
 [http_service]
   internal_port = 8000
