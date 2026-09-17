@@ -22,6 +22,8 @@ interface Props {
   panelOpen: boolean;
   onTogglePanel: () => void;
   phase: 'idle' | 'listening' | 'thinking' | 'speaking';
+  langMode: 'auto' | 'am' | 'en';
+  onLangMode: (mode: 'auto' | 'am' | 'en') => void;
 }
 
 export function Composer({
@@ -45,7 +47,8 @@ export function Composer({
   onToggleLive,
   panelOpen,
   onTogglePanel,
-  phase,
+  langMode,
+  onLangMode,
 }: Props) {
   function onKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -101,6 +104,16 @@ export function Composer({
           <button className={`tool-toggle${listening ? ' on' : ''}`} onClick={onToggleWake} type="button">
             <span className="dot" /> Hey Zer
           </button>
+          <select
+            className="mode-select"
+            value={langMode}
+            onChange={(e) => onLangMode(e.target.value as 'auto' | 'am' | 'en')}
+            title="Spoken language: auto-detect, or force Amharic/English"
+          >
+            <option value="auto">🌐 ቋንቋ ራሱ ይለይ · Auto</option>
+            <option value="am">አማርኛ</option>
+            <option value="en">English</option>
+          </select>
           <button
             className={`tool-toggle${speakReplies ? ' on' : ''}`}
             onClick={onToggleSpeakReplies}

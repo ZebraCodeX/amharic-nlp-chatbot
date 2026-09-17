@@ -127,6 +127,69 @@ export function speak(text: string, lang: 'am' | 'en', onEnd?: () => void): void
   window.speechSynthesis.speak(u);
 }
 
+/** Which language is this text in? (Amharic Ge'ez vs English Latin) */
+export function scriptLang(text: string): 'am' | 'en' | '' {
+  const am = (text.match(/[\u1200-\u137f]/g) || []).length;
+  const en = (text.match(/[a-z]/gi) || []).length;
+  if (am && am >= en) return 'am';
+  if (en) return 'en';
+  return '';
+}
+
+/** One-shot browser speech recognition. Resolves with the transcript or ''. */
+export function recognizeOnce(lang: string, maxMs = 12000): Promise<string> {
+  const Ctor =
+    (window as unknown as { SpeechRecognition?: unknown }).SpeechRecognition ||
+    (window as unknown as { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition;
+  if (!Ctor) return Promise.resolve('');
+  return new Promise<string>((resolve) => {
+    const rec = new (Ctor as new () => any)();
+    rec.lang = lang;
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    let done = false;
+    const finish = (t: string) => {
+      if (done) return;
+      done = true;
+      try {
+        rec.stop();
+      } catch {
+        /* ignore */
+      }
+      resolve(t);
+    };
+    rec.onresult = (e: any) => finish(String(e.results[0][0].transcript || ''));
+    rec.onerror = () => finish('');
+    rec.onend = () => finish('');
+    try {
+      rec.start();
+    } catch {
+      finish('');
+    }
+    window.setTimeout(() => finish(''), maxMs);
+  });
+}
+
+/**
+ * Recognize speech and decide its language: try Amharic first (this is an
+ * Amharic app), then re-run in English if the transcript came back Latin-only.
+ */
+export async function recognizeDetected(
+  mode: 'auto' | 'am' | 'en' = 'auto',
+): Promise<{ text: string; lang: 'am' | 'en' }> {
+  if (mode !== 'auto') {
+    const text = await recognizeOnce(mode === 'am' ? 'am-ET' : 'en-US');
+    return { text, lang: mode };
+  }
+  const first = await recognizeOnce('am-ET');
+  const guess = scriptLang(first);
+  if (first && (!guess || guess === 'en')) {
+    const second = await recognizeOnce('en-US');
+    if (second) return { text: second, lang: scriptLang(second) || 'en' };
+  }
+  return { text: first, lang: guess || 'am' };
+}
+
 export interface WakeWord {
   start(): void;
   stop(): void;

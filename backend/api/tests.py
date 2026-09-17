@@ -158,6 +158,35 @@ class ZerLanguageTest(ApiTestBase):
         self.assertEqual(data['source'], 'intent:greeting')
 
 
+class ZerBrainTest(ApiTestBase):
+    def test_offline_amharic_code_generation(self):
+        import codegen
+        out = codegen.generate('ፓይቶን ኮድ ጻፍልኝ ድምር')
+        self.assertIsNotNone(out)
+        self.assertIn('```python', out)
+        self.assertIn('ድምር', out)          # Amharic identifier
+        self.assertIn('ለማስኬድ', out)          # Amharic explanation
+
+    def test_chat_returns_amharic_code(self):
+        resp, data = self.post_json('/api/chat/', {'text': 'ፓይቶን ኮድ ጻፍልኝ ድምር'})
+        self.assertEqual(data['source'], 'code')
+        self.assertIn('```python', data['reply'])
+
+    def test_spoken_language_reconciliation(self):
+        from zer_speech import detect_spoken_language
+        self.assertEqual(detect_spoken_language('ሰላም እንዴት ነህ', 'en'), 'am')
+        self.assertEqual(detect_spoken_language('hello how are you', 'am'), 'en')
+
+    def test_keyword_intent_fallback(self):
+        from zer import get_zer
+        tag, score = get_zer()._am._keyword_intent('ስለ ኢትዮጵያ ጥንታዊ ታሪክ')
+        self.assertEqual(tag, 'ethiopia')
+        self.assertGreater(score, 0)
+        # Ambiguous queries must not guess an intent.
+        ambiguous, _ = get_zer()._am._keyword_intent('ስለ ጤና')
+        self.assertIsNone(ambiguous)
+
+
 class LearningTest(ApiTestBase):
     """Corrections taught in /review change how Zer responds."""
 

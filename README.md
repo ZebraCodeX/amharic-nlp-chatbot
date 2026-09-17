@@ -39,6 +39,31 @@ The web app is a **Django REST Framework API** (`backend/`) with a
 Ethiopian-inspired *parchment & fidel* design system. The NLP brain stays pure
 Python stdlib and is reused unchanged behind the API.
 
+## Zer's own brain (no other AI required)
+
+Zer answers, codes and translates **without any external model**:
+
+- **Language detection** — spoken Amharic vs English is decided from the
+  transcript's script (Ge'ez vs Latin), which is essentially exact, then
+  reconciled with Whisper's guess. `Auto` mode handles both; you can also force
+  አማርኛ/English. Zer replies and speaks in the detected language.
+- **Amharic code generation** (`codegen.py`) — real, runnable code for Python,
+  JavaScript, HTML, CSS, SQL and Bash with **Amharic comments, Amharic string
+  literals and Amharic identifiers** (e.g. `def ድምር(ቁጥሮች): return sum(ቁጥሮች)`),
+  plus an Amharic explanation. Covers sum, sort, loops, functions, classes,
+  files, JSON, Fibonacci, primes, palindromes, word counts, SQLite, fetch/APIs,
+  Bash and Git.
+- **Retrieval + knowledge** — a keyword-specificity intent pass (`chatbot.py`)
+  on top of the vector search, 54 intents with deep `rich_answers.json` detail,
+  a 20 000-word per-letter dictionary, and the multi-domain corpus model.
+
+> **On "train a DeepSeek-level model":** a frontier bilingual foundation model
+> cannot be trained inside this repository — that needs trillions of tokens and
+> thousands of GPUs. What ships here is a **fully self-contained assistant**
+> (rules + retrieval + code generation) that needs no other AI, and the optional
+> `LLM_BASE_URL` hook to attach a *self-hosted* open-source model for open-ended
+> generation. Everything above works offline.
+
 ## Live voice conversation (Zer)
 
 Voice is built into the chat. Three ways to talk:

@@ -170,11 +170,30 @@ def stt_available():
         return _whisper is not None
 
 
-def transcribe_bytes(data, filename='audio.webm', language=None):
-    """Transcribe an audio blob. Returns dict or {'error': …}.
+_PROMPTS = {
+    'am': 'ሰላም። እንዴት ነህ? እኔ ዘር ነኝ።',
+    'en': 'Hello. How are you? I am Zer.',
+}
 
-    ``language=None`` lets Whisper auto-detect (this is what drives the
-    "reply in the language the user spoke" behaviour).
+
+def detect_spoken_language(text, fallback=None):
+    """Amharic (Ge'ez) and English use different scripts, so the transcript's
+    script is a near-perfect language signal. Falls back to Whisper's guess."""
+    am = sum(1 for c in text if '\u1200' <= c <= '\u137f')
+    en = sum(1 for c in text if ('a' <= c.lower() <= 'z'))
+    if am and am >= en:
+        return 'am'
+    if en and en > am:
+        return 'en'
+    return fallback
+
+
+def transcribe_bytes(data, filename='audio.webm', language=None):
+    """Transcribe an audio blob and return {text, language, …}.
+
+    ``language=None`` lets Whisper auto-detect; the result is then reconciled
+    against the transcript's script so Amharic speech is never mistaken for
+    English (and vice versa).
     """
     if not data:
         return {'error': 'empty audio'}
@@ -182,6 +201,7 @@ def transcribe_bytes(data, filename='audio.webm', language=None):
     if model is None:
         return {'error': 'speech-to-text unavailable (install faster-whisper)'}
 
+    forced = normalize_lang(language)
     suffix = os.path.splitext(filename or '')[1] or '.webm'
     tmp = None
     try:
@@ -189,12 +209,16 @@ def transcribe_bytes(data, filename='audio.webm', language=None):
             fh.write(data)
             tmp = fh.name
         segments, info = model.transcribe(
-            tmp, language=normalize_lang(language), beam_size=1,
-            vad_filter=True, condition_on_previous_text=False)
+            tmp, language=forced, beam_size=1, vad_filter=True,
+            condition_on_previous_text=False,
+            initial_prompt=_PROMPTS.get(forced) if forced else None)
         text = ' '.join(s.text.strip() for s in segments).strip()
+        whisper_lang = normalize_lang(info.language)
+        lang = forced or detect_spoken_language(text, whisper_lang) or whisper_lang
         return {
             'text': text,
-            'language': normalize_lang(info.language),
+            'language': lang,
+            'whisper_language': whisper_lang,
             'language_probability': round(float(info.language_probability), 3),
             'duration': round(float(info.duration), 2),
             'provider': f'faster-whisper:{_whisper_model_name()}',

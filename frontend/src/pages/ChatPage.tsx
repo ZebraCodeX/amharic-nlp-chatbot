@@ -8,6 +8,7 @@ import { VoicePanel } from '../components/VoicePanel';
 import {
   base64ToBlobUrl,
   createWakeWord,
+  recognizeDetected,
   speak,
   startRecording,
   type Recorder,
@@ -58,6 +59,7 @@ export function ChatPage() {
   const [prefs, setPrefs] = useState<VoicePrefs>(() => loadVoicePrefs());
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [lastLang, setLastLang] = useState('');
+  const [langMode, setLangMode] = useState<'auto' | 'am' | 'en'>('auto');
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -177,6 +179,7 @@ export function ChatPage() {
       setVoiceError(null);
       try {
         const res = await api.voiceTurn(blob, {
+          lang: langMode === 'auto' ? undefined : langMode,
           history: history(messagesRef.current),
           voice: turnParams(prefs),
         });
@@ -202,7 +205,7 @@ export function ChatPage() {
         onDone?.();
       }
     },
-    [prefs, addMsg, history, playUrl, speakReply],
+    [prefs, langMode, addMsg, history, playUrl, speakReply],
   );
 
   /* ---------------- Live (Gemini-style) conversation loop ---------------- */
@@ -212,39 +215,36 @@ export function ChatPage() {
 
   const liveCycleRef = useRef<(() => void) | null>(null);
 
-  const browserLiveTurn = useCallback(() => {
-    const Ctor =
-      (window as unknown as { SpeechRecognition?: any; webkitSpeechRecognition?: any })
-        .SpeechRecognition ||
-      (window as unknown as { webkitSpeechRecognition?: any }).webkitSpeechRecognition;
-    if (!Ctor) {
-      setVoiceError('Live mode needs a browser with speech recognition (Chrome/Edge).');
-      stopLive();
-      return;
-    }
-    const rec = new Ctor();
-    rec.lang = 'am-ET';
-    rec.interimResults = false;
-    rec.onresult = async (e: any) => {
-      const text = String(e.results[0][0].transcript || '');
-      addMsg({ role: 'user', text });
+  /** Browser-recognition turn (two-pass language detection), then speak back. */
+  const browserTurn = useCallback(
+    async (onDone?: () => void) => {
+      const { text, lang } = await recognizeDetected(langMode);
+      if (!text) {
+        onDone?.();
+        return;
+      }
+      addMsg({ role: 'user', text, lang });
       setSending(true);
       setPhase('thinking');
       try {
         const reply = await api.chat(text, history(messagesRef.current));
-        addMsg({ role: 'ai', text: reply.reply, source: reply.source });
-        setLastLang(reply.lang || '');
+        addMsg({ role: 'ai', text: reply.reply, source: reply.source, followups: reply.followups });
+        setLastLang(reply.lang || lang);
         setSending(false);
         setPhase('speaking');
-        await speakReply(reply.reply, reply.lang, scheduleLive);
+        await speakReply(reply.reply, reply.lang || lang, onDone);
       } catch {
         setSending(false);
-        scheduleLive();
+        setVoiceError('error contacting Zer');
+        onDone?.();
       }
-    };
-    rec.onerror = () => scheduleLive();
-    rec.start();
-  }, [addMsg, history, speakReply, scheduleLive]);
+    },
+    [langMode, addMsg, history, speakReply],
+  );
+
+  const browserLiveTurn = useCallback(() => {
+    browserTurn(scheduleLive);
+  }, [browserTurn, scheduleLive]);
 
   const liveCycle = useCallback(async () => {
     if (!liveRef.current) return;
@@ -315,9 +315,9 @@ export function ChatPage() {
         setVoiceError('Microphone permission was denied.');
       }
     } else {
-      browserLiveTurn();
+      browserTurn();
     }
-  }, [sending, live, speech, browserLiveTurn]);
+  }, [sending, live, speech, browserTurn]);
 
   const stopListening = useCallback(async () => {
     const r = recorderRef.current;
@@ -453,6 +453,8 @@ export function ChatPage() {
         panelOpen={panelOpen}
         onTogglePanel={() => setPanelOpen((v) => !v)}
         phase={phase}
+        langMode={langMode}
+        onLangMode={setLangMode}
       />
 
       {keyboardOpen && (

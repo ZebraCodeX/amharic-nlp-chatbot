@@ -277,6 +277,52 @@ class AmharicAssistant:
         tag = self._idx_to_tag[top_idx]
         return tag, top_score
 
+    def _build_kw_index(self):
+        """token → tags inverted index + per-tag token sets (built once)."""
+        index = {}
+        tag_tokens = {}
+        for intent in self.intents:
+            tag = intent['tag']
+            toks = set()
+            for p in intent['patterns']:
+                toks |= set(self._tokens(p))
+            tag_tokens[tag] = toks
+            for t in toks:
+                index.setdefault(t, set()).add(tag)
+        self._kw_index = index
+        self._kw_tag_tokens = tag_tokens
+
+    def _keyword_intent(self, text):
+        """Second-pass intent match weighted by token specificity (1/document
+        frequency), so a distinctive word like «እጠብቅ» wins over an ambiguous one.
+        Ambiguous-only queries match nothing rather than guessing."""
+        if getattr(self, '_kw_index', None) is None:
+            self._build_kw_index()
+        q = set(self._tokens(text))
+        if not q:
+            return None, 0.0
+        scores = {}
+        for tok in q:
+            tags = self._kw_index.get(tok)
+            if not tags:
+                continue
+            weight = 1.0 / len(tags)
+            for tag in tags:
+                if tag in SHORT_TAGS:
+                    continue
+                scores[tag] = scores.get(tag, 0.0) + weight
+        if not scores:
+            return None, 0.0
+        best = max(scores, key=scores.get)
+        overlap = len(q & self._kw_tag_tokens.get(best, set()))
+        specific = any(len(self._kw_index.get(tok, ())) == 1
+                       for tok in q & self._kw_tag_tokens.get(best, set()))
+        total = scores[best]
+        # Require a distinctive token or ≥2 shared words.
+        if total < 1.0 or not (specific or overlap >= 2):
+            return None, 0.0
+        return best, min(1.0, total / max(1, len(q)))
+
     def _respond_for(self, tag, exclude=None):
         for intent in self.intents:
             if intent['tag'] == tag:
@@ -628,6 +674,15 @@ class AmharicAssistant:
         return defaults.get(lang, defaults['python'])
 
     def _try_code(self, text):
+        # Offline Amharic code generator first — real code with Amharic
+        # comments and identifiers, no model required.
+        try:
+            from codegen import generate as _codegen
+            rich = _codegen(text)
+            if rich:
+                return rich
+        except Exception:
+            pass
         low = self.normalizer.normalize(text)
         action = re.search(
             r'(\b(ጻፍ|ፃፍ|ፅፍ|ጻፍልኝ|ፃፍልኝ|ስጠኝ|እጽፋለሁ|እፅፋለሁ|write|make|help me|generate)\b|ኮድ|ስክሪፕት)', low)
@@ -780,8 +835,12 @@ class AmharicAssistant:
         if meaning:
             return self._result(meaning, 'dictionary', 0.95)
 
-        # knowledge base (vector search)
+        # knowledge base (vector search, then a keyword fallback)
         tag, score = self._match_intent(text)
+        if not (tag and score >= 0.30):
+            ktag, kscore = self._keyword_intent(text)
+            if ktag and kscore >= 0.5:
+                tag, score = ktag, max(score, kscore)
         if tag and score >= 0.30:
             resp = self._respond_for(tag)
             self._last = (tag, resp)
