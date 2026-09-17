@@ -16,11 +16,15 @@ Get native builds from
 | Platform | Download | Stores |
 | --- | --- | --- |
 | **Web / PWA** | [hisar-amharic-ai.fly.dev](https://hisar-amharic-ai.fly.dev) | installable from the browser |
-| **Android** | [`Hisar.apk`](https://github.com/ZebraCodeX/amharic-nlp-chatbot/releases/latest/download/Hisar.apk) (`Hisar.aab` for Play) | Google Play |
-| **iOS** | `.ipa` (build via CI) | App Store / TestFlight |
+| **Android** | [`Hisar.apk`](https://github.com/ZebraCodeX/amharic-nlp-chatbot/releases/latest/download/Hisar.apk) · [`Hisar.aab`](https://github.com/ZebraCodeX/amharic-nlp-chatbot/releases/latest/download/Hisar.aab) | Google Play |
+| **iOS** | simulator build via CI · signed `.ipa` needs Apple signing | App Store / TestFlight |
 | **Windows** | [`Hisar-Setup.exe`](https://github.com/ZebraCodeX/amharic-nlp-chatbot/releases/latest/download/Hisar-Setup.exe) | Microsoft Store |
 | **macOS** | [`Hisar.dmg`](https://github.com/ZebraCodeX/amharic-nlp-chatbot/releases/latest/download/Hisar.dmg) | Mac App Store |
 | **Linux** | [`Hisar.AppImage`](https://github.com/ZebraCodeX/amharic-nlp-chatbot/releases/latest/download/Hisar.AppImage) · [`Hisar.deb`](https://github.com/ZebraCodeX/amharic-nlp-chatbot/releases/latest/download/Hisar.deb) | Snap / Flathub |
+
+The Windows/macOS builds are **unsigned by default** (SmartScreen/Gatekeeper
+warn) and Android ships a **debug-signed APK** — add signing secrets to produce
+store-ready installers (details in [`PACKAGING.md`](PACKAGING.md)).
 
 Apps are built by GitHub Actions (`.github/workflows/`) from one React
 codebase — **Capacitor** for Android/iOS and **Electron** for desktop. See
