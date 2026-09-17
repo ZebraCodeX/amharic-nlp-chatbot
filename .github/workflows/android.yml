@@ -10,10 +10,6 @@ on:
 permissions:
   contents: write
 
-concurrency:
-  group: release-${{ github.ref }}
-  cancel-in-progress: false
-
 
 jobs:
   build:
@@ -110,6 +106,12 @@ jobs:
 
       - name: Publish to GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: frontend/android/dist/*
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || \
+            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "Release $GITHUB_REF_NAME"
+          for i in 1 2 3 4 5; do
+            gh release upload "$GITHUB_REF_NAME" frontend/android/dist/* --clobber && break
+            echo "upload attempt $i failed, retrying..."; sleep 12
+          done
