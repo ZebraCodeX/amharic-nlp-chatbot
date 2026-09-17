@@ -24,6 +24,8 @@ urlpatterns = [
     path('translations', views.TranslationsView.as_view()),
     path('translations/stats/', views.TranslationStatsView.as_view(), name='translation-stats'),
     path('translations/stats', views.TranslationStatsView.as_view()),
+    path('translations/letters/', views.TranslationLettersView.as_view(), name='translation-letters'),
+    path('translations/letters', views.TranslationLettersView.as_view()),
     path('translations/verify/', views.TranslationVerifyView.as_view()),
     path('translations/verify', views.TranslationVerifyView.as_view()),
 
@@ -38,6 +40,10 @@ urlpatterns = [
 
     path('words/', views.WordsView.as_view(), name='words'),
     path('words', views.WordsView.as_view()),
+    path('dictionary/letters/', views.DictionaryLettersView.as_view(), name='dict-letters'),
+    path('dictionary/letters', views.DictionaryLettersView.as_view()),
+    path('dictionary/', views.DictionaryView.as_view(), name='dictionary'),
+    path('dictionary', views.DictionaryView.as_view()),
     path('ngram/', views.NgramView.as_view(), name='ngram'),
     path('ngram', views.NgramView.as_view()),
     path('suggest/', views.SuggestView.as_view(), name='suggest'),

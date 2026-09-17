@@ -180,6 +180,45 @@ class SpeechApiTest(ApiTestBase):
         self.assertEqual(resp.status_code, 400)
 
 
+class DictionaryApiTest(ApiTestBase):
+    def test_letter_index(self):
+        resp, data = self.get_json('/api/dictionary/letters/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertGreater(data['count'], 1000)
+        self.assertGreater(len(data['letters']), 20)
+        sample = data['letters'][0]
+        self.assertIn('letter', sample)
+        self.assertIn('count', sample)
+
+    def test_words_grouped_by_letter(self):
+        from amharic_nlp.letters import letter_of
+        resp, data = self.get_json('/api/dictionary/', letter='ሀ', limit=20)
+        self.assertEqual(resp.status_code, 200)
+        self.assertGreater(data['total'], 0)
+        self.assertTrue(data['words'])
+        for entry in data['words']:
+            self.assertEqual(letter_of(entry['w']), 'ሀ')
+
+    def test_letter_param_required(self):
+        resp, data = self.get_json('/api/dictionary/')
+        self.assertEqual(resp.status_code, 400)
+
+    def test_review_items_carry_translation_and_letter(self):
+        resp, data = self.get_json('/api/translations/', status='all', limit=10)
+        for item in data['items']:
+            self.assertIn('en', item)
+            self.assertIn('letter', item)
+
+    def test_translation_letters_and_filter(self):
+        resp, data = self.get_json('/api/translations/letters/')
+        self.assertEqual(resp.status_code, 200)
+        letters = [row['letter'] for row in data['letters']]
+        self.assertTrue(letters)
+        target = letters[0]
+        resp, page = self.get_json('/api/translations/', status='all', letter=target, limit=50)
+        self.assertTrue(all(i['letter'] == target for i in page['items']))
+
+
 class SuggestApiTest(ApiTestBase):
     def test_suggest_route(self):
         resp, data = self.get_json('/api/suggest/', text='ሰላም')

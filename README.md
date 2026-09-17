@@ -157,10 +157,11 @@ Amharic NLP toolkit. An Amharic-speaking AI assistant:
   `compose()`, `charFor()` and `ordersFor()` are exported on `AmharicKeyboard`
   for reuse, and the choice is remembered in `localStorage`.
 - **Translation review UI** — open `/review` to see Amharic words beside their
-  English translations and approve (✓) or correct (✎) them. Every correction is
-  stored server-side and *immediately wins* in the translator, so the crowd
-  keeps improving the whole app. Filter by *ማረጋገጫ / ያልተተረጎሙ / የተረጋገጡ*,
-  search, and see live counts.
+  English translations and approve (✓) or correct (✎) them. Every word shows an
+  **English translation to judge** (fetched with 🌐 when none is stored yet, at
+  most 3 at a time and cached server-side), filterable by **letter** (ሀ ለ መ …)
+  and by *ማረጋገጫ / ያልተተረጎሙ / የተረጋገጡ*. Every correction is stored server-side and
+  *immediately wins* in the translator, so the crowd keeps improving the app.
 - **Remembers your name** — «ስሜ አበበ ነው» makes greetings personal.
 - **Amharic only** — English input gets a polite Amharic-only reminder
   (except programming-language code requests).
@@ -411,8 +412,13 @@ NLP brain (assistant, translator scoring, keyboard component wiring).
   from `/review` (created at runtime; corrected pairs always win in translation).
 - `data/nl_model.json` — 2/3-gram model across books + articles + movies + web
   (from `amharic_nlp/corpora/`; rebuild with `python3 -m amharic_nlp.training`).
-- `data/amharic_words.json` — 20,000-word spelling dictionary (served at
-  `GET /api/words`; used by the keyboard and `/api/suggest`).
+- `data/amharic_words.json` — 20,000-word Amharic dictionary, **indexed by
+  letter** (the first fidel family: ሀ ለ ሐ መ ሠ … ፀ ፈ ፐ, 39 groups). Shape:
+  `{count, letters:[{letter,count}], by_letter:{ሀ:[{w,f},…],…}, words:[…]}`.
+  Rebuild with `python3 -m amharic_nlp.tools.build_dictionary`.
+  `GET /api/words` returns the flat list (keyboard/`/api/suggest`);
+  `GET /api/dictionary/letters/` and `GET /api/dictionary/?letter=ሀ` expose the
+  per-letter index.
 - `data/vocabulary.txt` — every observed word + frequency (323k+ words).
 - `data/sentences.json` — frequent sentence bank for type-ahead completion.
 - `data/corpus_stats.json` — per-domain training report.

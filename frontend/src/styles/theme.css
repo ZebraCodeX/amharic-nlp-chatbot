@@ -240,6 +240,26 @@ a { color: var(--terracotta); }
 }
 .tab.active { background: var(--green); color: #f8f4e6; border-color: var(--green); }
 
+.letterbar { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
+.letter-chip {
+  min-width: 40px; padding: 6px 10px; border-radius: 10px; cursor: pointer;
+  border: 1px solid var(--line-strong); background: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: 1.02rem; display: inline-flex;
+  align-items: baseline; gap: 4px;
+}
+.letter-chip small { font-size: 0.6rem; color: var(--muted); }
+.letter-chip:hover { border-color: var(--gold); }
+.letter-chip.active { background: var(--green); color: #f8f4e6; border-color: var(--green); }
+.letter-chip.active small { color: var(--gold-soft); }
+
+.review-letter {
+  display: inline-block; margin-left: 8px; font-size: 0.62rem; color: var(--muted);
+  border: 1px solid var(--line-strong); border-radius: 6px; padding: 0 5px;
+}
+.en-row { display: flex; gap: 8px; align-items: center; }
+.en-row .review-input { flex: 1; }
+.en-row .btn { flex: 0 0 auto; }
+
 .review-list { display: flex; flex-direction: column; gap: 10px; }
 .review-row {
   display: grid; grid-template-columns: minmax(120px, 22%) 1fr auto; gap: 14px; align-items: center;

@@ -73,6 +73,8 @@ def corpora_path(domain=''):
     return os.path.join(CORPORA_DIR, domain) if domain else CORPORA_DIR
 
 
+from .letters import letter_of, base_of, family_order   # noqa: E402, F401
+
 # Late imports (keep construction cheap / optional features lazy).
 from .suggester import Suggester   # noqa: E402, F401
 
@@ -80,6 +82,7 @@ __all__ = [
     'AmharicNormalizer', 'AmharicTokenizer', 'AmharicStemmer',
     'StopWordFilter', 'SentenceSplitter', 'TfidfVectorizer',
     'DocumentIndex', 'BibleCorpus', 'AmharicTextProcessor',
+    'letter_of', 'base_of', 'family_order',
     'NLModel', 'Suggester', 'training', 'corpus',
     'NORMALIZATION', 'ETHIOPIC_RE', 'DEFAULT_STOPWORDS',
     'STEM_PREFIXES', 'STEM_SUFFIXES_CLEAN',

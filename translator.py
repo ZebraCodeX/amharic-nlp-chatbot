@@ -29,6 +29,8 @@ import time
 import urllib.parse
 import urllib.request
 
+from amharic_nlp.letters import family_order, letter_of
+
 USER_AGENT = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) HisarBot/1.0'}
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
@@ -401,6 +403,7 @@ def _build_pairs():
             'endorsed': rec.get('endorsed', 0) if rec else 0,
             'verified': rec is not None,
             'confidence': _pair_confidence(rec, suggested, am, en or suggested, ens),
+            'letter': letter_of(am),
         })
         seen.add(am)
 
@@ -416,6 +419,7 @@ def _build_pairs():
             'endorsed': r.get('endorsed', 0),
             'verified': True,
             'confidence': _pair_confidence(r, '', am, em),
+            'letter': letter_of(am),
         })
         seen.add(am)
 
@@ -424,7 +428,7 @@ def _build_pairs():
             continue
         pairs.append({'am': w, 'en': '', 'status': 'untranslated',
                       'source': 'dictionary', 'endorsed': 0, 'verified': False,
-                      'confidence': 0.0})
+                      'confidence': 0.0, 'letter': letter_of(w)})
         seen.add(w)
 
     with _PAIRS_LOCK:
@@ -442,8 +446,23 @@ def _ensure_pairs():
     return _PAIRS
 
 
+def translation_letters():
+    """Letter (fidel family) breakdown of the review catalogue, in fidel order."""
+    items = _ensure_pairs()
+    counts = {}
+    for p in items:
+        key = p.get('letter') or 'ሌላ'
+        counts[key] = counts.get(key, 0) + 1
+    ordered = [lt for lt in family_order() if lt in counts]
+    ordered += [lt for lt in sorted(k for k in counts if k not in family_order())]
+    return {
+        'total': len(items),
+        'letters': [{'letter': lt, 'count': counts[lt]} for lt in ordered],
+    }
+
+
 def list_translations(query='', status='all', limit=100, offset=0,
-                      max_confidence=None):
+                      max_confidence=None, letter=None):
     """Paginated catalogue for the review UI.
 
     status ∈ {'all', 'review', 'verified', 'corrected', 'untranslated'}.
@@ -471,6 +490,8 @@ def list_translations(query='', status='all', limit=100, offset=0,
             # most uncertain first — the words that most need a human
             items = sorted(items, key=lambda p: p.get('confidence', 0.0))
 
+    if letter:
+        items = [p for p in items if (p.get('letter') or 'ሌላ') == letter]
     q = _collapse(query)
     if q:
         ql = q.lower()

@@ -1,6 +1,7 @@
 import type {
   ChatReply,
   ChatTurn,
+  LettersList,
   LlmStatus,
   ReviewItem,
   ReviewList,
@@ -78,12 +79,29 @@ export const api = {
     limit?: number;
     offset?: number;
     max_confidence?: number;
+    letter?: string;
   }): Promise<ReviewList> {
     return request<ReviewList>(`/translations/${qs(params)}`);
   },
 
   reviewStats(): Promise<ReviewStats> {
     return request<ReviewStats>('/translations/stats/');
+  },
+
+  translationLetters(): Promise<LettersList> {
+    return request<LettersList>('/translations/letters/');
+  },
+
+  dictionaryLetters(): Promise<LettersList> {
+    return request<LettersList>('/dictionary/letters/');
+  },
+
+  dictionaryByLetter(
+    letter: string,
+    limit = 200,
+    offset = 0,
+  ): Promise<{ letter: string; total: number; words: { w: string; f: number }[] }> {
+    return request(`/dictionary/${qs({ letter, limit, offset })}`);
   },
 
   verify(body: {

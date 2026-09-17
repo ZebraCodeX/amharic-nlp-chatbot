@@ -66,12 +66,36 @@ class TranslationsView(APIView):
             limit=_int_param(request, 'limit', 50, 1, 500),
             offset=_int_param(request, 'offset', 0, 0, 10_000_000),
             max_confidence=request.query_params.get('max_confidence') or None,
+            letter=request.query_params.get('letter') or None,
         ))
 
 
 class TranslationStatsView(APIView):
     def get(self, request):
         return Response(services.translation_stats())
+
+
+class TranslationLettersView(APIView):
+    def get(self, request):
+        return Response(services.translation_letters())
+
+
+class DictionaryLettersView(APIView):
+    def get(self, request):
+        return Response(services.dictionary_letters())
+
+
+class DictionaryView(APIView):
+    def get(self, request):
+        letter = request.query_params.get('letter') or ''
+        if not letter:
+            return Response({'error': 'letter required'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        return Response(services.dictionary_by_letter(
+            letter,
+            limit=_int_param(request, 'limit', 100, 1, 1000),
+            offset=_int_param(request, 'offset', 0, 0, 10_000_000),
+        ))
 
 
 class TranslationVerifyView(APIView):
@@ -99,7 +123,9 @@ class CorrectionsReviewView(APIView):
 
 class WordsView(APIView):
     def get(self, request):
-        return Response(services.words())
+        # Flat list only — the keyboard doesn't need the per-letter index.
+        data = services.words()
+        return Response({'count': data.get('count'), 'words': data.get('words', [])})
 
 
 class NgramView(APIView):

@@ -37,6 +37,7 @@ export interface ReviewItem {
   endorsed: number;
   verified: boolean;
   confidence: number;
+  letter?: string | null;
 }
 
 export interface ReviewList {
@@ -70,6 +71,17 @@ export interface VerifyResult {
   id: string;
   corrected: string;
   endorsed: number;
+}
+
+export interface LetterCount {
+  letter: string;
+  count: number;
+}
+
+export interface LettersList {
+  total?: number;
+  count?: number;
+  letters: LetterCount[];
 }
 
 export interface SpeechStatus {

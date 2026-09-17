@@ -101,6 +101,34 @@ def words():
         return _words_cache
 
 
+def dictionary_letters():
+    """The per-letter index of the Amharic dictionary (fidel order + counts)."""
+    data = words()
+    return {
+        'count': data.get('count', 0),
+        'letters': data.get('letters', []),
+    }
+
+
+def dictionary_by_letter(letter, limit=100, offset=0):
+    """All dictionary words whose first fidel family is ``letter``."""
+    data = words()
+    by = data.get('by_letter') or {}
+    items = by.get(letter, [])
+    try:
+        offset = max(0, int(offset))
+        limit = max(1, min(int(limit), 1000))
+    except (TypeError, ValueError):
+        offset, limit = 0, 100
+    return {
+        'letter': letter,
+        'total': len(items),
+        'offset': offset,
+        'limit': limit,
+        'words': items[offset:offset + limit],
+    }
+
+
 def ngram():
     global _ngram_cache
     with _words_lock:
@@ -135,6 +163,11 @@ def translations(**kwargs):
 def translation_stats():
     from translator import translation_stats as _stats
     return _stats()
+
+
+def translation_letters():
+    from translator import translation_letters as _letters
+    return _letters()
 
 
 def verify_translation(text, src, dst, translation, correction='', engine='user'):

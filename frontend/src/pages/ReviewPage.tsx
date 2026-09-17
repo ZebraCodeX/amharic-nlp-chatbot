@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../api/client';
-import type { ReviewItem, ReviewStats } from '../api/types';
+import type { LetterCount, ReviewItem, ReviewStats } from '../api/types';
 
 const TABS = [
   { key: 'review', label: 'እምነት <90%' },
@@ -17,14 +17,46 @@ const STATUS_META: Record<string, { label: string; cls: string }> = {
   untranslated: { label: 'ትርጉም የለውም', cls: 'none' },
 };
 
+/* --- limited-concurrency English suggestions (server caches each result) --- */
+const suggestionCache = new Map<string, string>();
+let activeSuggestions = 0;
+const suggestQueue: (() => void)[] = [];
+
+async function fetchSuggestion(word: string): Promise<string> {
+  if (suggestionCache.has(word)) return suggestionCache.get(word) as string;
+  const run = async () => {
+    const res = await api.translate(word, 'en');
+    const text = (res.translated || '').trim();
+    suggestionCache.set(word, text);
+    return text;
+  };
+  return new Promise<string>((resolve, reject) => {
+    const start = () => {
+      activeSuggestions += 1;
+      run()
+        .then(resolve, reject)
+        .finally(() => {
+          activeSuggestions -= 1;
+          const next = suggestQueue.shift();
+          if (next) next();
+        });
+    };
+    if (activeSuggestions < 3) start();
+    else suggestQueue.push(start);
+  });
+}
+
 export function ReviewPage() {
   const [stats, setStats] = useState<ReviewStats | null>(null);
   const [items, setItems] = useState<ReviewItem[]>([]);
   const [total, setTotal] = useState(0);
   const [status, setStatus] = useState('review');
+  const [letter, setLetter] = useState('');
+  const [letters, setLetters] = useState<LetterCount[]>([]);
   const [query, setQuery] = useState('');
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [suggestOn, setSuggestOn] = useState(true);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
 
@@ -38,12 +70,22 @@ export function ReviewPage() {
     api.reviewStats().then(setStats).catch(() => {});
   }, []);
 
+  const loadLetters = useCallback(() => {
+    api.translationLetters().then((d) => setLetters(d.letters)).catch(() => {});
+  }, []);
+
   const load = useCallback(
-    (reset: boolean, nextStatus = status, nextQuery = query) => {
+    (reset: boolean, nextStatus = status, nextQuery = query, nextLetter = letter) => {
       setLoading(true);
       const nextOffset = reset ? 0 : offset;
       api
-        .translations({ status: nextStatus, q: nextQuery, limit: LIMIT, offset: nextOffset })
+        .translations({
+          status: nextStatus,
+          q: nextQuery,
+          letter: nextLetter || undefined,
+          limit: LIMIT,
+          offset: nextOffset,
+        })
         .then((d) => {
           setTotal(d.total);
           setOffset(nextOffset + d.items.length);
@@ -52,28 +94,29 @@ export function ReviewPage() {
         .catch(() => showToast('ስህተት። እንደገና ሞክር።', false))
         .finally(() => setLoading(false));
     },
-    [offset, status, query, showToast],
+    [offset, status, query, letter, showToast],
   );
 
   useEffect(() => {
     loadStats();
-    load(true, 'review', '');
+    loadLetters();
+    load(true, 'review', '', '');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    const t = window.setTimeout(() => load(true, status, query), 250);
+    const t = window.setTimeout(() => load(true, status, query, letter), 250);
     return () => window.clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, status]);
+  }, [query, status, letter]);
 
   return (
     <div className="wrap">
       <span className="eyebrow">አማርኛ ⇄ English</span>
       <h1 className="section-title">የትርጉም ማስተካከያ</h1>
       <p className="lede">
-        ዝቅተኛ እምነት (ከ90% በታች) ያላቸውን ትርጉሞች እዚህ አስተካክል። እያንዳንዱ ማስተካከያ የመላውን መተግበሪያ
-        ትርጉም ወዲያውኑ ያሻሽላል።
+        የእያንዳንዱን ቃል የእንግሊዝኛ ትርጉም ተመልከትና ✓ (ትክክል) ወይም ✎ (አስተካክል) በማድረግ አረጋግጥ። እያንዳንዱ ማስተካከያ
+        የመላውን መተግበሪያ ትርጉም ወዲያውኑ ያሻሽላል።
       </p>
 
       {stats && (
@@ -88,7 +131,7 @@ export function ReviewPage() {
           </div>
           <div className="stat-card terra">
             <b>{stats.untranslated}</b>
-            <span>ያልተተረጎሙ</span>
+            <span>ትርጉም የለውም</span>
           </div>
           <div className="stat-card">
             <b>{stats.verified}</b>
@@ -119,7 +162,37 @@ export function ReviewPage() {
             </button>
           ))}
         </div>
+        <button
+          className={`tool-toggle${suggestOn ? ' on' : ''}`}
+          type="button"
+          onClick={() => setSuggestOn((v) => !v)}
+          title="Show an English translation for every word"
+        >
+          <span className="dot" /> 🌐 ትርጉም አሳይ
+        </button>
       </div>
+
+      {letters.length > 0 && (
+        <div className="letterbar">
+          <button
+            className={`letter-chip${letter === '' ? ' active' : ''}`}
+            onClick={() => setLetter('')}
+          >
+            ሁሉም
+          </button>
+          {letters.map((l) => (
+            <button
+              key={l.letter}
+              className={`letter-chip${letter === l.letter ? ' active' : ''}`}
+              onClick={() => setLetter(l.letter)}
+              title={`${l.count} ቃላት`}
+            >
+              {l.letter}
+              <small>{l.count}</small>
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="review-list">
         {items.map((it) => (
@@ -127,14 +200,14 @@ export function ReviewPage() {
             key={`${it.am}-${it.status}`}
             item={it}
             status={status}
-            onSaved={(updated, resolved) => {
+            suggestOn={suggestOn}
+            onSuggest={fetchSuggestion}
+            onSaved={(_updated, resolved) => {
               if (resolved) {
-                setTimeout(
-                  () => setItems((prev) => prev.filter((p) => p.am !== updated.am)),
-                  700,
-                );
+                setTimeout(() => setItems((prev) => prev.filter((p) => p.am !== it.am)), 700);
               }
               loadStats();
+              loadLetters();
             }}
             onToast={showToast}
           />
@@ -165,17 +238,61 @@ export function ReviewPage() {
 interface RowProps {
   item: ReviewItem;
   status: string;
+  suggestOn: boolean;
+  onSuggest: (word: string) => Promise<string>;
   onSaved: (item: ReviewItem, resolved: boolean) => void;
   onToast: (msg: string, ok: boolean) => void;
 }
 
-function ReviewRow({ item, status, onSaved, onToast }: RowProps) {
+function ReviewRow({ item, status, suggestOn, onSuggest, onSaved, onToast }: RowProps) {
   const [value, setValue] = useState(item.en);
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [suggesting, setSuggesting] = useState(false);
+  const [suggested, setSuggested] = useState(false);
 
   const meta = STATUS_META[item.status] ?? STATUS_META.suggested;
   const pct = Math.round((item.confidence || 0) * 100);
+
+  const suggest = useCallback(async () => {
+    setSuggesting(true);
+    try {
+      const text = await onSuggest(item.am);
+      if (text) {
+        setValue(text);
+        setSuggested(true);
+      } else {
+        onToast('ትርጉም አልተገኘም — በእጅህ ጻፍ', false);
+      }
+    } catch {
+      onToast('ትርጉም ማምጣት አልተቻለም', false);
+    } finally {
+      setSuggesting(false);
+    }
+  }, [item.am, onSuggest, onToast]);
+
+  // Show an English translation to judge, even when none is stored yet.
+  useEffect(() => {
+    if (!suggestOn || item.en) return;
+    let alive = true;
+    (async () => {
+      setSuggesting(true);
+      try {
+        const text = await onSuggest(item.am);
+        if (alive && text) {
+          setValue(text);
+          setSuggested(true);
+        }
+      } catch {
+        /* ignore */
+      } finally {
+        if (alive) setSuggesting(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [suggestOn, item.am, item.en, onSuggest]);
 
   async function save(isCorrection: boolean) {
     const v = value.trim();
@@ -201,18 +318,31 @@ function ReviewRow({ item, status, onSaved, onToast }: RowProps) {
 
   return (
     <div className={`review-row${saved ? ' saved' : ''}`}>
-      <div className="review-am">{item.am}</div>
+      <div className="review-am">
+        {item.am}
+        {item.letter && <small className="review-letter">{item.letter}</small>}
+      </div>
       <div className="review-mid">
-        <input
-          className="review-input"
-          value={value}
-          placeholder="English translation…"
-          dir="ltr"
-          onChange={(e) => setValue(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') save(false);
-          }}
-        />
+        <div className="en-row">
+          <input
+            className="review-input"
+            value={value}
+            placeholder={suggesting ? 'ትርጉም በመፈለግ ላይ…' : 'English translation…'}
+            dir="ltr"
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') save(false);
+            }}
+          />
+          <button
+            className="btn btn-sm"
+            onClick={suggest}
+            disabled={suggesting}
+            title="Fetch an English translation suggestion"
+          >
+            {suggesting ? '…' : '🌐'}
+          </button>
+        </div>
         <div className="conf-track">
           <div
             className={`conf-fill${item.confidence >= THRESHOLD ? ' ok' : ''}`}
@@ -222,6 +352,7 @@ function ReviewRow({ item, status, onSaved, onToast }: RowProps) {
         <div className="badges">
           <span className={`badge ${meta.cls}`}>{meta.label}</span>
           <span className="badge">እምነት {pct}%</span>
+          {suggested && <span className="badge">🌐 የተጠቆመ</span>}
           {item.endorsed > 0 && <span className="badge">{item.endorsed}✓</span>}
         </div>
       </div>
