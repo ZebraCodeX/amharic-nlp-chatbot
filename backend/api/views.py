@@ -184,11 +184,12 @@ class ManifestView(View):
 class ServiceWorkerView(View):
     def get(self, request):
         sw = settings.SPA_DIR / 'sw.js'
-        if not sw.exists():
-            return HttpResponse('// not built', content_type='application/javascript')
-        return HttpResponse(sw.read_text(encoding='utf-8'),
-                            content_type='application/javascript; charset=utf-8',
-                            headers={'Service-Worker-Allowed': '/'})
+        body = sw.read_text(encoding='utf-8') if sw.exists() else '// not built'
+        return HttpResponse(
+            body,
+            content_type='application/javascript; charset=utf-8',
+            headers={'Service-Worker-Allowed': '/'},
+        )
 
 
 class RobotsView(View):
