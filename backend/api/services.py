@@ -170,6 +170,11 @@ def translation_letters():
     return _letters()
 
 
+def learning_stats():
+    from learning import stats
+    return stats()
+
+
 def verify_translation(text, src, dst, translation, correction='', engine='user'):
     from translator import store_verification
     text = (text or '').strip()

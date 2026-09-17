@@ -78,6 +78,11 @@ export interface LetterCount {
   count: number;
 }
 
+export interface LearningStats {
+  learned: number;
+  recent: { am: string; en: string }[];
+}
+
 export interface LettersList {
   total?: number;
   count?: number;

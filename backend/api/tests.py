@@ -158,6 +158,46 @@ class ZerLanguageTest(ApiTestBase):
         self.assertEqual(data['source'], 'intent:greeting')
 
 
+class LearningTest(ApiTestBase):
+    """Corrections taught in /review change how Zer responds."""
+
+    def test_teach_then_zer_uses_it(self):
+        from zer import get_zer
+        # Before teaching, an unknown word isn't answered from the glossary.
+        before = get_zer().respond('ጥምቀት ምን ማለት ነው?', use_llm=False)
+        self.assertNotEqual(before['source'], 'learned')
+
+        # Teach via the review API.
+        resp, data = self.post_json('/api/translations/verify/', {
+            'text': 'ጥምቀት', 'src': 'am', 'dst': 'en',
+            'translation': '', 'correct': 'baptism'})
+        self.assertTrue(data['ok'])
+
+        after = get_zer().respond('ጥምቀት ምን ማለት ነው?', use_llm=False)
+        self.assertEqual(after['source'], 'learned')
+        self.assertIn('baptism', after['reply'])
+
+    def test_english_question_uses_learned_pair(self):
+        from zer import get_zer
+        self.post_json('/api/translations/verify/', {
+            'text': 'ቡና', 'src': 'am', 'dst': 'en',
+            'translation': '', 'correct': 'coffee drink'})
+        r = get_zer().respond('translate ቡና in english', use_llm=False)
+        self.assertEqual(r['source'], 'learned')
+        self.assertIn('coffee drink', r['reply'])
+
+    def test_learning_stats_endpoint(self):
+        resp, data = self.get_json('/api/learning/stats/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('learned', data)
+        start = data['learned']
+        self.post_json('/api/translations/verify/', {
+            'text': 'ውሃ', 'src': 'am', 'dst': 'en',
+            'translation': '', 'correct': 'water'})
+        resp, data = self.get_json('/api/learning/stats/')
+        self.assertEqual(data['learned'], start + 1)
+
+
 class SpeechApiTest(ApiTestBase):
     def test_status_shape(self):
         resp, data = self.get_json('/api/speech/status/')

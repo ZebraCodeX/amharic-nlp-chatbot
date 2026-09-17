@@ -159,12 +159,14 @@ Amharic NLP toolkit. An Amharic-speaking AI assistant:
   `ቡና`) on a QWERTY page, with the GFF/Keyman uppercase-emphatic convention.
   `compose()`, `charFor()` and `ordersFor()` are exported on `AmharicKeyboard`
   for reuse, and the choice is remembered in `localStorage`.
-- **Translation review UI** — open `/review` to see Amharic words beside their
-  English translations and approve (✓) or correct (✎) them. Every word shows an
-  **English translation to judge** (fetched with 🌐 when none is stored yet, at
-  most 3 at a time and cached server-side), filterable by **letter** (ሀ ለ መ …)
-  and by *ማረጋገጫ / ያልተተረጎሙ / የተረጋገጡ*. Every correction is stored server-side and
-  *immediately wins* in the translator, so the crowd keeps improving the app.
+- **Teach Zer translations** — `/review` is a pure teaching surface (no chat
+  chrome): each Amharic word sits beside an **English translation to judge**
+  (fetched with 🌐 when none is stored yet, ≤3 at a time, cached), filterable by
+  **letter** (ሀ ለ መ …) and by *ማረጋገጫ / ያልተተረጎሙ / የተረጋገጡ*. Approve with ✓ or fix
+  with ✎. Corrections *immediately win* in the translator **and are learned by
+  Zer** (`learning.py`): the taught pairs are injected into the assistant's
+  answers and the LLM prompt, so asking «X ምን ማለት ነው?» / *“translate X”* afterwards
+  answers with your wording. `/api/learning/stats/` reports how many it learned.
 - **Remembers your name** — «ስሜ አበበ ነው» makes greetings personal.
 - **Amharic only** — English input gets a polite Amharic-only reminder
   (except programming-language code requests).

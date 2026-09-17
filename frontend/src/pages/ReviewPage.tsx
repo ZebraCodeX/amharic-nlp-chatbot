@@ -57,6 +57,7 @@ export function ReviewPage() {
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   const [suggestOn, setSuggestOn] = useState(true);
+  const [learned, setLearned] = useState(0);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
 
@@ -72,6 +73,10 @@ export function ReviewPage() {
 
   const loadLetters = useCallback(() => {
     api.translationLetters().then((d) => setLetters(d.letters)).catch(() => {});
+  }, []);
+
+  const loadLearning = useCallback(() => {
+    api.learningStats().then((d) => setLearned(d.learned)).catch(() => {});
   }, []);
 
   const load = useCallback(
@@ -100,6 +105,7 @@ export function ReviewPage() {
   useEffect(() => {
     loadStats();
     loadLetters();
+    loadLearning();
     load(true, 'review', '', '');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -112,12 +118,16 @@ export function ReviewPage() {
 
   return (
     <div className="wrap">
-      <span className="eyebrow">አማርኛ ⇄ English</span>
-      <h1 className="section-title">የትርጉም ማስተካከያ</h1>
+      <span className="eyebrow">ዘርን አስተምር · Teach Zer</span>
+      <h1 className="section-title">የትርጉም ማስተማሪያ</h1>
       <p className="lede">
-        የእያንዳንዱን ቃል የእንግሊዝኛ ትርጉም ተመልከትና ✓ (ትክክል) ወይም ✎ (አስተካክል) በማድረግ አረጋግጥ። እያንዳንዱ ማስተካከያ
-        የመላውን መተግበሪያ ትርጉም ወዲያውኑ ያሻሽላል።
+        ለእያንዳንዱ ቃል ትክክለኛውን የእንግሊዝኛ ትርጉም አስተምር — ✓ (ትክክል) ወይም ✎ (አስተካክል)።
+        ዘር ከእነዚህ ትምህርቶች ተምሮ በሚመልሳቸው መልሶች ይጠቀማቸዋል።
       </p>
+
+      <div className="learn-banner">
+        🌱 ዘር <b>{learned}</b> የትርጉም ትምህርቶችን ተምሯል — እያንዳንዱ ማስተካከያ መልሱን ያሻሽላል።
+      </div>
 
       {stats && (
         <div className="stat-grid">
@@ -208,6 +218,7 @@ export function ReviewPage() {
               }
               loadStats();
               loadLetters();
+              loadLearning();
             }}
             onToast={showToast}
           />
@@ -306,7 +317,7 @@ function ReviewRow({ item, status, suggestOn, onSuggest, onSaved, onToast }: Row
       const newConf = isCorrection && v !== item.en ? 0.95 : 1.0;
       setValue(res.corrected || v);
       setSaved(true);
-      onToast('✓ ተቀምጧል — ትርጉሙ ተሻሽሏል', true);
+      onToast('✓ ተቀምጧል — ዘር ተምሯል', true);
       const resolved = status === 'review' && newConf >= THRESHOLD;
       onSaved({ ...item, en: res.corrected || v, confidence: newConf }, resolved);
     } catch {

@@ -73,6 +73,23 @@ class Zer:
         from chatbot import AmharicAssistant
         self._am = AmharicAssistant()
 
+    # -- learned translations (taught in /review) -------------------------
+    def _learned_reply(self, text):
+        """Answer directly from the glossary humans taught, when asked."""
+        try:
+            from learning import answer as learned_answer
+        except Exception:
+            return None
+        result = learned_answer(text)
+        return result[0] if result else None
+
+    def _learned_hints(self, text):
+        try:
+            from learning import hints
+            return hints(text)
+        except Exception:
+            return []
+
     # -- English ----------------------------------------------------------
     def _english_llm(self, text, history=None, use_llm=True):
         if not use_llm:
@@ -82,6 +99,11 @@ class Zer:
         except Exception:
             return None
         system = ZER_SYSTEM + " The user is writing in English."
+        learned = self._learned_hints(text)
+        if learned:
+            system += (" The user has personally taught you these Amharic→English "
+                       "translations — always use their wording: " +
+                       "; ".join(learned) + ".")
         hist = []
         for turn in (history or [])[-6:]:
             if not isinstance(turn, dict):
@@ -124,6 +146,12 @@ class Zer:
         resolved = _normalize_lang(lang) or detect_language(text)
         if resolved == 'unknown':
             resolved = detect_language(text)
+
+        # Use translations the user taught us, before anything else.
+        learned = self._learned_reply(text)
+        if learned:
+            return {'reply': learned, 'source': 'learned', 'confidence': 0.95,
+                    'lang': resolved if resolved != 'unknown' else 'am', 'followups': []}
 
         if resolved == 'am':
             result = self._am.respond(text, use_llm=use_llm)

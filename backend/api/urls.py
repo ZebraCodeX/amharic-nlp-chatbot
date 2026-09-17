@@ -26,6 +26,8 @@ urlpatterns = [
     path('translations/stats', views.TranslationStatsView.as_view()),
     path('translations/letters/', views.TranslationLettersView.as_view(), name='translation-letters'),
     path('translations/letters', views.TranslationLettersView.as_view()),
+    path('learning/stats/', views.LearningStatsView.as_view(), name='learning-stats'),
+    path('learning/stats', views.LearningStatsView.as_view()),
     path('translations/verify/', views.TranslationVerifyView.as_view()),
     path('translations/verify', views.TranslationVerifyView.as_view()),
 

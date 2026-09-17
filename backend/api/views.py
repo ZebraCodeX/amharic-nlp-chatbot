@@ -80,6 +80,13 @@ class TranslationLettersView(APIView):
         return Response(services.translation_letters())
 
 
+class LearningStatsView(APIView):
+    """How many translations Zer has learned from the review UI."""
+
+    def get(self, request):
+        return Response(services.learning_stats())
+
+
 class DictionaryLettersView(APIView):
     def get(self, request):
         return Response(services.dictionary_letters())

@@ -220,6 +220,12 @@ a { color: var(--terracotta); }
 @keyframes bounce { 0%,60%,100% { transform: translateY(0); opacity: .5 } 30% { transform: translateY(-5px); opacity: 1 } }
 
 /* ---------- stats / review ---------- */
+.learn-banner {
+  background: var(--green-soft); border: 1px solid var(--green-2); color: var(--green);
+  border-radius: 12px; padding: 10px 16px; margin-bottom: 16px; font-size: 0.92rem;
+}
+.learn-banner b { color: var(--green-2); }
+
 .stat-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 22px; }
 .stat-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 16px 18px; box-shadow: var(--shadow-sm); }
 .stat-card b { display: block; font-family: var(--font-display); font-size: 1.9rem; color: var(--green); line-height: 1.1; }

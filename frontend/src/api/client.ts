@@ -1,6 +1,7 @@
 import type {
   ChatReply,
   ChatTurn,
+  LearningStats,
   LettersList,
   LlmStatus,
   ReviewItem,
@@ -90,6 +91,10 @@ export const api = {
 
   translationLetters(): Promise<LettersList> {
     return request<LettersList>('/translations/letters/');
+  },
+
+  learningStats(): Promise<LearningStats> {
+    return request<LearningStats>('/learning/stats/');
   },
 
   dictionaryLetters(): Promise<LettersList> {

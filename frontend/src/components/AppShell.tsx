@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { api } from '../api/client';
 import type { LlmStatus } from '../api/types';
 import { useInstallPrompt } from '../hooks/useInstallPrompt';
 
-// One page (chat) + Review. Voice and the Amharic keyboard live inside the chat.
-const LINKS = [{ to: '/review', label: 'ትርጉም' }];
-
 export function AppShell() {
   const [llm, setLlm] = useState<LlmStatus | null>(null);
   const { canInstall, install } = useInstallPrompt();
+  const location = useLocation();
+  const onReview = location.pathname.startsWith('/review');
 
   useEffect(() => {
     api.llmStatus().then(setLlm).catch(() => setLlm(null));
@@ -26,28 +25,33 @@ export function AppShell() {
           </span>
         </NavLink>
 
-        <nav className="nav">
-          {LINKS.map((l) => (
+        {onReview ? (
+          // The review page is a pure translation-teaching surface: no chat
+          // chrome, just a way back to the assistant.
+          <nav className="nav">
+            <NavLink to="/" className="nav-link">
+              ← ወደ ውይይት
+            </NavLink>
+          </nav>
+        ) : (
+          <nav className="nav">
+            {canInstall && (
+              <button className="btn btn-gold btn-sm" onClick={install} title="Install this app">
+                ⬇ ጫን
+              </button>
+            )}
+            <span className={`status-pill${llm?.available ? ' on' : ''}`} title="LLM brain status">
+              <span className="dot" />
+              {llm?.available ? `✦ ${llm.model || 'AI አእምሮ'}` : 'offline AI'}
+            </span>
             <NavLink
-              key={l.to}
-              to={l.to}
+              to="/review"
               className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
             >
-              {l.label}
+              ትርጉም አስተምር
             </NavLink>
-          ))}
-        </nav>
-
-        {canInstall && (
-          <button className="btn btn-gold btn-sm" onClick={install} title="Install this app">
-            ⬇ ጫን
-          </button>
+          </nav>
         )}
-
-        <span className={`status-pill${llm?.available ? ' on' : ''}`} title="LLM brain status">
-          <span className="dot" />
-          {llm?.available ? `✦ ${llm.model || 'AI አእምሮ'}` : 'offline AI'}
-        </span>
       </header>
       <main className="main">
         <Outlet />

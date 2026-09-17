@@ -682,6 +682,14 @@ class AmharicAssistant:
             system += " ተጠቃሚው አጭር መልስ ጠይቋል — አጭርና ቀጥተኛ መልስ ስጥ።"
         if self.user_name:
             system += f" የተጠቃሚው ስም {self.user_name} ነው።"
+        try:
+            from learning import hints as _learned_hints
+            learned = _learned_hints(text)
+            if learned:
+                system += (" የተጠቃሚው የትርጉም ትምህርት (እነዚህን ቃላት በተጠቃሚው መሰረት "
+                           "ተጠቀም)፦ " + "; ".join(learned) + "።")
+        except Exception:
+            pass
         history = []
         for turn in self.history[-6:]:
             if not isinstance(turn, dict):
