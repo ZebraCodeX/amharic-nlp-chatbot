@@ -46,7 +46,11 @@
     "mac": {
       "target": ["dmg"],
       "category": "public.app-category.education",
-      "artifactName": "Hisar.${ext}"
+      "artifactName": "Hisar.${ext}",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "Zer uses the microphone for live Amharic/English voice conversation.",
+        "NSSpeechRecognitionUsageDescription": "Zer uses speech recognition for the \u201cHey Zer\u201d wake word."
+      }
     },
     "linux": {
       "target": ["AppImage", "deb"],

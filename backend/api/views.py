@@ -1,10 +1,12 @@
-"""REST API views (DRF) wrapping the pure-stdlib NLP services."""
+"""REST API views (DRF) wrapping the pure-stdlib NLP + speech services."""
+import base64
 import json
 
 from django.conf import settings
 from django.http import HttpResponse
 from django.views import View
 from rest_framework import status
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -24,13 +26,14 @@ def _int_param(request, name, default, lo, hi):
 
 
 class ChatView(APIView):
-    """POST {text, history?} or GET ?text=&history= → the assistant's reply."""
+    """POST {text, history?, lang?} or GET ?text=&history=&lang= → Zer's reply."""
 
     def post(self, request):
         ser = ChatRequestSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
         result = services.chat(ser.validated_data['text'],
-                               ser.validated_data.get('history'))
+                               ser.validated_data.get('history'),
+                               ser.validated_data.get('lang') or None)
         return Response(result)
 
     def get(self, request):
@@ -41,7 +44,8 @@ class ChatView(APIView):
                 history = json.loads(raw)
             except ValueError:
                 history = None
-        return Response(services.chat(request.query_params.get('text', ''), history))
+        lang = request.query_params.get('lang') or None
+        return Response(services.chat(request.query_params.get('text', ''), history, lang))
 
 
 class TranslateView(APIView):
@@ -113,6 +117,108 @@ class LlmStatusView(APIView):
         return Response(services.llm_status())
 
 
+class SpeechStatusView(APIView):
+    """Which open-source STT/TTS providers are available in this deployment."""
+
+    def get(self, request):
+        try:
+            return Response(services.speech_status())
+        except Exception as exc:
+            return Response({'stt': {'available': False}, 'tts': {'available': False},
+                             'error': str(exc)})
+
+
+class TranscribeView(APIView):
+    """POST multipart `audio` (+ optional `lang`) → {text, language, …}."""
+
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def post(self, request):
+        upload = request.FILES.get('audio')
+        if upload is None:
+            return Response({'error': 'audio file required'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        data = upload.read()
+        if not data:
+            return Response({'error': 'empty audio'}, status=status.HTTP_400_BAD_REQUEST)
+        if len(data) > settings.MAX_AUDIO_BYTES:
+            return Response({'error': 'audio too large'}, status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
+        result = services.transcribe(data, filename=upload.name or 'audio.webm',
+                                     language=request.data.get('lang') or None)
+        if 'error' in result:
+            return Response(result, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        return Response(result)
+
+
+class SynthesizeView(APIView):
+    """POST {text, lang} → audio/wav (open-source TTS)."""
+
+    def post(self, request):
+        text = (request.data.get('text') or '').strip()
+        lang = (request.data.get('lang') or 'am').lower()
+        if not text:
+            return Response({'error': 'text required'}, status=status.HTTP_400_BAD_REQUEST)
+        audio, mime, provider = services.synthesize(text, lang)
+        if audio is None:
+            return Response({'error': 'text-to-speech unavailable'},
+                            status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        resp = HttpResponse(audio, content_type=mime or 'audio/wav')
+        resp['X-TTS-Provider'] = provider or 'unknown'
+        return resp
+
+
+class VoiceTurnView(APIView):
+    """One hands-free round trip: audio in → transcript + Zer reply + audio out."""
+
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def post(self, request):
+        upload = request.FILES.get('audio')
+        if upload is None:
+            return Response({'error': 'audio file required'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        data = upload.read()
+        if not data:
+            return Response({'error': 'empty audio'}, status=status.HTTP_400_BAD_REQUEST)
+        if len(data) > settings.MAX_AUDIO_BYTES:
+            return Response({'error': 'audio too large'}, status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
+
+        stt = services.transcribe(data, filename=upload.name or 'audio.webm',
+                                  language=request.data.get('lang') or None)
+        if 'error' in stt:
+            return Response({'stage': 'stt', **stt}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        transcript = stt.get('text', '')
+        language = stt.get('language') or 'am'
+        if not transcript:
+            return Response({'transcript': '', 'language': language,
+                             'reply': '', 'source': 'empty', 'audio_b64': None})
+
+        history = None
+        raw = request.data.get('history')
+        if raw:
+            try:
+                history = json.loads(raw) if isinstance(raw, str) else raw
+            except ValueError:
+                history = None
+
+        reply = services.chat(transcript, history, lang=language)
+        audio, mime, provider = services.synthesize(reply.get('reply', ''), language)
+
+        return Response({
+            'transcript': transcript,
+            'language': language,
+            'language_probability': stt.get('language_probability'),
+            'reply': reply.get('reply', ''),
+            'source': reply.get('source'),
+            'followups': reply.get('followups', []),
+            'stt_provider': stt.get('provider'),
+            'tts_provider': provider,
+            'audio_mime': mime,
+            'audio_b64': base64.b64encode(audio).decode('ascii') if audio else None,
+        })
+
+
 class HealthView(APIView):
     def get(self, request):
         extra = {}
@@ -125,13 +231,13 @@ class HealthView(APIView):
 
 _DEV_PAGE = """<!doctype html><html lang="am"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ሕሳር — API</title>
+<title>ዘር — API</title>
 <style>body{font-family:system-ui,sans-serif;background:#f7f3e9;color:#241f1a;
 margin:0;display:grid;place-items:center;min-height:100vh}
 main{max-width:640px;padding:32px;background:#fff;border:1px solid #e4dcc8;
 border-radius:16px}h1{color:#14532d}code{background:#f0ebdd;padding:2px 6px;border-radius:6px}
 a{color:#9c3b1b}</style></head><body><main>
-<h1>ሕሳር API ዝግጁ ነው</h1>
+<h1>ዘር (Zer) API ዝግጁ ነው</h1>
 <p>The Django REST API is running. The React single-page app has not been built
 into <code>backend/static/spa</code> yet.</p>
 <p>For development run <code>npm run dev</code> in <code>frontend/</code> (Vite
@@ -157,8 +263,8 @@ class SpaView(View):
 # PWA root assets (must live at the origin root to scope the service worker)
 # ---------------------------------------------------------------------------
 _MANIFEST = {
-    'name': 'ሕሳር — Amharic AI',
-    'short_name': 'ሕሳር',
+    'name': 'ዘር — Zer · Amharic AI',
+    'short_name': 'ዘር',
     'description': 'የአማርኛ AI ረዳት፣ የግዕዝ ኪቦርድና የትርጉም ማስተካከያ።',
     'start_url': '/',
     'scope': '/',

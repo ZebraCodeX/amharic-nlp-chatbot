@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, shell } = require('electron');
+const { app, BrowserWindow, Menu, shell, session } = require('electron');
 const path = require('path');
 
 const API_BASE = process.env.HISAR_API_BASE || 'https://hisar-amharic-ai.fly.dev';
@@ -95,6 +95,10 @@ if (!gotLock) {
     }
   });
   app.whenReady().then(() => {
+    // Allow the microphone for the live voice conversation ("Hey Zer").
+    session.defaultSession.setPermissionRequestHandler((_wc, permission, callback) => {
+      callback(permission === 'media' || permission === 'audioCapture');
+    });
     buildMenu();
     createWindow();
     app.on('activate', () => {

@@ -81,9 +81,19 @@ STORAGES = {
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
-    'DEFAULT_PARSER_CLASSES': ['rest_framework.parsers.JSONParser'],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FormParser',
+    ],
     'UNAUTHENTICATED_USER': None,
 }
+
+# Voice clips are uploaded to /api/speech|voice. Keep well under Fly's limits.
+MAX_AUDIO_BYTES = int(os.environ.get('MAX_AUDIO_BYTES', str(20 * 1024 * 1024)))
+DATA_UPLOAD_MAX_MEMORY_SIZE = MAX_AUDIO_BYTES + (2 * 1024 * 1024)
+FILE_UPLOAD_MAX_MEMORY_SIZE = DATA_UPLOAD_MAX_MEMORY_SIZE
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
 # CORS: permissive in debug (Vite dev server on :5173), explicit in prod.
 CORS_ALLOW_ALL_ORIGINS = env_bool('CORS_ALLOW_ALL', DEBUG)

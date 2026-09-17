@@ -6,6 +6,7 @@ import { useInstallPrompt } from '../hooks/useInstallPrompt';
 
 const LINKS = [
   { to: '/', label: 'ውይይት', end: true },
+  { to: '/voice', label: 'ድምጽ' },
   { to: '/keyboard', label: 'ኪቦርድ' },
   { to: '/review', label: 'ትርጉም' },
 ];
@@ -22,10 +23,10 @@ export function AppShell() {
     <div className="app-shell">
       <header className="topbar">
         <NavLink to="/" className="brand" style={{ textDecoration: 'none' }}>
-          <span className="brand-mark">ሕ</span>
+          <span className="brand-mark">ዘ</span>
           <span className="brand-text">
-            <b>ሕሳር</b>
-            <span>Amharic AI</span>
+            <b>ዘር</b>
+            <span>Zer · Amharic AI</span>
           </span>
         </NavLink>
 

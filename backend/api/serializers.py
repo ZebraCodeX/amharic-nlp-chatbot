@@ -4,6 +4,7 @@ from rest_framework import serializers
 class ChatRequestSerializer(serializers.Serializer):
     text = serializers.CharField(allow_blank=True, trim_whitespace=True)
     history = serializers.ListField(child=serializers.DictField(), required=False)
+    lang = serializers.CharField(required=False, allow_blank=True)
 
 
 class ChatTurnSerializer(serializers.Serializer):

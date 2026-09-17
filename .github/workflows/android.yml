@@ -53,6 +53,12 @@ jobs:
           npx cap add android || true
           npx cap sync android
 
+      - name: Grant microphone permission for voice chat
+        working-directory: frontend/android
+        run: |
+          perl -0pi -e 's#(<uses-permission android:name="android.permission.INTERNET"\s*/>)#$1\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />#' app/src/main/AndroidManifest.xml
+          grep -q RECORD_AUDIO app/src/main/AndroidManifest.xml && echo "RECORD_AUDIO added"
+
       - name: Decode signing keystore (optional)
         if: env.ANDROID_KEYSTORE_BASE64 != ''
         working-directory: frontend/android/app

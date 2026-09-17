@@ -1,4 +1,4 @@
-# ሕሳር — Amharic AI (Amharic only)
+# ዘር (Zer) — Amharic AI
 
 [![Live on Fly.io](https://img.shields.io/badge/live-hisar--amharic--ai.fly.dev-e94560)](https://hisar-amharic-ai.fly.dev)
 
@@ -30,10 +30,37 @@ Apps are built by GitHub Actions (`.github/workflows/`) from one React
 codebase — **Capacitor** for Android/iOS and **Electron** for desktop. See
 [`PACKAGING.md`](PACKAGING.md) for signing keys and store submission.
 
+The AI assistant is **Zer (ዘር)** — Amharic for *seed*. Say **“Hey Zer”** and
+talk to it in **Amharic or English**: Zer detects the language you spoke and
+answers in the same language, out loud, in a live voice conversation.
+
 The web app is a **Django REST Framework API** (`backend/`) with a
 **React + TypeScript** single-page front end (`frontend/`), styled with a custom
 Ethiopian-inspired *parchment & fidel* design system. The NLP brain stays pure
 Python stdlib and is reused unchanged behind the API.
+
+## Live voice conversation (Zer)
+
+Open **[`/voice`](https://hisar-amharic-ai.fly.dev/voice)** and press the mic (or
+toggle **Hey Zer** for hands-free). One round trip is
+`audio → STT → language detection → Zer → TTS → audio`, all open source:
+
+| Stage | Library | Notes |
+| --- | --- | --- |
+| Speech-to-text | **[faster-whisper](https://github.com/SYSTRAN/faster-whisper)** (OpenAI Whisper on CTranslate2) | multilingual, **auto language detection** (`am` / `en`); model size via `ZER_WHISPER_MODEL` (default `base`) |
+| Language routing | `zer.py` | Ge'ez script → Amharic, Latin → English; Whisper's detected language wins |
+| Brain | Zer (`zer.py` + `chatbot.py`) | replies in the detected language; LLM-backed when configured, offline rules otherwise |
+| Text-to-speech | **Meta MMS-TTS** (`facebook/mms-tts-amh`/`-eng`) or **[eSpeak NG](https://github.com/espeak-ng/espeak-ng)** | MMS is higher quality (optional, `torch`); eSpeak NG is always available and supports Amharic |
+| Wake word | Browser `SpeechRecognition` | “hey zer” / “ሄይ ዘር”; push-to-talk always works |
+
+If the server speech stack is unavailable (e.g. a small self-host), the page
+transparently falls back to the browser's Web Speech API. Endpoints:
+`GET /api/speech/status/`, `POST /api/speech/transcribe/`,
+`POST /api/speech/synthesize/`, `POST /api/voice/turn/`.
+
+> **Docker** installs `espeak-ng` + `faster-whisper`; models cache on the
+> `hisar_data` volume (`HF_HOME=/app/userdata/hf`). Mic permissions for the
+> packaged apps are wired in `PACKAGING.md` / the CI workflows.
 
 ```text
 backend/    Django 6 + DRF  — REST API, serves the built SPA with gunicorn

@@ -52,17 +52,18 @@ class HealthTest(ApiTestBase):
         self.assertEqual(data['status'], 'ok')
         self.assertIn('llm', data)
 
-    def test_spa_placeholder_when_unbuilt(self):
+    def test_spa_or_placeholder_served(self):
         resp = self.client.get('/')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn('ሕሳር', resp.content.decode('utf-8'))
+        # Built SPA or the dev placeholder — both identify Zer.
+        self.assertIn('ዘር', resp.content.decode('utf-8'))
 
     def test_manifest_at_root(self):
         resp = self.client.get('/manifest.webmanifest')
         self.assertEqual(resp.status_code, 200)
         self.assertIn('manifest+json', resp['Content-Type'])
         data = resp.json()
-        self.assertEqual(data['name'], 'ሕሳር — Amharic AI')
+        self.assertEqual(data['name'], 'ዘር — Zer · Amharic AI')
         self.assertEqual(data['start_url'], '/')
 
     def test_service_worker_scope_header(self):
@@ -130,6 +131,52 @@ class ReviewApiTest(ApiTestBase):
 
     def test_verify_requires_translation(self):
         resp, data = self.post_json('/api/translations/verify/', {'text': 'ሰላም'})
+        self.assertEqual(resp.status_code, 400)
+
+
+class ZerLanguageTest(ApiTestBase):
+    def test_detect_language(self):
+        from zer import detect_language
+        self.assertEqual(detect_language('ሰላም እንዴት ነህ?'), 'am')
+        self.assertEqual(detect_language('hello, how are you?'), 'en')
+        self.assertEqual(detect_language('AI ምንድን ነው?'), 'am')
+        self.assertEqual(detect_language('12345'), 'unknown')
+
+    def test_assistant_is_named_zer(self):
+        from zer import get_zer
+        self.assertEqual(get_zer().name, 'ዘር')
+
+    def test_english_chat_offline_reply(self):
+        from zer import get_zer
+        r = get_zer().respond('hello there', use_llm=False)
+        self.assertEqual(r['lang'], 'en')
+        self.assertIn('Zer', r['reply'])
+
+    def test_amharic_chat_still_works(self):
+        resp, data = self.post_json('/api/chat/', {'text': 'ሰላም'})
+        self.assertEqual(data['lang'], 'am')
+        self.assertEqual(data['source'], 'intent:greeting')
+
+
+class SpeechApiTest(ApiTestBase):
+    def test_status_shape(self):
+        resp, data = self.get_json('/api/speech/status/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('stt', data)
+        self.assertIn('tts', data)
+        self.assertIn('available', data['stt'])
+        self.assertIn('available', data['tts'])
+
+    def test_transcribe_requires_audio(self):
+        resp = self.client.post('/api/speech/transcribe/', {}, format='multipart')
+        self.assertEqual(resp.status_code, 400)
+
+    def test_synthesize_requires_text(self):
+        resp, data = self.post_json('/api/speech/synthesize/', {})
+        self.assertEqual(resp.status_code, 400)
+
+    def test_voice_turn_requires_audio(self):
+        resp = self.client.post('/api/voice/turn/', {}, format='multipart')
         self.assertEqual(resp.status_code, 400)
 
 

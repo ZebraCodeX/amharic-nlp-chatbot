@@ -3,6 +3,7 @@ import { AppShell } from './components/AppShell';
 import { ChatPage } from './pages/ChatPage';
 import { KeyboardPage } from './pages/KeyboardPage';
 import { ReviewPage } from './pages/ReviewPage';
+import { VoicePage } from './pages/VoicePage';
 
 export default function App() {
   return (
@@ -10,6 +11,7 @@ export default function App() {
       <Routes>
         <Route element={<AppShell />}>
           <Route index element={<ChatPage />} />
+          <Route path="voice" element={<VoicePage />} />
           <Route path="keyboard" element={<KeyboardPage />} />
           <Route path="review" element={<ReviewPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

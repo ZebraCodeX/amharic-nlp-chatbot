@@ -16,12 +16,23 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     DJANGO_DEBUG=0 \
     DJANGO_ALLOWED_HOSTS=* \
-    HISAR_USERDATA_DIR=/app/userdata
+    HISAR_USERDATA_DIR=/app/userdata \
+    HF_HOME=/app/userdata/hf \
+    XDG_CACHE_HOME=/app/userdata/cache \
+    ZER_WHISPER_MODEL=base \
+    ZER_TTS=espeak
 
 WORKDIR /app
 
-COPY backend/requirements.txt /app/backend/requirements.txt
-RUN pip install --no-cache-dir -r /app/backend/requirements.txt
+# espeak-ng: open-source TTS with Amharic support. ffmpeg: audio decoding.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends espeak-ng ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.txt backend/requirements-speech.txt /app/backend/
+RUN pip install --no-cache-dir \
+        -r /app/backend/requirements.txt \
+        -r /app/backend/requirements-speech.txt
 
 # Application code (frontend sources are dropped after the copy).
 COPY . /app
@@ -41,4 +52,4 @@ EXPOSE 8000
 CMD ["gunicorn", "config.wsgi:application", \
      "--bind", "0.0.0.0:8000", \
      "--workers", "1", "--threads", "8", \
-     "--timeout", "120", "--access-logfile", "-"]
+     "--timeout", "240", "--access-logfile", "-"]

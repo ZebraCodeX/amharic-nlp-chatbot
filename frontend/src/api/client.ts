@@ -5,8 +5,10 @@ import type {
   ReviewItem,
   ReviewList,
   ReviewStats,
+  SpeechStatus,
   TranslateResult,
   VerifyResult,
+  VoiceTurn,
 } from './types';
 
 declare global {
@@ -103,6 +105,36 @@ export const api = {
 
   llmStatus(): Promise<LlmStatus> {
     return request<LlmStatus>('/llm-status/');
+  },
+
+  speechStatus(): Promise<SpeechStatus> {
+    return request<SpeechStatus>('/speech/status/');
+  },
+
+  /** One hands-free round trip: audio in → transcript + reply + spoken reply. */
+  async voiceTurn(
+    audio: Blob,
+    opts: { lang?: string; history?: ChatTurn[] } = {},
+  ): Promise<VoiceTurn> {
+    const form = new FormData();
+    form.append('audio', audio, 'clip.webm');
+    if (opts.lang) form.append('lang', opts.lang);
+    if (opts.history) form.append('history', JSON.stringify(opts.history));
+    // No explicit Content-Type: the browser must set the multipart boundary.
+    const res = await fetch(`${BASE}/voice/turn/`, { method: 'POST', body: form });
+    if (!res.ok) throw new Error(`${res.status} ${await res.text().catch(() => '')}`);
+    return (await res.json()) as VoiceTurn;
+  },
+
+  /** Server-side open-source TTS → a playable Blob. */
+  async synthesize(text: string, lang = 'am'): Promise<Blob | null> {
+    const res = await fetch(`${BASE}/speech/synthesize/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, lang }),
+    });
+    if (!res.ok) return null;
+    return res.blob();
   },
 };
 

@@ -27,6 +27,15 @@ urlpatterns = [
     path('translations/verify/', views.TranslationVerifyView.as_view()),
     path('translations/verify', views.TranslationVerifyView.as_view()),
 
+    path('speech/status/', views.SpeechStatusView.as_view(), name='speech-status'),
+    path('speech/status', views.SpeechStatusView.as_view()),
+    path('speech/transcribe/', views.TranscribeView.as_view(), name='speech-transcribe'),
+    path('speech/transcribe', views.TranscribeView.as_view()),
+    path('speech/synthesize/', views.SynthesizeView.as_view(), name='speech-synthesize'),
+    path('speech/synthesize', views.SynthesizeView.as_view()),
+    path('voice/turn/', views.VoiceTurnView.as_view(), name='voice-turn'),
+    path('voice/turn', views.VoiceTurnView.as_view()),
+
     path('words/', views.WordsView.as_view(), name='words'),
     path('words', views.WordsView.as_view()),
     path('ngram/', views.NgramView.as_view(), name='ngram'),

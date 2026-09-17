@@ -100,6 +100,19 @@ by Django/Fly.
   origin root by Django, and the header shows an **Install** button when the
   browser offers `beforeinstallprompt`.
 
+## Microphone (voice chat “Hey Zer”)
+
+Live voice conversation needs mic access on every target:
+
+- **Web/PWA** — granted by the browser on `https://` (Fly). No setup.
+- **Android** — CI adds `RECORD_AUDIO` + `MODIFY_AUDIO_SETTINGS` to
+  `AndroidManifest.xml` after `cap add`. Capacitor's WebView prompts for the
+  runtime permission.
+- **iOS** — CI adds `NSMicrophoneUsageDescription` and
+  `NSSpeechRecognitionUsageDescription` to `Info.plist` after `cap sync`.
+- **Electron** — `desktop/main.cjs` allows the `media` permission; macOS builds
+  set the same usage strings via `build.mac.extendInfo`.
+
 ## Assets
 - App icons live in `frontend/public/` (`icon.svg`, `icon-192.png`, `icon-512.png`).
   Regenerate with `python3 tools/gen_icons.py`.

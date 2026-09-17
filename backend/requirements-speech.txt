@@ -1,0 +1,9 @@
+# Speech-to-text for Zer (open-source OpenAI Whisper on CTranslate2).
+# Tiny CPU wheels; the model (ZER_WHISPER_MODEL, default "base") is downloaded
+# on first use and cached under HF_HOME.
+faster-whisper>=1.0,<2
+
+# Optional higher-quality neural TTS (Meta MMS VITS) instead of eSpeak NG.
+# Uncomment to enable; ~1 GB extra and needs ~1 GB more RAM.
+# torch>=2.2
+# transformers>=4.40

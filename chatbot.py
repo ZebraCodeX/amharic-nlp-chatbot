@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-chatbot.py — "ሕሳር", a general-purpose Amharic conversational AI.
+chatbot.py — "ዘር", a general-purpose Amharic conversational AI.
 
 An Amharic-speaking AI assistant:
   * vector-based intent matching over `data/knowledge_base.json`
@@ -167,7 +167,7 @@ class AmharicAssistant:
         self.intents = self.data['intents']
         self.dictionary = self.data.get('dictionary', {})
         self.rich = self._load_rich()
-        self.name = self.data.get('assistant', {}).get('name', 'ሕሳር')
+        self.name = self.data.get('assistant', {}).get('name', 'ዘር')
         self.user_name = None
         self._lat_re = re.compile(r'[\u0041-\u024f]+')
         self._more_memory = []
@@ -591,7 +591,7 @@ class AmharicAssistant:
              "server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)\n"
              "print('Serving on port 8000…')\nserver.serve_forever()"),
             (('json', 'ጃሶን'), 'python',
-             "import json\n\ndata = {'name': 'ሕሳር', 'age': 1}\n"
+             "import json\n\ndata = {'name': 'ዘር', 'age': 1}\n"
              "print(json.dumps(data, ensure_ascii=False, indent=2))\n\n"
              "parsed = json.loads(json.dumps(data))\nprint(parsed['name'])"),
             (('html', 'ገፅ', 'page', 'ድር', 'ድረ'), 'html',
@@ -622,7 +622,7 @@ class AmharicAssistant:
             'html': "<!doctype html>\n<html lang='am'>\n<head>\n<meta charset='utf-8'>\n"
                     "<title>ገፄ</title>\n</head>\n<body>\n  <h1>ሰላም!</h1>\n</body>\n</html>",
             'css': "body {\n  font-family: 'Noto Sans Ethiopic', sans-serif;\n}",
-            'json': "{\n  \"name\": \"ሕሳር\",\n  \"topic\": \"AI\",\n  \"lang\": \"am\"\n}",
+            'json': "{\n  \"name\": \"ዘር\",\n  \"topic\": \"AI\",\n  \"lang\": \"am\"\n}",
             'bash': "#!/usr/bin/env bash\necho 'ሰላም ዓለም!'",
         }
         return defaults.get(lang, defaults['python'])
@@ -667,7 +667,7 @@ class AmharicAssistant:
         except Exception:
             return None
         system = (
-            "አንተ ሕሳር ነህ፣ ብልህና ዝርዝር የምትመልስ የአማርኛ ቋንቋ AI ረዳት ነህ። "
+            "አንተ ዘር ነህ፣ ብልህና ዝርዝር የምትመልስ የአማርኛ ቋንቋ AI ረዳት ነህ። "
             "ሁልጊዜ በአማርኛ (ግዕዝ ፊደል) መልስ ስጥ። ለእንግሊዝኛ መልስ አትስጥ፣ ትርጉም ብቻ "
             "ከጠየቀህ በስተቀር። "
             "መልስህ ጥልቅና ዝርዝር ይሁን፦ (፩) በአንድ ዓረፍተ ነገር አጭር መግቢያ/ ትርጉም ስጥ፤ "
@@ -851,7 +851,7 @@ class AmharicAssistant:
 
 def demo_chat():
     """Interactive command-line chat session in Amharic."""
-    print("ሕሳር — የአማርኛ AI ረዳት. አማርኛን ጻፍልኝ (‹ደህና ሁን› በል ወይም Ctrl-C ለመውጣት).")
+    print("ዘር — የአማርኛ AI ረዳት. አማርኛን ጻፍልኝ (‹ደህና ሁን› በል ወይም Ctrl-C ለመውጣት).")
     assistant = AmharicAssistant()
     print("ዝግጁ ነው! አሁን ማውራት እንጀምር።\n")
     while True:
@@ -863,10 +863,10 @@ def demo_chat():
         if not user:
             continue
         if user.lower() in ('quit', 'exit', 'q'):
-            print('ሕሳር > ደህና ሁን! እንደገና ይገናኘን።')
+            print('ዘር > ደህና ሁን! እንደገና ይገናኘን።')
             break
         r = assistant.respond(user)
-        print(f'ሕሳር > {r["reply"]}')
+        print(f'ዘር > {r["reply"]}')
 
 
 if __name__ == '__main__':

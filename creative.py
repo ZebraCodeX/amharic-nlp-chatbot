@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-creative.py — offline generative skills for ሕሳር.
+creative.py — offline generative skills for ዘር.
 
 When no LLM is reachable, "write / create / develop / plan" requests still get
 REAL output instead of canned chat lines: poems, song lyrics, story openings,
@@ -117,7 +117,7 @@ def website(text):
         f"<section id=\"intro\"><h2>መግቢያ</h2><p>እንኳን ወደ {t_title} በደህና መጡ! እዚህ ዋና መልእክትህን አስቀምጥ።</p></section>\n"
         f"<section id=\"about\"><h2>ስለ እኛ</h2><p>ስለ {t_title} አጭር መግለጫ እነሆ። ምስሎችንና ማስታወቂያ ማከል ይቻላል።</p></section>\n"
         f"<section id=\"contact\"><h2>ያግኙን</h2><p>ኢሜይል፡- ስም@example.com · ስልክ፡- +251 9xx xxx xxx</p></section>\n"
-        f"</main><footer>© 2026 · {t_title} · በሕሳር የተሰራ</footer>\n"
+        f"</main><footer>© 2026 · {t_title} · በዘር የተሰራ</footer>\n"
         f"</body></html>")
 
 

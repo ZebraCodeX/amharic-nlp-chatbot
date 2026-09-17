@@ -28,22 +28,37 @@ def get_assistant():
         return _assistant
 
 
-def chat(text, history=None):
-    """Run one assistant turn, serialized so concurrent requests can't interleave."""
+def get_zer():
+    global _assistant
+    with _lock:
+        from zer import get_zer as _get_zer
+        z = _get_zer()
+        _assistant = z._am          # keep a handle for other helpers
+        return z
+
+
+def chat(text, history=None, lang=None):
+    """One bilingual Zer turn, serialized so concurrent requests can't interleave."""
     from chatbot import normalize_history
     text = (text or '').strip()
     if not text:
-        return {'reply': 'ምን ትፈልጋለህ? በአማርኛ ጻፍልኝ።',
-                'source': 'empty', 'confidence': 1.0, 'followups': []}
-    assistant = get_assistant()
+        return {'reply': 'ምን ልርዳህ? / How can I help?',
+                'source': 'empty', 'confidence': 1.0, 'lang': lang or 'unknown',
+                'followups': []}
+    z = get_zer()
     with _lock:
-        if isinstance(history, list):
-            norm = normalize_history(history)
-            while norm and norm[-1].get('user') == text:
-                norm.pop()
-            assistant.history = norm[:10]
+        norm = normalize_history(history) if isinstance(history, list) else []
+        while norm and norm[-1].get('user') == text:
+            norm.pop()
+        z._am.history = norm[:10]
+        en_history = []
+        for turn in norm[:6]:
+            if turn.get('user'):
+                en_history.append({'role': 'user', 'content': turn['user']})
+            if turn.get('reply'):
+                en_history.append({'role': 'assistant', 'content': turn['reply']})
         start = time.time()
-        result = assistant.respond(text)
+        result = z.respond(text, lang=lang, history=en_history, use_llm=True)
     result['elapsed_ms'] = round((time.time() - start) * 1000)
     return result
 
@@ -144,6 +159,24 @@ def corrections_review(limit=100):
 def corrections_count():
     from translator import corrections_count as _count
     return _count()
+
+
+# ---------------------------------------------------------------------------
+# speech (open-source STT/TTS — optional, degrades to the browser)
+# ---------------------------------------------------------------------------
+def speech_status():
+    import zer_speech
+    return zer_speech.status()
+
+
+def transcribe(data, filename='audio.webm', language=None):
+    import zer_speech
+    return zer_speech.transcribe_bytes(data, filename=filename, language=language)
+
+
+def synthesize(text, lang='am'):
+    import zer_speech
+    return zer_speech.synthesize(text, lang)
 
 
 # ---------------------------------------------------------------------------

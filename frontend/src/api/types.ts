@@ -10,6 +10,7 @@ export interface ChatReply {
   reply: string;
   source: string;
   confidence: number;
+  lang?: string;
   followups?: string[];
   detail?: boolean;
   elapsed_ms?: number;
@@ -69,4 +70,22 @@ export interface VerifyResult {
   id: string;
   corrected: string;
   endorsed: number;
+}
+
+export interface SpeechStatus {
+  stt: { available: boolean; provider?: string; model?: string; languages?: string[] };
+  tts: { available: boolean; espeak?: boolean; mms?: boolean; languages?: string[] };
+}
+
+export interface VoiceTurn {
+  transcript: string;
+  language: string;
+  language_probability?: number;
+  reply: string;
+  source?: string;
+  followups?: string[];
+  stt_provider?: string;
+  tts_provider?: string;
+  audio_mime?: string;
+  audio_b64?: string | null;
 }

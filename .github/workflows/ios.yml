@@ -44,6 +44,14 @@ jobs:
           npx cap add ios || true
           npx cap sync ios
 
+      - name: Add microphone + speech usage strings for voice chat
+        working-directory: frontend/ios/App
+        run: |
+          PLIST=App/Info.plist
+          /usr/libexec/PlistBuddy -c "Add :NSMicrophoneUsageDescription string 'Zer uses the microphone for live Amharic/English voice conversation.'" "$PLIST" || true
+          /usr/libexec/PlistBuddy -c "Add :NSSpeechRecognitionUsageDescription string 'Zer uses speech recognition for the Hey Zer wake word.'" "$PLIST" || true
+          /usr/libexec/PlistBuddy -c "Print" "$PLIST" | grep -i -E "Microphone|Speech" || true
+
       - name: Build unsigned simulator app (validation)
         working-directory: frontend/ios/App
         run: |
