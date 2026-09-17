@@ -1,4 +1,4 @@
-# ሕሳር — Amharic AI (ChatGPT-style, Amharic only)
+# ሕሳር — Amharic AI (Amharic only)
 
 [![Live on Fly.io](https://img.shields.io/badge/live-hisar--amharic--ai.fly.dev-e94560)](https://hisar-amharic-ai.fly.dev)
 
@@ -7,7 +7,7 @@ keyboard and the translation review UI at
 [`/review`](https://hisar-amharic-ai.fly.dev/review), deployed on Fly.io.
 
 A pure-Python, dependency-free Amharic conversational AI plus a complete
-Amharic NLP toolkit. Think *ChatGPT that only speaks Amharic*:
+Amharic NLP toolkit. An Amharic-speaking AI assistant:
 
 - **Real AI brain (optional)** — when any OpenAI-compatible endpoint is
   reachable (a local **Ollama**, or a keyed service) ሕሳር becomes a true

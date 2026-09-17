@@ -2,7 +2,7 @@
 """
 chatbot.py — "ሕሳር", a general-purpose Amharic conversational AI.
 
-Like a small ChatGPT that only speaks Amharic:
+An Amharic-speaking AI assistant:
   * vector-based intent matching over `data/knowledge_base.json`
   * Amharic word definitions (built-in dictionary)
   * arithmetic in Amharic or with digits  ("5 ጠቅላላ 3", "17*4")
@@ -655,7 +655,7 @@ class AmharicAssistant:
         return random.choice([
             "አድርጌ አላየሁም ይሆናል። ስለ ምን ነገር ነው የምትጠይቀው? በአማርኛ በዝርዝር ስጠኝ።",
             "ያንን ጥያቄ ይዘቱን በተሻለ መረዳት እፈልጋለሁ። ተጨማሪ ዝርዝር ስጠኝ፣ ወይም እንዲህ ጠይቀኝ፡- «ስለ ቴክኖሎጂ ንገረኝ»፣ «AI ምንድን ነው?»፣ «5 ጠቅላላ 7»",
-            "እንደ ChatGPT ለመርዳት እዚህ ነኝ! ስለ ማንኛውም ርዕስ ጠይቀኝ፣ ሂሳብ አስላ፣ ወይም የአማርኛ ቃላትን ፍቺ ጠይቅ። ለምሳሌ፡ «ሳይንስ ምንድን ነው?»",
+            "ለመርዳት እዚህ ነኝ! ስለ ማንኛውም ርዕስ ጠይቀኝ፣ ሂሳብ አስላ፣ ወይም የአማርኛ ቃላትን ፍቺ ጠይቅ። ለምሳሌ፡ «ሳይንስ ምንድን ነው?»",
         ])
 
     # ------------------------------------------------------------------
