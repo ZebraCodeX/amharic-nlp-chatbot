@@ -6,6 +6,40 @@
 keyboard and the translation review UI at
 [`/review`](https://hisar-amharic-ai.fly.dev/review), deployed on Fly.io.
 
+The web app is a **Django REST Framework API** (`backend/`) with a
+**React + TypeScript** single-page front end (`frontend/`), styled with a custom
+Ethiopian-inspired *parchment & fidel* design system. The NLP brain stays pure
+Python stdlib and is reused unchanged behind the API.
+
+```text
+backend/    Django 6 + DRF  — REST API, serves the built SPA with gunicorn
+frontend/   Vite + React 18 + TypeScript — chat, keyboard, translation review
+chatbot.py  the assistant brain (used by backend/api/services.py)          ─┐
+translator.py  Amharic ⇄ English + user-correction store                    ├─ shared
+amharic_nlp/   trained n-gram / dictionaries / suggester                   ─┘
+chat_app.py + templates/ + static/   legacy stdlib server (kept for reference)
+```
+
+## Develop (Django + React)
+
+```bash
+# 1) backend
+python3 -m venv .venv && .venv/bin/pip install -r backend/requirements.txt
+cd backend && ../.venv/bin/python manage.py runserver        # http://127.0.0.1:8000
+
+# 2) frontend (separate terminal) — Vite proxies /api to Django
+cd frontend && npm install && npm run dev                    # http://127.0.0.1:5173
+
+# 3) production-style build (React → backend/static/spa, then gunicorn)
+cd frontend && npm run build
+cd ../backend && ../.venv/bin/python manage.py collectstatic --noinput
+../.venv/bin/gunicorn config.wsgi:application --bind 0.0.0.0:8000
+```
+
+API routes live under `/api/` (`chat`, `translate`, `translations`,
+`translations/stats`, `translations/verify`, `words`, `ngram`, `suggest`,
+`llm-status`, `health`). Django tests: `cd backend && python manage.py test api`.
+
 A pure-Python, dependency-free Amharic conversational AI plus a complete
 Amharic NLP toolkit. An Amharic-speaking AI assistant:
 
@@ -246,11 +280,16 @@ flyctl volumes create hisar_data --region sjc --size 1   # once
 flyctl deploy --remote-only --ha=false       # build + release
 ```
 
-The `hisar_data` volume is mounted at `/app/userdata` and persists crowd
-corrections (`user_translations.json`) and taught facts (`user_memory.json`)
-across restarts (see `HISAR_USERDATA_DIR`). Set an LLM backend with
-`flyctl secrets set LLM_BASE_URL=… LLM_API_KEY=… LLM_MODEL=…` to make the
-deployed app generative.
+The multi-stage `Dockerfile` builds the React SPA with Node, then runs
+**gunicorn** on port `8000` with Django serving both the API and the SPA (and
+WhiteNoise serving hashed assets). The `hisar_data` volume is mounted at
+`/app/userdata` and persists crowd corrections (`user_translations.json`) and
+taught facts (`user_memory.json`) across restarts (see `HISAR_USERDATA_DIR`).
+
+```bash
+flyctl secrets set DJANGO_SECRET_KEY="$(openssl rand -hex 32)"
+flyctl secrets set LLM_BASE_URL=… LLM_API_KEY=… LLM_MODEL=…   # optional: real LLM
+```
 
 ### Turn ሕሳር into a full LLM (optional)
 
@@ -261,7 +300,7 @@ make any OpenAI-compatible endpoint reachable:
 # Option A — local Ollama (free, offline, no API key)
 curl -fsSL https://ollama.com/install.sh | sh
 ollama pull qwen3:1.7b        # small; gemma2:2b / llama3.2:1b also fine
-# restart chat_app.py — it auto-detects Ollama and shows “✦ real Ai አእምሮ”
+# restart the server — it auto-detects Ollama and shows “✦ real Ai አእምሮ”
 
 # Option B — any OpenAI-compatible API
 LLM_BASE_URL=https://api.groq.com/openai/v1 \
@@ -275,13 +314,14 @@ dictionary and greetings stay on the instant deterministic rules.
 ## Tests
 
 ```bash
-python3 -m unittest discover -s tests -v   # 46 unit + integration tests
-node tools/smoke_test.js                    # headless DOM-stub test of the keyboard
-                                            # type-ahead (suggestUrl) integration
+cd backend && ../.venv/bin/python manage.py test api   # Django/DRF API tests
+python3 -m unittest discover -s tests -v               # NLP brain unit + integration tests
+node tools/smoke_test.js                               # headless keyboard (type-ahead + phonetic)
+cd frontend && npm run typecheck                       # TypeScript
 ```
 
-`tests/test_nlp_package.py` covers the separated NLP app (package API, trained
-artifacts, Suggester, `/api/suggest` route, keyboard wiring).
+`backend/api/tests.py` covers the REST end points; `tests/` covers the pure
+NLP brain (assistant, translator scoring, keyboard component wiring).
 
 ## Try these
 

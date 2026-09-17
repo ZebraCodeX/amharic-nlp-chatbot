@@ -15,3 +15,11 @@ data/user_translations.json
 Dockerfile
 .dockerignore
 fly.toml
+
+# build artifacts / dev data
+frontend/node_modules
+frontend/dist
+backend/staticfiles
+backend/static/spa
+backend/db.sqlite3
+backend/userdata

@@ -9,3 +9,13 @@ data/user_memory.json
 data/user_translations.json
 # downloaded raw corpora (rebuild with `python3 -m amharic_nlp.tools.download_corpora`)
 amharic_nlp/corpora/
+
+# Django / React
+.venv/
+venv/
+node_modules/
+frontend/dist/
+backend/staticfiles/
+backend/static/spa/
+backend/db.sqlite3
+backend/userdata/

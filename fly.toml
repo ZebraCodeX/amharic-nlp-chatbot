@@ -1,5 +1,5 @@
-# fly.toml — Fly.io config for ሕሳር (Amharic AI).
-# Deploy:  flyctl deploy --remote-only
+# fly.toml — Fly.io config for ሕሳር (Django/DRF API + React SPA).
+# Deploy:  flyctl deploy --remote-only --ha=false
 app = "hisar-amharic-ai"
 primary_region = "sjc"
 
@@ -7,26 +7,25 @@ primary_region = "sjc"
   dockerfile = "Dockerfile"
 
 [env]
-  HOST = "0.0.0.0"
-  PORT = "8080"
+  DJANGO_DEBUG = "0"
+  DJANGO_ALLOWED_HOSTS = "*"
+  CSRF_TRUSTED_ORIGINS = "https://hisar-amharic-ai.fly.dev"
   HISAR_USERDATA_DIR = "/app/userdata"
 
 [http_service]
-  internal_port = 8080
+  internal_port = 8000
   force_https = true
   auto_stop_machines = "stop"
   auto_start_machines = true
   min_machines_running = 0
   processes = ["app"]
 
-# Persist crowd corrections (data/user_translations.json) and taught facts
-# (user_memory.json) across restarts. Create with:
-#   flyctl volumes create hisar_data --region sjc --size 1
+# Persist crowd corrections + taught facts across restarts.
 [mounts]
   source = "hisar_data"
   destination = "/app/userdata"
 
 [[vm]]
-  memory = "512mb"
+  memory = "1gb"
   cpu_kind = "shared"
   cpus = 1
