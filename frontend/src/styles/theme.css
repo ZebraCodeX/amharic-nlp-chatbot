@@ -317,6 +317,7 @@ a { color: var(--terracotta); }
   background: linear-gradient(150deg, var(--green), var(--green-2));
   box-shadow: var(--shadow-lg); transition: transform .12s;
 }
+.mic-btn.small { width: 46px; height: 46px; font-size: 1.15rem; border-radius: 15px; box-shadow: none; flex: 0 0 auto; }
 .mic-btn:hover { transform: translateY(-2px); }
 .mic-btn.recording { background: linear-gradient(150deg, var(--terracotta), #c2410c); animation: micpulse 1.2s infinite; }
 .mic-btn:disabled { opacity: .55; cursor: wait; }

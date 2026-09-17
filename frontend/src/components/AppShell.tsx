@@ -4,12 +4,8 @@ import { api } from '../api/client';
 import type { LlmStatus } from '../api/types';
 import { useInstallPrompt } from '../hooks/useInstallPrompt';
 
-const LINKS = [
-  { to: '/', label: 'ውይይት', end: true },
-  { to: '/voice', label: 'ድምጽ' },
-  { to: '/keyboard', label: 'ኪቦርድ' },
-  { to: '/review', label: 'ትርጉም' },
-];
+// One page (chat) + Review. Voice and the Amharic keyboard live inside the chat.
+const LINKS = [{ to: '/review', label: 'ትርጉም' }];
 
 export function AppShell() {
   const [llm, setLlm] = useState<LlmStatus | null>(null);
@@ -35,7 +31,6 @@ export function AppShell() {
             <NavLink
               key={l.to}
               to={l.to}
-              end={l.end}
               className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
             >
               {l.label}

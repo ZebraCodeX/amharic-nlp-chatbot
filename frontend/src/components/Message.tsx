@@ -6,6 +6,7 @@ export interface MessageData {
   role: 'user' | 'ai';
   text: string;
   source?: string;
+  lang?: string;
   elapsed?: number;
   followups?: string[];
 }

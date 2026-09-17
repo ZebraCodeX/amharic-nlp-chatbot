@@ -41,9 +41,12 @@ Python stdlib and is reused unchanged behind the API.
 
 ## Live voice conversation (Zer)
 
-Open **[`/voice`](https://hisar-amharic-ai.fly.dev/voice)** and press the mic (or
-toggle **Hey Zer** for hands-free). One round trip is
-`audio → STT → language detection → Zer → TTS → audio`, all open source:
+Voice is built into the chat: press the **🎙 mic** in the composer (or toggle
+**Hey Zer** for hands-free). Zer detects whether you spoke Amharic or English and
+**talks back in that same language**. One round trip is
+`audio → STT → language detection → Zer → TTS → audio`, all open source.
+The app has a single page (chat) plus **ትርጉም / Review** — the Amharic keyboard
+(⌨) and voice live inside the chat composer.
 
 | Stage | Library | Notes |
 | --- | --- | --- |
