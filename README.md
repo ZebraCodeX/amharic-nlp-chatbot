@@ -3,6 +3,18 @@
 A pure-Python, dependency-free Amharic conversational AI plus a complete
 Amharic NLP toolkit. Think *ChatGPT that only speaks Amharic*:
 
+- **Real AI brain (optional)** — when any OpenAI-compatible endpoint is
+  reachable (a local **Ollama**, or a keyed service) ሕሳር becomes a true
+  generative LLM that *only speaks Amharic*: writes poems, novels, essays,
+  websites and code, and answers open questions. The rule brain still gives
+  super-fast, deterministic answers for greetings, math, definitions and
+  memory; everything creative or open-ended goes to the LLM. Without a backend
+  it silently keeps working on the offline rule brain.
+- **Multi-domain corpus language model** — the assistant is trained (fully
+  offline, pure stdlib) on **books + movies + articles + web**, not just the
+  Bible: `data/nl_model.json` is a 2-gram/3-gram model over a combined corpus
+  and powers *next-word hints* **and full sentence completion** in the
+  keyboard (see `/api/suggest` below).
 - **Ask anything** — 50+ topics (programming, book/story writing, science,
   physics/biology/chemistry, business & economy, geography, Ethiopia, health,
   music, sports, Amharic grammar, learning tips, and much more).
@@ -12,6 +24,12 @@ Amharic NLP toolkit. Think *ChatGPT that only speaks Amharic*:
 - **Deep learning engine** — the assistant *remembers facts you teach it*
   («አስታውስ የማርያም ቡና ጥቁር ነው»), answers follow-up questions
   («እና ታዲያ?»), and keeps ~10 turns of conversation context.
+- **In-depth answers, not one-liners** — every substantive topic (40+ of them)
+  answers with a *summary + ዋና ነጥቦች bullets + example + suggested follow-ups*,
+  composed from the curated `data/rich_answers.json`. Ask «ስለ ኢትዮጵያ ንገረኝ» and
+  get real depth; ask «በአጭሩ» and get a concise reply. «እና ታዲያ?» adds the *next*
+  unseen points instead of repeating. The web UI renders the follow-ups as
+  tappable chips.
 - **Math** — `5 ጠቅላላ 7`, `17*4`, `አምስት ሲደመር ሦስት` → digits **and**
   Amharic number words (100+ number words supported).
 - **Dictionary** — «ኢንጄራ» ምን ማለት ነው? → 46 Amharic definitions.
@@ -23,60 +41,186 @@ Amharic NLP toolkit. Think *ChatGPT that only speaks Amharic*:
   options, predictive word strip, backspace (long-press to clear), symbols &
   Amharic-numerals page, and an Enter key. With the *EN ⇄ አማ* toggle on, a live
   translation bar above the keyboard shows your typing in English as you type.
-- **Spelling dictionary** — a 1,500+ correctly-spelled Amharic word dictionary
-  (`data/amharic_words.json`, served via `GET /api/words`) is searched as you
+- **Spelling dictionary** — a 20,000-word correctly-spelled Amharic dictionary
+  (`data/amharic_words.json`, served via `GET /api/words`) searched as you
   type: pick any seed word's child-letter order, the assistant's `fold()`
   matcher (vowel-order + homophone-insensitive, mirroring `AmharicNormalizer`)
   still finds the right word and offers up to 3 correctly-spelled options in
-  the suggestion strip; tap to insert. Falls back to an embedded mini-list
-  when offline.
+  the suggestion strip; tap to insert. Built from the multi-domain corpus
+  vocabulary (books, articles, web), so the suggestions match modern and
+  classical Amharic. Falls back to an embedded mini-list when offline.
+- **Reusable Amharic keyboard component** — the screen keyboard + word search is
+  a *stand-alone, plug-in web component* (`static/amharic-keyboard.js` +
+  `static/amharic-keyboard.css`). Any app can use it: give it an `<input>`, a
+  dictionary endpoint and it provides Gboard-style typing, the spelling
+  dictionary search, n-gram next-word hints, optional **server type-ahead**
+  (`suggestUrl`) with full sentence completions, and an optional live
+  translation bar. The AI chat consumes it like any other app — see the
+  standalone demo at `/keyboard`.
+- **Werket-style phonetic typing** — the Fidel engine from the
+  [Werket](https://github.com/ZebraCodeX/Werket) editor is ported in: flip the
+  *ላቲን → ግዕዝ · Phonetic* switch and
+  type Latin (`selam`, `buna`, `egziabher`) to compose Ge'ez (`ሰላም`, `ቡና`) on a
+  QWERTY page, with the GFF/Keyman uppercase-emphatic convention. `compose()`,
+  `charFor()` and `ordersFor()` are exported on `AmharicKeyboard` for reuse, and
+  the choice is remembered in `localStorage`.
+- **Translation review UI** — open `/review` to see Amharic words beside their
+  English translations and approve (✓) or correct (✎) them. Every correction is
+  stored server-side and *immediately wins* in the translator, so the crowd
+  keeps improving the whole app. Filter by *ማረጋገጫ / ያልተተረጎሙ / የተረጋገጡ*,
+  search, and see live counts.
 - **Remembers your name** — «ስሜ አበበ ነው» makes greetings personal.
 - **Amharic only** — English input gets a polite Amharic-only reminder
   (except programming-language code requests).
 
 No numpy. No sklearn. No flask. No network model. Just Python 3.8+ stdlib +
-one free HTTP translate call when the translator is switched on.
+one free HTTP translate call when the translator is switched on. The language
+model is a small JSON file learned offline from free Amharic corpora — no
+Python ML dependencies, and you can rebuild it yourself with
+`python3 -m amharic_nlp.training`.
 
 ## Features
 
-### NLP toolkit (`amharic_nlp.py`)
+### NLP app (`amharic_nlp/` — a standalone package)
+The NLP is *separated from the chatbot* into its own application. It owns the
+raw corpora (`amharic_nlp/corpora/{books,movies,articles,other}/`), the
+training pipeline and the production learner artifacts in `data/`; the chat
+server only talks to its public API (`amharic_nlp/__init__.py`).
+
 - `AmharicNormalizer` — collapses homophones (ሀ/ሐ/ኀ→ሀ, ሠ→ሰ, ኣ→አ, ፀ→ጸ).
 - `AmharicTokenizer` — Ge'ez word segmentation (letters only, punctuation-safe).
 - `AmharicStemmer` — prefixes/suffixes stripping (እንደ/ወደ/ስለ…, ዎች/ሮች/ኣት/ኣን…).
 - `StopWordFilter` — Amharic function words (`data/stopwords.txt`).
 - `SentenceSplitter` — splits on Amharic punctuation ። ፡ ፧ ፨.
 - `TfidfVectorizer` + `DocumentIndex` — TF-IDF, cosine similarity (pure stdlib).
-- `BibleCorpus` — *optional* Amharic Bible retrieval tool for researchers
-  (bring your own `data/amharic_bible.json` if you want it; **not used** by the
-  chat assistant).
+- `BibleCorpus` — Amharic Bible verse retrieval tool for researchers (the
+  `amharic_bible.json` used by training also lives in `corpora/books/`).
+- `corpus.py` — streaming readers for many free-text formats: plain text,
+  Leipzig Corpora sentences, Amharic Wikipedia dump XML, CC-100 web crawl and
+  the amharic-bible-json format.
+- `NLModel` (`model.py`) — the trained 2/3-gram reader/predictor.
+- `Suggester` (`suggester.py`) — type-ahead: closest words + next-word hints +
+  sentence completion, homophone-folded.
+- `training.py` — end-to-end trainer producing all artifacts below.
+- `tools/download_corpora.py` — fetch the free sources and drop them in
+  `corpora/` (books, movies, articles, web). Browser-download Leipzig bundles
+  if their CDN blocks scripts — just unpack the `*_sentences.txt` into
+  `corpora/articles/`; the trainer picks them up.
 
 ### Conversation engine (`chatbot.py`)
 - `AmharicAssistant` — vector-based intent matching over `data/knowledge_base.json`
   (54 intents, ~120 Amharic patterns & responses).
+- **Hybrid routing** — deterministic rules win for math, memory, definitions,
+  names, greetings and Amharic-only enforcement; creative and open-ended
+  requests (`ግጥም ጻፍልኝ`, «ስለ ኮስሞስ ንገረኝ») go to the LLM when reachable.
+- **Offline generative skills** (`creative.py`) — when no LLM is running, the
+  verbs *write / create / develop / plan* still produce **real artifacts** in
+  Amharic: poems, song lyrics, story openings, full HTML websites, essays and
+  6-step action plans — never canned "I can't" lines.
 - Teachable long-term memory persisted to `data/user_memory.json`.
 - Multi-turn follow-ups and conversational context.
 - Mini code-snippet generator (Python / JavaScript / HTML / CSS / JSON / Bash).
 - Arithmetic in Arabic digits or Amharic number words.
+- **Real clock & Amharic date** — «ስንት ሰዓት ነው?», «ዛሬ ምን ቀን ነው?» and «ሳምንቱ
+  ስንት ነው?» answer with the live Ethiopic calendar date (`et_calendar.py`):
+  Ge'ez month names (መስከረም … ጳጉሜ), Amharic week-day and the ዓ.ም era — plus
+  the first 12-hour Amharic clock answer (ስምንት ሰዓት ተኩል, ከሰዓት).
+- **Fun randomness** — «ሳንቲም ጣልልኝ» (ጭንቅላት/ጅራት), «ዳይስ ጣል» (1–6), «ዕጣ ቅዳልኝ»
+  and «የዘፈቀደ ቁጥር ምረጥ» (1–100).
+- Time-of-day-aware greetings: መልካም ጥዋት / እንደቀኑ ውብ ቀን / መልካም ምሽት / መልካም ሌሊት.
 - Word definitions via the built-in dictionary.
+
+### Language model (`data/nl_model.json`)
+- Trained by `python3 -m amharic_nlp.training` over a *balanced multi-domain
+  corpus*: **books** (Amharic Wikipedia dump + the full Amharic Bible),
+  **articles** (BBC Amharic + Leipzig news), **movies** (drop subtitles/scripts
+  into `corpora/movies/`) and **other** web text (CC-100 Amharic). The bundled
+  trained model: ~337,000 sentences, ~323,000 unique words, 30,000-word
+  unigram, bigram + trigram continuations, and a 15,000-sentence bank.
+- `NLModel.next_words((ቃል1, ቃል2))` → top continuation words (trigram
+  preferred, bigram backup). Powers the keyboard's *next-word hints*.
+- `Suggester.suggest(partial)` → `{words, next, sentences}` for the training
+  UI's smart type-ahead (served at `GET /api/suggest`).
+
+### Retrieving & retraining on more Amharic text
+```bash
+# 1) fetch the free sources (Wikipedia, Bible, BBC articles, CC-100 web)
+python3 -m amharic_nlp.tools.download_corpora
+
+# 2) drop your own corpus text files into the matching folders:
+#      amharic_nlp/corpora/books/     (books, encyclopedias, መጻሕፍት)
+#      amharic_nlp/corpora/movies/    (movie/series subtitles, scripts)
+#      amharic_nlp/corpora/articles/  (news, magazines, blog posts)
+#      amharic_nlp/corpora/other/     (anything else)
+#    — plain UTF-8 .txt works; Leipzig *_sentences.txt and Wikipedia dumps too.
+
+# 3) retrain (flags keep one giant dump from crowding out the others)
+python3 -m amharic_nlp.training --per-domain 150000 --bible amharic_nlp/corpora/books/amharic_bible.json
+```
+The trainer writes `nl_model.json`, `amharic_words.json` (20,000-word spelling
+dictionary), `vocabulary.txt` (every word + frequency), `sentences.json`
+(frequent-sentence completion bank) and `corpus_stats.json` into `data/`.
+
+### LLM client (`llm.py`)
+- Zero-config auto-detection: local **Ollama** at `localhost:11434`, or any
+  OpenAI-compatible endpoint via `$LLM_BASE_URL`, `$LLM_API_KEY`, `$LLM_MODEL`
+  (works with OpenAI, Groq, Together, OpenRouter, vLLM…).
+- Small built-in reply cache; thread-safe; falls back to `None` (→ rule brain)
+  when no backend responds.
 
 ### Translation (`translator.py`)
 - `translate(text, src, dst)` — free, keyless Amharic ⇄ English.
 - MyMemory primary engine, Google Translate (gtx) fallback, in-memory cache.
 - Works offline (`online=False`) when the network is unavailable.
+- `list_translations(query, status, limit, offset)` — the review catalogue
+  (glossary + user corrections + frequent words awaiting translation).
+- `translation_stats()` — counts by status (`suggested`, `verified`,
+  `corrected`, `untranslated`, `glossary`).
 
 ### Web chat (`chat_app.py` + `templates/chat.html`)
-- `GET /` — chat UI with the Gboard-style keyboard & Amharic font.
-- `GET /api/chat?text=…` — JSON `{reply, source, confidence, elapsed_ms}`.
-- `GET /api/translate?text=…&to=en|am` — JSON `{translated}`.
+- `GET /` — chat UI with the reusable Gboard-style + phonetic keyboard.
+- `GET /keyboard` — **standalone keyboard demo** (a plain form using the same
+  reusable component, no AI involved).
+- `GET /review` — **translation review UI** (`templates/translations.html`):
+  approve or correct Amharic ⇄ English pairs; each saved correction immediately
+  improves the translator.
+- `GET /static/*` — the reusable keyboard assets (`amharic-keyboard.js/css`),
+  the review assets, and any other static files.
+- `POST /api/chat` — JSON body `{text, history?}` → `{reply, source, confidence,
+  followups?, elapsed_ms}` (GET `?text=` also works). `history` carries recent
+  turns so the LLM keeps the conversation context after a page reload.
+- `GET /api/translate?text=…&to=en|am` — JSON `{translated, score, reasons,
+  word_evidence}`; candidates are scored for glossary fidelity, length sanity,
+  and back-translation agreement when online engines are available.
+- `GET /api/translations?status=&q=&limit=&offset=` — paginated review
+  catalogue; `status ∈ {all, review, verified, corrected, untranslated}`.
+- `GET /api/translations/stats` — live counts for the review dashboard.
+- `POST /api/translations/verify` (alias `/api/translate/verify`) — body
+  `{text, src, dst, translation, correct?}`; saves an approval or correction.
+- `GET /api/words` — the 20,000-word spelling dictionary.
+- `GET /api/ngram` — the multi-domain n-gram model (next-word hints in UI).
+- `GET /api/suggest?text=…` — **smart type-ahead**: `{words, next, sentences}`
+  — closest dictionary words to the typed prefix, n-gram next-word hints, and
+  full sentence completions from the trained sentence bank (homophone-folded).
+- `GET /api/llm-status` — `{available, model, backend}` (shown as a badge in
+  the header: ✦ real Ai አእምሮ vs. offline AI).
 - `GET /api/health` — health check.
 
 ## Run it
 
 ```bash
-python3 chat_app.py            # http://0.0.0.0:8080
+python3 chat_app.py            # http://localhost:8080
 # or
 PORT=9000 python3 chat_app.py
 ```
+
+The server binds dual-stack (IPv6 + IPv4), so `http://localhost:8080` works on
+any machine. Standalone keyboard demo (no AI): `http://localhost:8080/keyboard`.
+
+On Android or iPhone, open the site in a modern browser and choose **Add to
+Home screen** or **Install app**. The PWA caches the keyboard, dictionary, and
+n-gram assets for fast startup; chat and online translation use the server when
+it is reachable.
 
 Command-line demo:
 
@@ -84,15 +228,55 @@ Command-line demo:
 python3 chatbot.py
 ```
 
+### Turn ሕሳር into a full LLM (optional)
+
+Zero setup for the offline rule brain — but to unlock real generative AI, just
+make any OpenAI-compatible endpoint reachable:
+
+```bash
+# Option A — local Ollama (free, offline, no API key)
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull qwen3:1.7b        # small; gemma2:2b / llama3.2:1b also fine
+# restart chat_app.py — it auto-detects Ollama and shows “✦ real Ai አእምሮ”
+
+# Option B — any OpenAI-compatible API
+LLM_BASE_URL=https://api.groq.com/openai/v1 \
+LLM_API_KEY=your-key LLM_MODEL=llama-3.3-70b-versatile python3 chat_app.py
+```
+
+While it is running, creative & open-ended requests (poems, stories, websites,
+essays, “ስለ X ንገረኝ”) are answered by the LLM in Amharic; math, memory,
+dictionary and greetings stay on the instant deterministic rules.
+
+## Tests
+
+```bash
+python3 -m unittest discover -s tests -v   # 46 unit + integration tests
+node tools/smoke_test.js                    # headless DOM-stub test of the keyboard
+                                            # type-ahead (suggestUrl) integration
+```
+
+`tests/test_nlp_package.py` covers the separated NLP app (package API, trained
+artifacts, Suggester, `/api/suggest` route, keyboard wiring).
+
 ## Try these
 
 | You type | What happens |
 |---|---|
-| ሰላም | Amharic greeting |
+| ሰላም | Amharic greeting (time-of-day aware) |
 | ስሜ አበበ ነው | remembers your name |
+| ስንት ሰዓት ነው? | real 12-hour Amharic clock time |
+| ዛሬ ምን ቀን ነው? | Ethiopic calendar date + ዓ.ም era + Amharic week-day |
+| ሳንቲም ጣልልኝ | coin flip (ጭንቅላት / ጅራት) |
+| ዳይስ ጣል | dice roll (1–6) |
+| ዕጣ ቅዳልኝ | random lot (1–100) |
 | AI ምንድን ነው? | plain-language definition |
 | ፕሮግራም ምንድን ነው? | programming intro |
 | ፓይቶን ኮድ ጻፍልኝ | Python code sample |
+| ስለ ፍቅር ግጥም ጻፍልኝ | original poem (offline template or LLM) |
+| ለትምህርቴ እቅድ አዘጋጅልኝ | 6-step action plan (offline) |
+| ስለ ቡና የድረገጽ ኮድ ጻፍልኝ | full HTML website (offline or LLM) |
+| ስለ ኮስሞስ ንገረኝ | open answer (LLM) |
 | መጽሐፍ መጻፍ እንዴት | book-writing structure |
 | 5 ጠቅላላ 7 | math → መልሱ፡ 12 — አስራ ሁለት |
 | «ኢንጄራ» ምን ማለት ነው? | Amharic definition |
@@ -104,10 +288,27 @@ python3 chatbot.py
 ## Data
 
 - `data/knowledge_base.json` — conversational intents, responses, dictionary.
+- `data/rich_answers.json` — curated in-depth detail (summary / points / example
+  / follow-ups) for every substantive intent; powers the detailed replies.
 - `data/stopwords.txt` — Amharic stop words.
 - `data/user_memory.json` — facts taught to the assistant (created at runtime).
-- *(Optional)* `data/amharic_bible.json` — Amharic Bible, only for the toolkit's
-  optional `BibleCorpus`, never for the chatbot.
+- `data/user_translations.json` — user-approved/corrected Amharic ⇄ English pairs
+  from `/review` (created at runtime; corrected pairs always win in translation).
+- `data/nl_model.json` — 2/3-gram model across books + articles + movies + web
+  (from `amharic_nlp/corpora/`; rebuild with `python3 -m amharic_nlp.training`).
+- `data/amharic_words.json` — 20,000-word spelling dictionary (served at
+  `GET /api/words`; used by the keyboard and `/api/suggest`).
+- `data/vocabulary.txt` — every observed word + frequency (323k+ words).
+- `data/sentences.json` — frequent sentence bank for type-ahead completion.
+- `data/corpus_stats.json` — per-domain training report.
+
+## Ethiopic calendar (`et_calendar.py`)
+
+Pure-stdlib Gregorian ⇄ Ethiopic conversion so «ዛሬ ምን ቀን ነው?» works offline:
+the Ethiopic year (ዓ.ም) starts on Gregorian 11 September, has 12 × 30-day months
+plus ጳጉሜ (5 days, 6 in a leap year). Verified against known boundaries
+(NY 2000 ዓ.ም = 2007-09-11, ጳጉሜ 5 = 2026-09-10) and full round-trips in
+`tests/test_features.py`.
 
 ## License
 

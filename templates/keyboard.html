@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amharic Keyboard — standalone</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/amharic-keyboard.css">
+    <style>
+        body{font-family:'Segoe UI',sans-serif;background:#0f2027;color:#e0e0e0;margin:0;min-height:100vh;display:flex;flex-direction:column}
+        .demo{max-width:640px;margin:0 auto;padding:24px 16px;width:100%}
+        h1{color:#4ecdc4;font-size:1.3em}
+        p{color:#9aa;line-height:1.6}
+        label{display:block;font-size:.85em;color:#4ecdc4;margin:14px 0 6px}
+        input{width:100%;padding:12px 16px;font-size:1.2em;border:2px solid #2a5a75;border-radius:8px;background:#12272e;color:#fff;outline:none;font-family:'Noto Sans Ethiopic',sans-serif}
+        input:focus{border-color:#4ecdc4}
+        .row{display:flex;gap:8px;margin-top:10px}
+        button{padding:10px 18px;background:#2a5a75;color:#fff;border:none;border-radius:8px;cursor:pointer}
+        button:hover{background:#1d4a63}
+        #log{font-size:.75em;color:#6fa;margin-top:14px;word-break:break-word;max-height:80px;overflow:auto}
+        footer{max-width:640px;margin:12px auto;padding:0 16px 24px;color:#567;font-size:.8em}
+        .kbd-float{max-width:640px;margin:0 auto;width:100%}
+    </style>
+</head>
+<body>
+    <div class="demo">
+        <h1>የአማርኛ የፊደል ቁልፍ ሰሌዳ — Amharic Keyboard</h1>
+        <p>This page is a plain web form — it has <em>nothing</em> to do with the AI chat.
+           It demonstrates that the keyboard is a <b>reusable component</b>: any app can
+           drop in <code>amharic-keyboard.js</code> + <code>amharic-keyboard.css</code>,
+           give it an input element and a dictionary, and get Gboard-style typing with
+           spelling-invariant word search + Bible-trained next-word hints.</p>
+
+        <label for="demoInput">Type here (any field in your app)</label>
+        <input id="demoInput" type="text" placeholder="በአማርኛ ያስገቡ..." autocomplete="off">
+
+        <div class="row">
+            <button onclick="kbd.toggle()">Show / Hide keyboard</button>
+            <button onclick="document.getElementById('demoInput').value='';kbd.refresh()">Clear</button>
+            <button onclick="log('value = '+document.getElementById('demoInput').value)">Value</button>
+        </div>
+        <div id="log">— events —</div>
+    </div>
+
+    <div class="kbd-float"><div id="kbd"></div></div>
+
+    <footer>Standalone demo · served by chat_app.py (uses /api/words + /api/ngram to give you live hints).</footer>
+
+    <script src="/static/amharic-keyboard.js"></script>
+    <script>
+        function log(s){const l=document.getElementById('log');l.textContent=s;clearTimeout(log._t);log._t=setTimeout(()=>{l.textContent='— events —'},4000);}
+        const kbd = new AmharicKeyboard({
+            container: document.getElementById('kbd'),
+            input: document.getElementById('demoInput'),
+            dictUrl: '/api/words',
+            ngramUrl: '/api/ngram',
+            suggestUrl: '/api/suggest',
+            onInput: (v, kind) => { if (kind === 'key' || kind === 'suggest') log('typed → ' + v); },
+            onSubmit: (v) => { log('enter → ' + v); }
+        });
+        kbd.open();
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+        }
+    </script>
+</body>
+</html>

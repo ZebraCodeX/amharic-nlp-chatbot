@@ -1,0 +1,65 @@
+/* translations.css — Amharic ⇄ English review UI (dark theme, matches chat). */
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#1a1a2e;color:#e0e0e0;min-height:100vh}
+a{color:inherit}
+header{background:#16213e;padding:14px 20px;border-bottom:1px solid #0f3460;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+header h1{font-size:1.25em;color:#e94560;font-family:'Noto Sans Ethiopic',sans-serif}
+header .sub{color:#888;font-size:.82em;display:block;margin-top:2px}
+.back{color:#4ecdc4;font-size:.85em;text-decoration:none;background:#0f3460;border-radius:16px;padding:6px 14px}
+.back:hover{background:#4ecdc4;color:#12233b}
+
+.stats{display:flex;flex-wrap:wrap;gap:10px;padding:14px 20px 4px}
+.stat{background:#16213e;border:1px solid #0f3460;border-radius:10px;padding:10px 16px;min-width:110px;display:flex;flex-direction:column}
+.stat b{font-size:1.4em;color:#e0e0e0}
+.stat span{font-size:.75em;color:#999;font-family:'Noto Sans Ethiopic',sans-serif}
+.stat.st-review b{color:#f0b429}
+.stat.st-none b{color:#e07a5f}
+.stat.st-verified b{color:#4ecdc4}
+.stat.st-corrected b{color:#9adbbc}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px 20px}
+#search{flex:1;min-width:200px;padding:10px 14px;border:2px solid #0f3460;border-radius:8px;background:#1a1a2e;color:#fff;outline:none;font-family:'Noto Sans Ethiopic',sans-serif;font-size:1em}
+#search:focus{border-color:#e94560}
+#kbdToggle{padding:9px 16px;background:#16213e;color:#4ecdc4;border:1px solid #4ecdc455;border-radius:8px;cursor:pointer;font-family:'Noto Sans Ethiopic',sans-serif}
+#kbdToggle:hover,#kbdToggle.active{background:#4ecdc4;color:#12233b}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.filter{padding:7px 14px;background:#16213e;border:1px solid #0f3460;border-radius:16px;color:#aaa;cursor:pointer;font-size:.85em;font-family:'Noto Sans Ethiopic',sans-serif}
+.filter:hover{border-color:#4ecdc4}
+.filter.active{background:#e94560;color:#fff;border-color:#e94560}
+
+main{padding:4px 20px 40px;display:flex;flex-direction:column;gap:8px;max-width:1100px;margin:0 auto}
+.row{display:flex;gap:12px;align-items:center;background:#16213e;border:1px solid #0f3460;border-radius:10px;padding:10px 14px}
+.row.saved{border-color:#4ecdc4}
+.row .am{flex:0 0 26%;font-family:'Noto Sans Ethiopic',sans-serif;font-size:1.15em;word-break:break-word}
+.row .mid{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0}
+.en-input{padding:8px 12px;border:1px solid #0f3460;border-radius:7px;background:#1a1a2e;color:#e0e0e0;outline:none;font-size:1em}
+.en-input:focus{border-color:#4ecdc4}
+.badge{align-self:flex-start;font-size:.72em;padding:2px 8px;border-radius:10px;font-family:'Noto Sans Ethiopic',sans-serif}
+.st-review{background:#3a2f12;color:#f0b429}
+.st-verified{background:#123a33;color:#4ecdc4}
+.st-corrected{background:#123a25;color:#9adbbc}
+.st-none{background:#3a2019;color:#e07a5f}
+.row .actions{display:flex;flex-direction:column;gap:6px}
+.btn{padding:7px 12px;border-radius:7px;border:1px solid transparent;cursor:pointer;font-size:.82em;font-family:'Noto Sans Ethiopic',sans-serif;white-space:nowrap}
+.btn.ok{background:#123a33;color:#4ecdc4;border-color:#4ecdc455}
+.btn.ok:hover{background:#4ecdc4;color:#12233b}
+.btn.fix{background:#3a2f12;color:#f0b429;border-color:#f0b42955}
+.btn.fix:hover{background:#f0b429;color:#12233b}
+.btn:disabled{opacity:.5;cursor:wait}
+.loading,.empty{padding:30px;text-align:center;color:#888;font-family:'Noto Sans Ethiopic',sans-serif}
+#moreBtn{align-self:center;margin:12px auto 30px;display:block;padding:10px 24px;background:#0f3460;color:#4ecdc4;border:1px solid #4ecdc455;border-radius:20px;cursor:pointer;font-family:'Noto Sans Ethiopic',sans-serif}
+#moreBtn:hover{background:#4ecdc4;color:#12233b}
+#moreBtn.hidden{display:none}
+
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:#0f3460;color:#fff;padding:12px 22px;border-radius:22px;opacity:0;pointer-events:none;transition:.25s;font-family:'Noto Sans Ethiopic',sans-serif;z-index:90;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{background:#123a33;color:#4ecdc4}
+.toast.err{background:#3a1420;color:#e94560}
+
+#kbd{padding:0 20px}
+@media(max-width:680px){
+    .row{flex-direction:column;align-items:stretch}
+    .row .am{flex:none}
+    .row .actions{flex-direction:row}
+    .btn{flex:1;text-align:center}
+}

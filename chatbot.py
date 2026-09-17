@@ -6,6 +6,9 @@ Like a small ChatGPT that only speaks Amharic:
   * vector-based intent matching over `data/knowledge_base.json`
   * Amharic word definitions (built-in dictionary)
   * arithmetic in Amharic or with digits  ("5 ጠቅላላ 3", "17*4")
+  * real clock + Amharic date: ስንት ሰዓት ነው? ዛሬ ምን ቀን ነው?
+    (Ethiopic calendar: መስከረም 1 … ጳጉሜ, era ዓ.ም, Amharic week-day)
+  * fun randomness — coin flip, dice roll, random lot (ዕጣ)
   * remembers your name across the conversation
   * politely enforces "Amharic only"
 No Bible, no pastor. Pure Python stdlib.
@@ -15,6 +18,7 @@ import json
 import os
 import random
 import re
+from datetime import datetime
 
 from amharic_nlp import (
     AmharicNormalizer,
@@ -24,10 +28,68 @@ from amharic_nlp import (
     DocumentIndex,
     TfidfVectorizer,
 )
+from et_calendar import (
+    MONTHS,
+    GREGORIAN_MONTHS,
+    gregorian_to_ethiopic,
+    weekday,
+)
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 KB_FILE = os.path.join(DATA_DIR, 'knowledge_base.json')
+RICH_FILE = os.path.join(DATA_DIR, 'rich_answers.json')
 MEMORY_FILE = os.path.join(DATA_DIR, 'user_memory.json')
+
+# Tags whose answers stay short on purpose — chit-chat, identity, courtesy.
+SHORT_TAGS = {
+    'greeting', 'goodbye', 'thanks', 'how_are_you', 'who_are_you',
+    'your_name', 'your_age', 'origin', 'joke', 'praise', 'i_love_you',
+    'small_talk',
+}
+
+# Phrasings that ask for a concise reply, or for an in-depth one.
+_SHORT_RE = re.compile(r'በአጭሩ|በአጭር|አጭር|በአጭሩ ንገረኝ|\bshort\b|briefly', re.IGNORECASE)
+_DETAIL_RE = re.compile(
+    r'በዝርዝር|ዝርዝር|አስረዳኝ|አብራራልኝ|ተጨማሪ\s+ዝርዝር|ሙሉ\s+ማብራሪያ|'
+    r'\bdetail|\bin[\s-]?depth|explain',
+    re.IGNORECASE)
+
+
+def normalize_history(history, limit=10):
+    """Normalize a conversation history list into {user, reply, source} turns.
+
+    The web client sends OpenAI-style {role, content} turns; the assistant
+    stores {user, reply, source}. Accept either (or junk) without crashing.
+    """
+    out = []
+    if not isinstance(history, list):
+        return out
+    for turn in history[-limit:]:
+        if not isinstance(turn, dict):
+            continue
+        if 'user' in turn and 'reply' in turn:
+            user = str(turn.get('user') or '').strip()
+            reply = str(turn.get('reply') or '').strip()
+            if not user and not reply:
+                continue
+            out.append({
+                'user': user,
+                'reply': reply,
+                'source': str(turn.get('source') or 'history'),
+            })
+            continue
+        content = str(turn.get('content') or '').strip()
+        if not content:
+            continue
+        if str(turn.get('role') or '') == 'assistant':
+            out.append({'user': '', 'reply': content, 'source': 'follow_up'})
+        else:
+            out.append({'user': content, 'reply': '', 'source': 'injected'})
+    return out
+
+# Intents that are creative by nature — routed to the LLM first when one is
+# reachable, so the "write a poem / book / website" requests get real output.
+CREATIVE_TAGS = {'book_writing', 'story_writing', 'character_creation', 'essay'}
 
 # Amharic number words → digits (helps the calculator)
 AMH_NUM_BASE = {
@@ -101,6 +163,7 @@ class AmharicAssistant:
         self.data = self._load(knowledge_base_path)
         self.intents = self.data['intents']
         self.dictionary = self.data.get('dictionary', {})
+        self.rich = self._load_rich()
         self.name = self.data.get('assistant', {}).get('name', 'ሕሳር')
         self.user_name = None
         self._lat_re = re.compile(r'[\u0041-\u024f]+')
@@ -109,6 +172,8 @@ class AmharicAssistant:
         self._idx_to_tag = []
         self.memory = self._load_memory()
         self._last = None          # (tag, response) of the last KB answer
+        self._used_points = {}     # tag -> how many rich bullet points shown
+        self._short_requested = False
         self.history = []          # recent turns for deeper context
         self._build_index()
 
@@ -118,6 +183,45 @@ class AmharicAssistant:
     def _load(self, path):
         with open(path, encoding='utf-8') as f:
             return json.load(f)
+
+    def _load_rich(self):
+        """Curated, multi-section detail per intent (summary/points/example)."""
+        try:
+            with open(RICH_FILE, encoding='utf-8') as f:
+                data = json.load(f)
+            answers = data.get('answers', {})
+            return answers if isinstance(answers, dict) else {}
+        except (OSError, ValueError):
+            return {}
+
+    def _compose_detailed(self, tag, base):
+        """Turn a one-line KB answer into a thorough, structured reply.
+
+        Returns (text, followups). Tags without curated detail (chit-chat,
+        identity) keep their short answer unchanged.
+        """
+        if tag in SHORT_TAGS:
+            return base, []
+        entry = self.rich.get(tag)
+        if not entry:
+            return base, []
+        parts = [entry.get('summary') or base]
+        points = [p for p in (entry.get('points') or []) if p]
+        if points:
+            parts.append('ዋና ነጥቦች፦\n' + '\n'.join('• ' + p for p in points))
+        example = entry.get('example')
+        if example:
+            parts.append('ምሳሌ፦ ' + example)
+        followups = [f for f in (entry.get('followups') or []) if f]
+        if followups:
+            parts.append('ተጨማሪ ልጠይቅ? ' + ' · '.join(followups))
+        return '\n\n'.join(parts), followups
+
+    def _detail_reply(self, tag, base):
+        """Detailed reply for a matched intent, honoring a concise request."""
+        if self._short_requested:
+            return base, []
+        return self._compose_detailed(tag, base)
 
     def _build_index(self):
         docs = []
@@ -175,6 +279,8 @@ class AmharicAssistant:
             if intent['tag'] == tag:
                 pool = [r for r in intent['responses'] if r != exclude]
                 resp = random.choice(pool or intent['responses'])
+                if tag == 'greeting':
+                    resp = self._time_greeting() + '! ' + resp
                 if self.user_name and tag in ('greeting', 'how_are_you'):
                     return resp.rstrip('?') + f", {self.user_name}?"
                 return resp
@@ -250,6 +356,23 @@ class AmharicAssistant:
         tag, used = self._last
         if not re.search(r'(እና|ታዲያ|ደግሞ|ተጨማሪ|ሌላ|እንዴት|ለምን|ምን ማለት|more|also|then)', text):
             return None
+        # Prefer the next unseen bullets from the curated detail, so a follow-up
+        # deepens the answer instead of repeating it.
+        entry = self.rich.get(tag)
+        if entry:
+            points = [p for p in (entry.get('points') or []) if p]
+            start = self._used_points.get(tag, 0)
+            remaining = points[start:]
+            if remaining:
+                take = remaining[:3]
+                self._used_points[tag] = start + len(take)
+                out = 'ተጨማሪ ነጥቦች፦\n' + '\n'.join('• ' + p for p in take)
+                if start + len(take) >= len(points):
+                    example = entry.get('example')
+                    if example:
+                        out += '\n\nምሳሌ፦ ' + example
+                self._last = (tag, used)
+                return out
         resp = self._respond_for(tag, exclude=used)
         if resp:
             self._last = (tag, resp)
@@ -357,6 +480,71 @@ class AmharicAssistant:
             self.user_name = m.group(1)
             return f"{self.user_name} ብለህ ትጠራለህ? ደስ ተሰኝቻለሁ! ሰላም {self.user_name}! እንዴት ልረዳህ?"
         return None
+
+    # ------------------------------------------------------------------
+    # real clock, Amharic (Ethiopic) calendar date & fun randomness
+    # ------------------------------------------------------------------
+    def _time_greeting(self):
+        h = datetime.now().hour
+        if 5 <= h < 12:
+            return 'መልካም ጥዋት'
+        if 12 <= h < 16:
+            return 'እንደቀኑ ውብ ቀን'
+        if 16 <= h < 19:
+            return 'መልካም ምሽት'
+        return 'መልካም ሌሊት'
+
+    def _amh_clock(self, h, m):
+        eth = (h + 6) % 12 or 12
+        if m == 0:
+            tail = ''
+        elif m <= 30:
+            tail = ' ተኩል' if m == 30 else f' እና {_amh_num_word(m)} ደቂቃ'
+        else:
+            tail = f' እና {_amh_num_word(m)} ደቂቃ'
+        part = ('ሌሊት' if h < 4 else 'ጧት' if h < 11 else 'ቀትር'
+                if h < 14 else 'ከሰዓት' if h < 18 else 'ማታ' if h < 21 else 'ሌሊት')
+        return f'{_amh_num_word(eth)} ሰዓት{tail} ({part})'
+
+    def _try_time(self, text):
+        if not re.search(r'(ሰዓት|ሰአት|ሰዓቱ|ጊዜ(ው)?\s*(ስንት|ምን))', text):
+            return None
+        if not re.search(r'(ስንት|ምን\s+ያህል|ምን\s+ያክል|አሳይ|ንገረኝ|መቼ)\??', text):
+            return None
+        now = datetime.now()
+        return (f'አሁን {self._amh_clock(now.hour, now.minute)} ነው። '
+                f'ለአንድ ግልጽነት (24-ሰዓት: {now.hour:02d}:{now.minute:02d})።')
+
+    def _try_date(self, text):
+        if not re.search(r'(ዛሬ|ቀኑ|ቀን|ሳምንቱ|ሳምንት|የምን\s+ቀን|የትኛው\s+ቀን)', text):
+            return None
+        if not re.search(r'(ስንት|ምን|የምን|የትኛው|አሳይ|መቼ)\??', text):
+            return None
+        now = datetime.now()
+        et = gregorian_to_ethiopic(now.year, now.month, now.day)
+        wd = weekday(now.year, now.month, now.day)
+        suffix = ' ቀን' if et[1] != 13 else ''
+        return (f'ዛሬ {wd} ነው። በኢትዮጵያ አቆጣጠር {MONTHS[et[1] - 1]} {et[2]}{suffix}, {et[0]} ዓ.ም። '
+                f'በጎርጎርዮስ አቆጣጠር {GREGORIAN_MONTHS[now.month - 1]} {now.day}, {now.year}።')
+
+    _RANDOM_RE = re.compile(
+        r'ሳንቲም\s+(ጣል|ጣሊ|ጣሉ|\btoss\b)|\bcoin\b|\bflip\b|'
+        r'(ዳይስ|ዲይስ)\b|\bdice\b|\bdie\b|'
+        r'ዕጣ|ዕድል\s+(ቅዳ|ጣል)|\blot\b|'
+        r'(random\s+)?(number|ቁጥር)\s+(ምረጥ|random)|\brandom\b|የዘፈቀደ\s+ቁጥር',
+        re.IGNORECASE)
+
+    def _try_random(self, text):
+        m = self._RANDOM_RE.search(text)
+        if not m:
+            return None
+        if re.search(r'(ሳንቲም|\bcoin\b|\bflip\b)', text, re.I):
+            return f'ሳንቲሙ {random.choice(["ጭንቅላት", "ጅራት"])} ወጣ!'
+        if re.search(r'(ዳይስ|ዲይስ|\bdice\b|\bdie\b)', text, re.I):
+            return f'ዳይሱ {random.randint(1, 6)} ወጣ! (ጥሩ ዕድል?)'
+        if re.search(r'(random|የዘፈቀደ|ቁጥር)', text, re.I):
+            return random.randint(1, 100) == 7 and '…(ዕጣው 7 — ዕድለኛ ቁጥር!)' or f'ዕጣው {random.randint(1, 100)} ወጣ!'
+        return f'ዕጣው {random.randint(1, 100)} ወጣ!'
 
     # ------------------------------------------------------------------
     # mini code generator: ፕሮግራም / programming language snippets
@@ -467,71 +655,194 @@ class AmharicAssistant:
         ])
 
     # ------------------------------------------------------------------
+    # optional LLM brain (llm.py) — used for creative / open-ended requests
+    # ------------------------------------------------------------------
+    def _llm_answer(self, text):
+        try:
+            from llm import chat as llm_chat
+        except Exception:
+            return None
+        system = (
+            "አንተ ሕሳር ነህ፣ ብልህና ዝርዝር የምትመልስ የአማርኛ ቋንቋ AI ረዳት ነህ። "
+            "ሁልጊዜ በአማርኛ (ግዕዝ ፊደል) መልስ ስጥ። ለእንግሊዝኛ መልስ አትስጥ፣ ትርጉም ብቻ "
+            "ከጠየቀህ በስተቀር። "
+            "መልስህ ጥልቅና ዝርዝር ይሁን፦ (፩) በአንድ ዓረፍተ ነገር አጭር መግቢያ/ ትርጉም ስጥ፤ "
+            "(፪) ከዚያ «ዋና ነጥቦች» በሚል ርዕስ ስር 3–6 የተለያዩ ነጥቦችን በነጥብ (•) ዘርዝር፤ "
+            "(፫) ተጨባጭ ምሳሌ ወይም አጠቃቀም ጨምር፤ (፬) ሲመችህ ሠንጠረዥ፣ ደረጃ ወይም ኮድ "
+            "ተጠቀም፤ (፭) በመጨረሻ አንባቢው ሊጠይቅ የሚችለውን 1–2 ተከታይ ጥያቄ ጠቁም። "
+            "ተጠቃሚው ግጥም፣ ዘፈን፣ ታሪክ፣ ድርሰት፣ ቻራክተር፣ ድረ-ገጽ (HTML) ወይም ኮድ "
+            "ከጠየቀ ሙሉ ይዘቱን አዘጋጅ። ወዳጃዊ፣ ግልጽና ፈጠራ አስተሳሰብ ያለህ ሁን። "
+            "አስፈላጊ ካልሆነ ከ600 ቃላት አትርግም (ግጥም/ኮድ/ዝርዝር ሲሆን ተገቢውን ሙሉ ክፍል ስጥ)።"
+        )
+        if self._short_requested:
+            system += " ተጠቃሚው አጭር መልስ ጠይቋል — አጭርና ቀጥተኛ መልስ ስጥ።"
+        if self.user_name:
+            system += f" የተጠቃሚው ስም {self.user_name} ነው።"
+        history = []
+        for turn in self.history[-6:]:
+            if not isinstance(turn, dict):
+                continue
+            user = str(turn.get('user') or '').strip()
+            if user:
+                history.append({'role': 'user', 'content': user})
+            src = str(turn.get('source') or '')
+            reply = str(turn.get('reply') or '').strip()
+            if reply and (src.startswith('intent:') or src in
+                          ('fallback', 'llm', 'follow_up', 'injected', 'history')):
+                history.append({'role': 'assistant', 'content': reply})
+        return llm_chat(system, text, history)
+
+    def _creative_offline(self, text):
+        """Offline generative skills: write/create/develop/plan get REAL output
+        (poems, plans, websites…) even when no LLM is reachable."""
+        try:
+            from creative import creative_answer
+            return creative_answer(text)
+        except Exception:
+            return None
+
+    # ------------------------------------------------------------------
     # main entry point
     # ------------------------------------------------------------------
-    def respond(self, text):
+    @staticmethod
+    def _result(reply, source, confidence, followups=None, detail=False):
+        out = {'reply': reply, 'source': source,
+               'confidence': round(confidence, 3) if isinstance(confidence, float) else confidence}
+        if followups:
+            out['followups'] = list(followups)
+        if detail:
+            out['detail'] = True
+        return out
+
+    def respond(self, text, use_llm=True, detail=True):
         text = (text or '').strip()
         if not text:
-            return {'reply': 'ምን ትፈልጋለህ? በአማርኛ ጻፍልኝ።', 'source': 'empty', 'confidence': 1.0}
+            return self._result('ምን ትፈልጋለህ? በአማርኛ ጻፍልኝ።', 'empty', 1.0)
+
+        # Respect an explicit call for a short or an in-depth answer.
+        self._short_requested = bool(_SHORT_RE.search(text))
+        if _DETAIL_RE.search(text):
+            self._short_requested = False
+            detail = True
 
         # code requests may contain programing-language names (Latin) → allow
         code = self._try_code(text)
         if code:
             self._push_history(text, code, 'code')
-            return {'reply': code, 'source': 'code', 'confidence': 0.9}
+            return self._result(code, 'code', 0.9)
 
         if self._is_amharic_only(text):
-            return {
-                'reply': 'እባክህ በአማርኛ ጻፍልኝ! እኔ የተፈጠርኩት የአማርኛ ቋንቋን ለመረዳት ነው። እንግሊዝኛን አልገባኝም። ትርጉም የምትፈልግ ከሆነ «EN» ማብሪያውን ተጠቀም።',
-                'source': 'language_gate', 'confidence': 1.0,
-            }
+            return self._result(
+                'እባክህ በአማርኛ ጻፍልኝ! እኔ የተፈጠርኩት የአማርኛ ቋንቋን ለመረዳት ነው። እንግሊዝኛን አልገባኝም። ትርጉም የምትፈልግ ከሆነ «EN» ማብሪያውን ተጠቀም።',
+                'language_gate', 1.0)
 
         # teachable long-term memory
         taught = self._try_teach(text)
         if taught:
             self._push_history(text, taught, 'memory')
-            return {'reply': taught, 'source': 'memory', 'confidence': 0.9}
+            return self._result(taught, 'memory', 0.9)
 
         # name capture
         named = self._try_name(text)
         if named:
-            return {'reply': named, 'source': 'name', 'confidence': 0.9}
+            return self._result(named, 'name', 0.9)
 
         # arithmetic
         math = self._try_math(text)
         if math:
-            return {'reply': math, 'source': 'math', 'confidence': 0.99}
+            return self._result(math, 'math', 0.99)
+
+        # real clock / Amharic date / fun randomness
+        clock = self._try_time(text)
+        if clock:
+            return self._result(clock, 'time', 0.95)
+        day = self._try_date(text)
+        if day:
+            return self._result(day, 'date', 0.95)
+        rnd = self._try_random(text)
+        if rnd:
+            return self._result(rnd, 'random', 0.9)
 
         # word meaning
         meaning = self._try_dict(text)
         if meaning:
-            return {'reply': meaning, 'source': 'dictionary', 'confidence': 0.95}
+            return self._result(meaning, 'dictionary', 0.95)
 
         # knowledge base (vector search)
         tag, score = self._match_intent(text)
         if tag and score >= 0.30:
             resp = self._respond_for(tag)
             self._last = (tag, resp)
-            self._push_history(text, resp, f'intent:{tag}')
-            return {'reply': resp, 'source': f'intent:{tag}', 'confidence': round(score, 3)}
+            rule_only = tag in ('greeting', 'how_are_you', 'goodbye', 'thanks')
+            prefers_llm = (use_llm and not rule_only and
+                           (tag in CREATIVE_TAGS or
+                            self._is_creative_request(text) or
+                            self._is_open_ended(text) or
+                            bool(_DETAIL_RE.search(text))))
+            if prefers_llm:
+                llm_reply = self._llm_answer(text)
+                if llm_reply:
+                    self._push_history(text, llm_reply, 'llm')
+                    return self._result(llm_reply, 'llm', 0.9)
+                offline = self._creative_offline(text)
+                if offline:
+                    self._push_history(text, offline, 'creative')
+                    return self._result(offline, 'creative', 0.7)
+            detailed, followups = (self._detail_reply(tag, resp) if detail
+                                   else (resp, []))
+            self._push_history(text, detailed, f'intent:{tag}')
+            return self._result(detailed, f'intent:{tag}', score,
+                                followups=followups, detail=detailed != resp)
 
         # deep recall: facts the user taught me
         recalled = self._recall_memory(text)
         if recalled:
             self._push_history(text, recalled, 'memory')
-            return {'reply': recalled, 'source': 'memory', 'confidence': 0.5}
+            return self._result(recalled, 'memory', 0.5)
 
         # context follow-up on the previous topic
         follow = self._follow_up(text)
         if follow:
             self._push_history(text, follow, 'follow_up')
-            return {'reply': follow, 'source': 'follow_up', 'confidence': 0.6}
+            return self._result(follow, 'follow_up', 0.6)
 
-        return {'reply': self._fallback(), 'source': 'fallback', 'confidence': 0.12}
+        # deeply open-ended question → LLM first, rule fallback last
+        if use_llm:
+            llm_reply = self._llm_answer(text)
+            if llm_reply:
+                self._push_history(text, llm_reply, 'llm')
+                return self._result(llm_reply, 'llm', 0.85)
+            if self._is_creative_request(text):
+                offline = self._creative_offline(text)
+                if offline:
+                    self._push_history(text, offline, 'creative')
+                    return self._result(offline, 'creative', 0.7)
+
+        return self._result(self._fallback(), 'fallback', 0.12,
+                            followups=self._fallback_followups())
+
+    def _fallback_followups(self):
+        return ['ስለ AI ንገረኝ', 'ስለ ቴክኖሎጂ ንገረኝ', 'ስለ ኢትዮጵያ ንገረኝ']
 
     def _push_history(self, user, reply, source):
         self.history.append({'user': user, 'reply': reply, 'source': source})
         del self.history[:-10]
+
+    def _is_creative_request(self, text):
+        return bool(re.search(
+            r'(ግጥም|ዘፈን|መዝሙር|ድርሰት|ድህረ\s*ገጽ|ዌብ\s*ሳይት|ቻራክተር|ተረት|ልቦለድ|'
+            r'እቅድ|ዕቅድ|ፕላን|ዲዛይን|ግንባታ|ፍጠር|ፍጥረት|አዘጋጅ|'
+            r'poem|song|story|essay|website|plan|design|build|create|develop|write|generate|'
+            r'ታሪክ\s+(ጻፍ|ፃፍ|ስጠኝ)|ጻፍልኝ|ፃፍልኝ|ፃፍ|ጻፍ|ስጠኝ|ጻፍልኝ)',
+            self.normalizer.normalize(text)))
+
+    def _is_open_ended(self, text):
+        """„Tell me about…" phrasing — deserves the LLM when one is reachable."""
+        return bool(re.search(
+            r'ንገረኝ|ንገርኝ|ጠይቀኝ|ጠይቁ|ምን\s+ታውቃለህ|ምን\s+ታውቂያለሁ|'
+            r'ተረዳህ|ልታስረዳኝ|ማብራራት|መጠየቅ\s+እፈልጋለሁ|ጥያቄ\s+አለኝ|'
+            r'ምን\s+ማለት\s+ነው\s+.*\?|ስለ.*\?\s*$',
+            self.normalizer.normalize(text)))
 
 
 def demo_chat():

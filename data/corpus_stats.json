@@ -1,0 +1,28 @@
+{
+  "domains": {
+    "books": {
+      "files": 2,
+      "sentences": 180177,
+      "tokens": 1489603,
+      "unique_words": 200392
+    },
+    "articles": {
+      "files": 60,
+      "sentences": 6923,
+      "tokens": 71411,
+      "unique_words": 15211
+    },
+    "other": {
+      "files": 1,
+      "sentences": 150000,
+      "tokens": 1377889,
+      "unique_words": 185105
+    }
+  },
+  "total_sentences": 337100,
+  "total_tokens": 2938903,
+  "total_unique_words": 323098,
+  "dictionary_words": 20000,
+  "sentence_bank": 14965,
+  "data_dir": "/home/zee/Work/amharic-nlp-chatbot/data"
+}

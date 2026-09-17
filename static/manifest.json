@@ -1,0 +1,36 @@
+{
+  "name": "ሕሳር — የአማርኛ AI ውይይት",
+  "short_name": "ሕሳር",
+  "description": "Amharic AI assistant — smart type-ahead, dictionary, translator with verified corrections, and offline n-gram model.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a1a2e",
+  "theme_color": "#16213e",
+  "lang": "am",
+  "dir": "ltr",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    { "src": "/static/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/static/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/static/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "ውይይት ጀምር",
+      "short_name": "Chat",
+      "description": "Open ሕሳር chat",
+      "url": "/",
+      "icons": [{ "src": "/static/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "ሙሉ የቁልፍ ሰሌዳ",
+      "short_name": "Keyboard",
+      "description": "Amharic keyboard + word search",
+      "url": "/keyboard",
+      "icons": [{ "src": "/static/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}
