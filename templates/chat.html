@@ -112,8 +112,8 @@ const kbd = new AmharicKeyboard({
     dictUrl: '/api/words',
     ngramUrl: '/api/ngram',
     suggestUrl: '/api/suggest',
-    phonetic: true,                       // Werket-style: type selam → ሰላም
-    storageKey: 'hisar.phonetic',
+    phonetic: false,                      // default = Amharic Fidel keyboard;
+    storageKey: 'hisar.phonetic',         // the toggle (selam → ሰላም) is opt-in
     onSubmit: sendMsg,
     translate: {
         enabled: () => document.getElementById('trsToggle').checked,

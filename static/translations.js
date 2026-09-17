@@ -229,7 +229,7 @@
             kbd = new window.AmharicKeyboard({
                 container: $('kbd'),
                 input: searchEl,
-                phonetic: true,
+                phonetic: false,
                 storageKey: 'hisar.phonetic',
                 placeholder: 'የአማርኛ ቃል ጻፍ…'
             });

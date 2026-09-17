@@ -86,9 +86,19 @@ class PhoneticKeyboardAssetTest(unittest.TestCase):
         self.assertIn('.akb-mode-toggle', self.css)
         self.assertIn('.akb-key.latin', self.css)
 
-    def test_chat_page_enables_phonetic(self):
-        self.assertIn('phonetic: true', self.chat)
+    def test_chat_page_defaults_to_amharic_keyboard(self):
+        # The on-screen keyboard must be the Amharic Fidel layout by default;
+        # phonetic (Latin→Ge'ez) typing is an opt-in toggle, not the default.
+        self.assertIn('phonetic: false', self.chat)
+        self.assertNotIn('phonetic: true', self.chat)
+        self.assertIn('amharic-keyboard.js', self.chat)
         self.assertIn('/review', self.chat)
+
+    def test_component_phonetic_is_opt_in(self):
+        self.assertIn('this.phonetic = !!options.phonetic', self.js)
+        # The Fidel (Amharic) letters page exists and is the non-phonetic default.
+        self.assertIn('akb-key char', self.js)
+        self.assertIn('akb-key latin', self.js)
 
     def test_compose_known_words(self):
         # Mirrors the Werket README examples: selam → ሰላም, buna → ቡና.

@@ -58,12 +58,13 @@ Amharic NLP toolkit. Think *ChatGPT that only speaks Amharic*:
   translation bar. The AI chat consumes it like any other app — see the
   standalone demo at `/keyboard`.
 - **Werket-style phonetic typing** — the Fidel engine from the
-  [Werket](https://github.com/ZebraCodeX/Werket) editor is ported in: flip the
-  *ላቲን → ግዕዝ · Phonetic* switch and
-  type Latin (`selam`, `buna`, `egziabher`) to compose Ge'ez (`ሰላም`, `ቡና`) on a
-  QWERTY page, with the GFF/Keyman uppercase-emphatic convention. `compose()`,
-  `charFor()` and `ordersFor()` are exported on `AmharicKeyboard` for reuse, and
-  the choice is remembered in `localStorage`.
+  [Werket](https://github.com/ZebraCodeX/Werket) editor is ported in. The
+  on-screen keyboard is the **Amharic Fidel layout by default** (tap a family
+  key for its 7 vowel orders); flip the *ላቲን → ግዕዝ · Phonetic* switch only if
+  you want to type Latin (`selam`, `buna`) and have it compose Ge'ez (`ሰላም`,
+  `ቡና`) on a QWERTY page, with the GFF/Keyman uppercase-emphatic convention.
+  `compose()`, `charFor()` and `ordersFor()` are exported on `AmharicKeyboard`
+  for reuse, and the choice is remembered in `localStorage`.
 - **Translation review UI** — open `/review` to see Amharic words beside their
   English translations and approve (✓) or correct (✎) them. Every correction is
   stored server-side and *immediately wins* in the translator, so the crowd
