@@ -42,6 +42,7 @@ _whisper_failed = False
 _mms_failed = False
 _mms_error = None
 _piper_error = None
+_uroman = None
 
 SUPPORTED_LANGS = ('am', 'en')
 
@@ -54,6 +55,18 @@ def _whisper_model_name():
 
 def _espeak_bin():
     return shutil.which('espeak-ng') or shutil.which('espeak')
+
+
+def _romanize(text, lcode='amh'):
+    """MMS-TTS expects Latin (uroman-romanized) text for non-Latin scripts."""
+    global _uroman
+    try:
+        if _uroman is None:
+            from uroman import Uroman
+            _uroman = Uroman()
+        return _uroman.romanize_string(text, lcode=lcode)
+    except Exception:
+        return text
 
 
 def _mms_ids(lang):
@@ -252,7 +265,11 @@ def _synthesize_mms(text, lang, rate=None, volume=None):
                 entry = (model, tokenizer)
                 _mms_models[model_id] = entry
             model, tokenizer = entry
-            inputs = tokenizer(text, return_tensors='pt')
+            prepared = _romanize(text, 'amh') if lang == 'am' else text
+            inputs = tokenizer(prepared, return_tensors='pt')
+            if inputs['input_ids'].numel() == 0:
+                _mms_error = 'tokenizer produced no tokens'
+                return None
             with torch.no_grad():
                 waveform = model(**inputs).waveform[0].cpu().numpy()
             pcm = (waveform * 32767).clip(-32768, 32767).astype('<i2').tobytes()

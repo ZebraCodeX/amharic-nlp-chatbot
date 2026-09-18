@@ -4,10 +4,12 @@
 faster-whisper>=1.0,<2
 
 # Text-to-speech:
-#   MMS-TTS (Meta neural VITS) — the strong Amharic voice; needs torch+transformers.
+#   MMS-TTS (Meta neural VITS) — the strong Amharic voice. It needs `uroman`
+#   because MMS expects romanized text for non-Latin scripts.
 #   Piper — fast, natural English ONNX voices.
-# Torch is installed CPU-only in the Dockerfile (smaller, no CUDA); transformers
-# drives MMS here. Uncomment trl separately if you want SFTTrainer.
-transformers>=4.44
+# Torch is installed CPU-only in the Dockerfile (smaller, no CUDA).
+# transformers is pinned below 5.x: the VITS path is stable on 4.4x.
+transformers>=4.44,<5
 sentencepiece
+uroman>=0.2
 piper-tts>=1.2
