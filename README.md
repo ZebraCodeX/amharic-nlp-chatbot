@@ -141,9 +141,11 @@ Zer detects whether you spoke Amharic or English and **talks back in that same
 language**. One round trip is `audio → STT → language detection → Zer → TTS →
 audio`, all open source.
 
-**🎛 Voice settings** — pick the voice type per language (eSpeak NG voices and
-vocal variants, or the MMS neural voice when enabled) and tune **speed, pitch
-and volume**; settings persist locally.
+**🎛 Voice settings** — human-sounding **neural** voices by default: Meta
+**MMS-TTS** for Amharic (`facebook/mms-tts-amh`; needs `uroman` for the Ge'ez
+script) and **Piper** for English (Amy / Ryan / Lessac / Alan). Pick per language
+and tune **speed / pitch / volume**; settings persist. eSpeak NG is kept only as
+a last-resort fallback so audio always works.
 
 **Connection status** — the header shows a green **በመስረር ላይ · online** pill when
 the Zer server is reachable (polled every 30 s), and an amber **offline** pill
