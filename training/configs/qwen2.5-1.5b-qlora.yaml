@@ -1,0 +1,24 @@
+# Zer QLoRA — single 24 GB GPU (e.g. RTX 3090/4090, A10, L4, Kaggle P100/T4).
+# Pass these to training/train_qlora.py, e.g.:
+#   python training/train_qlora.py --model Qwen/Qwen2.5-1.5B-Instruct \
+#     --epochs 3 --batch 4 --grad-accum 4 --lr 2e-4 --max-len 2048
+model: Qwen/Qwen2.5-1.5B-Instruct
+dataset: training/data/amharic_sft.jsonl
+out: /path/to/zer-training/out/zer-qwen1.5b-lora
+
+epochs: 3
+batch: 4
+grad_accum: 4
+lr: 2.0e-4
+max_len: 2048
+
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.05
+target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+quant:
+  load_in_4bit: true
+  bnb_4bit_quant_type: nf4
+  bnb_4bit_compute_dtype: float16
+  bnb_4bit_use_double_quant: true

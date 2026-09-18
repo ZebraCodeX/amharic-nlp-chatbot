@@ -27,3 +27,8 @@ desktop/node_modules/
 desktop/release/
 desktop/web/
 *.keystore
+.venv-train/
+.hf-cache/
+training/out/
+training/data/*.jsonl
+training/out/
