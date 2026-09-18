@@ -64,6 +64,10 @@ if [ ! -d .venv-train ]; then python3 -m venv .venv-train; fi
 pip install -q -U pip
 pip install -q -r training/requirements-train.txt
 
+# RunPod's PyTorch image sets HF_HUB_ENABLE_HF_TRANSFER=1. Since hf_transfer is
+# in requirements it should be present; if not, drop the flag so downloads work.
+python -c "import hf_transfer" >/dev/null 2>&1 || unset HF_HUB_ENABLE_HF_TRANSFER
+
 # --- dataset + train + merge (run.sh fetches conversations, builds SFT) -----
 log "Building dataset + training (this is the long part)…"
 MODEL="$MODEL" OUT="$OUT" EPOCHS="$EPOCHS" BATCH="$BATCH" GA="$GA" \

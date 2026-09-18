@@ -27,6 +27,14 @@ import inspect
 import json
 import os
 
+# Some GPU base images (e.g. RunPod's PyTorch) export HF_HUB_ENABLE_HF_TRANSFER=1
+# without shipping the `hf_transfer` package — disable it rather than crash the
+# download. (hf_transfer is in requirements-train.txt, so this is a safety net.)
+try:
+    import hf_transfer  # noqa: F401
+except ImportError:
+    os.environ.pop('HF_HUB_ENABLE_HF_TRANSFER', None)
+
 import torch
 from datasets import load_dataset
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training

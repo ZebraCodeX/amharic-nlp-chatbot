@@ -25,6 +25,10 @@ fi
 pip install -q -U pip
 pip install -q -r training/requirements-train.txt
 
+# Some GPU base images (RunPod) set HF_HUB_ENABLE_HF_TRANSFER=1 without the
+# package installed; drop it so model downloads don't hard-fail.
+python -c "import hf_transfer" >/dev/null 2>&1 || unset HF_HUB_ENABLE_HF_TRANSFER
+
 python training/build_dataset.py
 
 python - <<'PY'

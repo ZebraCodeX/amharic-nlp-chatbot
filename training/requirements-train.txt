@@ -10,5 +10,6 @@ accelerate>=0.33
 datasets>=2.20
 bitsandbytes>=0.43        # 4-bit QLoRA (CUDA/Linux); omit on CPU or macOS
 trl>=0.11                 # optional: SFTTrainer alternative
+hf_transfer               # needed when HF_HUB_ENABLE_HF_TRANSFER=1 (RunPod images)
 sentencepiece
 safetensors

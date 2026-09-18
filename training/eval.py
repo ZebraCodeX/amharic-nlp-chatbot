@@ -9,8 +9,16 @@ Prints generations, the detected response language, and whether the reply
 matches the prompt language (Zer's core bilingual guarantee).
 """
 import argparse
+import os
 import re
 import sys
+
+# See train_qlora.py: tolerate base images that set HF_HUB_ENABLE_HF_TRANSFER
+# without installing hf_transfer.
+try:
+    import hf_transfer  # noqa: F401
+except ImportError:
+    os.environ.pop('HF_HUB_ENABLE_HF_TRANSFER', None)
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer

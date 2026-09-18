@@ -19,6 +19,13 @@ import argparse
 import os
 import sys
 
+# See train_qlora.py: tolerate base images that set HF_HUB_ENABLE_HF_TRANSFER
+# without installing hf_transfer.
+try:
+    import hf_transfer  # noqa: F401
+except ImportError:
+    os.environ.pop('HF_HUB_ENABLE_HF_TRANSFER', None)
+
 
 def main():
     ap = argparse.ArgumentParser()
