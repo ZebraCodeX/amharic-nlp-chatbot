@@ -1,20 +1,26 @@
 import type {
+  AuthPayload,
   ChatReply,
   ChatTurn,
+  Conversation,
   Health,
   LearningStats,
   LettersList,
   LlmStatus,
+  MemoryItem,
   ReviewItem,
   ReviewList,
   ReviewStats,
   SpeechStatus,
   TranslateResult,
+  User,
   VerifyResult,
   VoiceSettings,
   VoicesResponse,
   VoiceTurn,
 } from './types';
+
+export type { User };
 
 declare global {
   interface Window {
@@ -44,11 +50,31 @@ function resolveOrigin(): string {
 const ORIGIN = resolveOrigin();
 const BASE = `${ORIGIN}/api`;
 
+let _token: string | null = null;
+let _onUnauthorized: (() => void) | null = null;
+
+export function setAuthToken(token: string | null): void {
+  _token = token;
+}
+export function setUnauthorizedHandler(fn: (() => void) | null): void {
+  _onUnauthorized = fn;
+}
+
+function authHeaders(): Record<string, string> {
+  return _token ? { Authorization: `Token ${_token}` } : {};
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    ...init,
-  });
+  const headers = {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+    ...authHeaders(),
+    ...((init?.headers as Record<string, string> | undefined) || {}),
+  };
+  const res = await fetch(`${BASE}${path}`, { ...init, headers });
+  if (res.status === 401 && _token) {
+    _onUnauthorized?.();
+  }
   if (!res.ok) {
     const text = await res.text().catch(() => '');
     throw new Error(`${res.status} ${res.statusText}${text ? `: ${text.slice(0, 200)}` : ''}`);
@@ -66,10 +92,10 @@ function qs(params: Record<string, string | number | undefined>): string {
 }
 
 export const api = {
-  chat(text: string, history?: ChatTurn[]): Promise<ChatReply> {
+  chat(text: string, history?: ChatTurn[], conversation?: number): Promise<ChatReply> {
     return request<ChatReply>('/chat/', {
       method: 'POST',
-      body: JSON.stringify({ text, history }),
+      body: JSON.stringify({ text, history, conversation }),
     });
   },
 
@@ -145,6 +171,52 @@ export const api = {
     return request<Health>('/health/');
   },
 
+  // ---- auth ----
+  register(body: { username: string; password: string; display_name?: string; email?: string }) {
+    return request<AuthPayload>('/auth/register/', { method: 'POST', body: JSON.stringify(body) });
+  },
+  login(body: { username: string; password: string }) {
+    return request<AuthPayload>('/auth/login/', { method: 'POST', body: JSON.stringify(body) });
+  },
+  logout() {
+    return request<{ ok: boolean }>('/auth/logout/', { method: 'POST' });
+  },
+  me() {
+    return request<User>('/auth/me/');
+  },
+
+  // ---- conversations + memories ----
+  listConversations() {
+    return request<{ conversations: Conversation[] }>('/conversations/');
+  },
+  createConversation(title = '') {
+    return request<Conversation>('/conversations/', {
+      method: 'POST',
+      body: JSON.stringify({ title }),
+    });
+  },
+  getConversation(id: number) {
+    return request<Conversation>(`/conversations/${id}/`);
+  },
+  renameConversation(id: number, title: string) {
+    return request<Conversation>(`/conversations/${id}/`, {
+      method: 'PATCH',
+      body: JSON.stringify({ title }),
+    });
+  },
+  deleteConversation(id: number) {
+    return request<{ ok: boolean }>(`/conversations/${id}/`, { method: 'DELETE' });
+  },
+  listMemories() {
+    return request<{ memories: MemoryItem[] }>('/memories/');
+  },
+  deleteMemory(id: number) {
+    return request<{ ok: boolean }>('/memories/', {
+      method: 'DELETE',
+      body: JSON.stringify({ id }),
+    });
+  },
+
   /** One hands-free round trip: audio in → transcript + reply + spoken reply. */
   async voiceTurn(
     audio: Blob,
@@ -164,7 +236,11 @@ export const api = {
       });
     }
     // No explicit Content-Type: the browser must set the multipart boundary.
-    const res = await fetch(`${BASE}/voice/turn/`, { method: 'POST', body: form });
+    const res = await fetch(`${BASE}/voice/turn/`, {
+      method: 'POST',
+      body: form,
+      headers: { ...authHeaders() },
+    });
     if (!res.ok) throw new Error(`${res.status} ${await res.text().catch(() => '')}`);
     return (await res.json()) as VoiceTurn;
   },
@@ -177,7 +253,7 @@ export const api = {
   ): Promise<Blob | null> {
     const res = await fetch(`${BASE}/speech/synthesize/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({ text, lang, ...(voice || {}) }),
     });
     if (!res.ok) return null;

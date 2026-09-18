@@ -117,6 +117,71 @@ a { color: var(--terracotta); }
 
 .main { flex: 1; width: 100%; }
 
+/* ---------- app layout + sidebar ---------- */
+.app-layout { display: flex; min-height: 100vh; }
+.sidebar-wrap {
+  flex: 0 0 292px; position: sticky; top: 0; align-self: flex-start;
+  height: 100vh; overflow-y: auto; border-right: 1px solid var(--line);
+  background: var(--paper);
+}
+.sidebar { display: flex; flex-direction: column; gap: 4px; padding: 16px 14px 20px; min-height: 100%; }
+.sidebar .brand { padding: 4px 6px 14px; }
+.side-section { padding: 10px 0; border-top: 1px solid var(--line); }
+.side-section.conversations { border-top: 1px solid var(--line); flex: 1 1 auto; min-height: 0; }
+.side-label { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; padding-left: 4px; }
+.side-note { font-size: 0.8rem; color: var(--muted); padding: 4px 6px; }
+.side-bottom { margin-top: auto; border-top: 1px solid var(--line); }
+.side-field { display: flex; flex-direction: column; gap: 5px; font-size: 0.8rem; color: var(--ink-soft); margin: 8px 0; }
+.side-field .mode-select { width: 100%; }
+
+.user-row { display: flex; align-items: center; gap: 9px; }
+.avatar-circle {
+  width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  background: linear-gradient(150deg, var(--flag-green), var(--green-2)); color: #f8f4e6;
+  font-family: var(--font-display); font-size: 1.05rem; flex: 0 0 34px;
+}
+.user-name { flex: 1; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.link-btn { background: none; border: none; color: var(--terracotta); cursor: pointer; font-family: var(--font-body); font-size: 0.82rem; padding: 4px 6px; }
+.link-btn:hover { text-decoration: underline; }
+
+.conv-list { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; }
+.conv-item {
+  display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 10px;
+  cursor: pointer; border: 1px solid transparent; transition: background .12s;
+}
+.conv-item:hover { background: var(--parchment); }
+.conv-item.active { background: var(--green-soft); border-color: var(--green-2); }
+.conv-title { flex: 1; font-size: 0.88rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.conv-time { font-size: 0.66rem; color: var(--muted); flex: 0 0 auto; }
+.conv-del { border: none; background: none; color: var(--muted); cursor: pointer; font-size: 1.05rem; line-height: 1; padding: 0 2px; }
+.conv-del:hover { color: var(--flag-red); }
+
+.mobile-bar { display: none; }
+.icon-btn { border: 1px solid var(--line-strong); background: var(--paper); border-radius: 9px; padding: 5px 11px; font-size: 1.1rem; cursor: pointer; }
+.mobile-brand { font-family: var(--font-display); color: var(--green); font-size: 1.1rem; margin-right: auto; }
+.status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); }
+.status-dot.on { background: var(--flag-green); box-shadow: 0 0 0 4px rgba(7,138,48,.16); }
+.status-dot.off { background: var(--flag-yellow); }
+
+/* modal */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(36,31,26,.45); z-index: 80; display: grid; place-items: center; padding: 18px; }
+.modal { width: min(420px, 100%); padding: 24px; display: flex; flex-direction: column; gap: 11px; }
+.modal .review-input { width: 100%; }
+
+@media (max-width: 860px) {
+  .app-layout { flex-direction: column; }
+  .mobile-bar {
+    display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 50;
+    padding: 9px 14px; background: var(--parchment); border-bottom: 1px solid var(--line);
+  }
+  .sidebar-wrap {
+    position: fixed; left: 0; top: 0; bottom: 0; z-index: 60; width: 292px; height: 100vh;
+    transform: translateX(-102%); transition: transform .25s ease; box-shadow: var(--shadow-lg);
+  }
+  .app-layout.menu-open .sidebar-wrap { transform: none; }
+  .scrim { position: fixed; inset: 0; background: rgba(36,31,26,.4); z-index: 55; }
+}
+
 /* ---------- generic ---------- */
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: clamp(18px, 4vw, 34px); }
 .eyebrow { font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); font-weight: 700; }

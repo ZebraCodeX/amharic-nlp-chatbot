@@ -10,6 +10,23 @@ from . import views
 app_name = 'api'
 
 urlpatterns = [
+    # auth
+    path('auth/register/', views.RegisterView.as_view(), name='register'),
+    path('auth/register', views.RegisterView.as_view()),
+    path('auth/login/', views.LoginView.as_view(), name='login'),
+    path('auth/login', views.LoginView.as_view()),
+    path('auth/logout/', views.LogoutView.as_view(), name='logout'),
+    path('auth/logout', views.LogoutView.as_view()),
+    path('auth/me/', views.MeView.as_view(), name='me'),
+    path('auth/me', views.MeView.as_view()),
+
+    # conversations + memories
+    path('conversations/', views.ConversationListCreateView.as_view(), name='conversations'),
+    path('conversations', views.ConversationListCreateView.as_view()),
+    path('conversations/<int:pk>/', views.ConversationDetailView.as_view()),
+    path('memories/', views.MemoryListCreateView.as_view(), name='memories'),
+    path('memories', views.MemoryListCreateView.as_view()),
+
     path('chat/', views.ChatView.as_view(), name='chat'),
     path('chat', views.ChatView.as_view()),
 

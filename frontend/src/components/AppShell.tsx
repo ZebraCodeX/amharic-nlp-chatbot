@@ -1,59 +1,28 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { useInstallPrompt } from '../hooks/useInstallPrompt';
+import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import { useOnline } from '../hooks/useOnline';
+import { Sidebar } from './Sidebar';
 
 export function AppShell() {
-  const { canInstall, install } = useInstallPrompt();
-  const { online, llm } = useOnline();
-  const location = useLocation();
-  const onReview = location.pathname.startsWith('/review');
+  const { online } = useOnline();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <NavLink to="/" className="brand" style={{ textDecoration: 'none' }}>
-          <span className="brand-mark">ዘ</span>
-          <span className="brand-text">
-            <b>ዘር</b>
-            <span>Zer · Amharic AI</span>
-          </span>
-        </NavLink>
+    <div className={`app-layout${menuOpen ? ' menu-open' : ''}`}>
+      <div className="mobile-bar">
+        <button className="icon-btn" onClick={() => setMenuOpen((v) => !v)} aria-label="menu">
+          ☰
+        </button>
+        <span className="mobile-brand">ዘር · Zer</span>
+        <span className={`status-dot${online ? ' on' : ' off'}`} title={online ? 'online' : 'offline'} />
+      </div>
 
-        {onReview ? (
-          // The review page is a pure translation-teaching surface: no chat chrome.
-          <nav className="nav">
-            <NavLink to="/" className="nav-link">
-              ← ወደ ውይይት
-            </NavLink>
-          </nav>
-        ) : (
-          <nav className="nav">
-            {canInstall && (
-              <button className="btn btn-gold btn-sm" onClick={install} title="Install this app">
-                ⬇ ጫን
-              </button>
-            )}
-            <span
-              className={`status-pill${online ? ' on' : ' off'}`}
-              title={online ? 'Connected to Zer' : 'Offline — the installed app still works'}
-            >
-              <span className="dot" />
-              {online ? 'በመስመር ላይ · online' : 'ከመስመር ውጭ · offline'}
-            </span>
-            {online && llm?.available && (
-              <span className="brain-pill" title={`Generative model: ${llm.model || ''}`}>
-                ✦ AI አእምሮ
-              </span>
-            )}
-            <NavLink
-              to="/review"
-              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-            >
-              ትርጉም አስተምር
-            </NavLink>
-          </nav>
-        )}
-      </header>
+      <div className="sidebar-wrap">
+        <Sidebar onNavigate={() => setMenuOpen(false)} />
+      </div>
+
+      {menuOpen && <div className="scrim" onClick={() => setMenuOpen(false)} />}
+
       <main className="main">
         <Outlet />
       </main>

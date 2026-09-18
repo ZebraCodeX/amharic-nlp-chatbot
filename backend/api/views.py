@@ -10,12 +10,53 @@ from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+
 from . import services
+from .models import Conversation, Memory, Turn
 from .serializers import (
     ChatRequestSerializer,
+    ConversationDetailSerializer,
+    ConversationSerializer,
+    LoginSerializer,
+    MemorySerializer,
+    RegisterSerializer,
     TranslateQuerySerializer,
+    UserSerializer,
     VerifySerializer,
 )
+
+User = get_user_model()
+
+
+def _auth_payload(user):
+    token, _ = Token.objects.get_or_create(user=user)
+    return {'token': token.key, 'user': UserSerializer(user).data}
+
+
+def _persist_turns(request, text, reply, lang, source, conversation_id=None):
+    """Save a user/assistant turn pair for authenticated users. Returns id."""
+    user = getattr(request, 'user', None)
+    if user is None or not user.is_authenticated:
+        return None
+    conv = None
+    if conversation_id:
+        conv = Conversation.objects.filter(id=conversation_id, user=user).first()
+    if conv is None:
+        conv = Conversation.objects.create(user=user, title=(text or '')[:60],
+                                           lang=lang or '')
+    Turn.objects.create(conversation=conv, role='user', text=text or '', lang=lang or '')
+    Turn.objects.create(conversation=conv, role='assistant', text=reply or '',
+                        lang=lang or '', source=source or '')
+    if not conv.title:
+        conv.title = (text or '')[:60]
+    conv.lang = lang or conv.lang
+    conv.updated = timezone.now()
+    conv.save(update_fields=['title', 'lang', 'updated'])
+    return conv.id
 
 
 def _int_param(request, name, default, lo, hi):
@@ -25,15 +66,121 @@ def _int_param(request, name, default, lo, hi):
         return default
 
 
+class RegisterView(APIView):
+    def post(self, request):
+        ser = RegisterSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        user = ser.save()
+        return Response(_auth_payload(user), status=status.HTTP_201_CREATED)
+
+
+class LoginView(APIView):
+    def post(self, request):
+        ser = LoginSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        return Response(_auth_payload(ser.validated_data['user']))
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        Token.objects.filter(user=request.user).delete()
+        return Response({'ok': True})
+
+
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            **UserSerializer(request.user).data,
+            'conversations': request.user.conversations.count(),
+            'memories': request.user.memories.count(),
+        })
+
+
+class ConversationListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        qs = request.user.conversations.all()[:200]
+        return Response({'conversations': ConversationSerializer(qs, many=True).data})
+
+    def post(self, request):
+        conv = Conversation.objects.create(
+            user=request.user,
+            title=(request.data.get('title') or '')[:140],
+            lang=(request.data.get('lang') or '')[:8],
+        )
+        return Response(ConversationDetailSerializer(conv).data,
+                        status=status.HTTP_201_CREATED)
+
+
+class ConversationDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def _get(self, request, pk):
+        return Conversation.objects.filter(pk=pk, user=request.user).first()
+
+    def get(self, request, pk):
+        conv = self._get(request, pk)
+        if not conv:
+            return Response({'error': 'not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(ConversationDetailSerializer(conv).data)
+
+    def patch(self, request, pk):
+        conv = self._get(request, pk)
+        if not conv:
+            return Response({'error': 'not found'}, status=status.HTTP_404_NOT_FOUND)
+        if 'title' in request.data:
+            conv.title = (request.data.get('title') or '')[:140]
+            conv.save(update_fields=['title', 'updated'])
+        return Response(ConversationSerializer(conv).data)
+
+    def delete(self, request, pk):
+        conv = self._get(request, pk)
+        if conv:
+            conv.delete()
+        return Response({'ok': True})
+
+
+class MemoryListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        qs = request.user.memories.all()[:200]
+        return Response({'memories': MemorySerializer(qs, many=True).data})
+
+    def post(self, request):
+        fact = (request.data.get('fact') or '').strip()
+        if not fact:
+            return Response({'error': 'fact required'}, status=status.HTTP_400_BAD_REQUEST)
+        mem = Memory.objects.create(user=request.user, fact=fact[:500])
+        return Response(MemorySerializer(mem).data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        pk = request.data.get('id') or request.query_params.get('id')
+        request.user.memories.filter(pk=pk).delete()
+        return Response({'ok': True})
+
+
 class ChatView(APIView):
-    """POST {text, history?, lang?} or GET ?text=&history=&lang= → Zer's reply."""
+    """POST {text, history?, lang?, conversation?} → Zer's reply (persisted for
+    signed-in users)."""
 
     def post(self, request):
         ser = ChatRequestSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
-        result = services.chat(ser.validated_data['text'],
-                               ser.validated_data.get('history'),
-                               ser.validated_data.get('lang') or None)
+        data = ser.validated_data
+        result = services.chat(data['text'], data.get('history'),
+                               data.get('lang') or None,
+                               user=request.user if request.user.is_authenticated else None)
+        conv_id = _persist_turns(request, data['text'], result.get('reply'),
+                                 result.get('lang'), result.get('source'),
+                                 request.data.get('conversation'))
+        if conv_id:
+            result['conversation'] = conv_id
         return Response(result)
 
     def get(self, request):
@@ -45,7 +192,9 @@ class ChatView(APIView):
             except ValueError:
                 history = None
         lang = request.query_params.get('lang') or None
-        return Response(services.chat(request.query_params.get('text', ''), history, lang))
+        return Response(services.chat(
+            request.query_params.get('text', ''), history, lang,
+            user=request.user if request.user.is_authenticated else None))
 
 
 class TranslateView(APIView):
@@ -261,7 +410,8 @@ class VoiceTurnView(APIView):
             except ValueError:
                 history = None
 
-        reply = services.chat(transcript, history, lang=language)
+        reply = services.chat(transcript, history, lang=language,
+                              user=request.user if request.user.is_authenticated else None)
         params = _voice_params(request.data)
         # Per-language voice choice: the language is only known after STT.
         chosen = request.data.get('voice_am' if language == 'am' else 'voice_en')
@@ -269,6 +419,9 @@ class VoiceTurnView(APIView):
             params['voice'] = str(chosen)
         audio, mime, provider = services.synthesize(
             reply.get('reply', ''), language, **params)
+        conv_id = _persist_turns(request, transcript, reply.get('reply'), language,
+                                 reply.get('source'),
+                                 request.data.get('conversation'))
 
         return Response({
             'transcript': transcript,
@@ -281,6 +434,7 @@ class VoiceTurnView(APIView):
             'tts_provider': provider,
             'audio_mime': mime,
             'audio_b64': base64.b64encode(audio).decode('ascii') if audio else None,
+            **({'conversation': conv_id} if conv_id else {}),
         })
 
 

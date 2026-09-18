@@ -37,8 +37,19 @@ def get_zer():
         return z
 
 
-def chat(text, history=None, lang=None):
-    """One bilingual Zer turn, serialized so concurrent requests can't interleave."""
+def _user_facts(user):
+    try:
+        return list(user.memories.values_list('fact', flat=True)[:50])
+    except Exception:
+        return []
+
+
+def chat(text, history=None, lang=None, user=None):
+    """One bilingual Zer turn, serialized so concurrent requests can't interleave.
+
+    When ``user`` is given, the user's taught facts ground the reply and any new
+    fact is stored on their account (so Zer remembers them next time).
+    """
     from chatbot import normalize_history
     text = (text or '').strip()
     if not text:
@@ -57,8 +68,27 @@ def chat(text, history=None, lang=None):
                 en_history.append({'role': 'user', 'content': turn['user']})
             if turn.get('reply'):
                 en_history.append({'role': 'assistant', 'content': turn['reply']})
-        start = time.time()
-        result = z.respond(text, lang=lang, history=en_history, use_llm=True)
+
+        original_save = z._am._save_memory
+        if user is not None:
+            z._am.memory = {str(i + 1): f for i, f in enumerate(_user_facts(user))}
+            z._am._save_memory = lambda: None       # per-user facts live in the DB
+        try:
+            start = time.time()
+            result = z.respond(text, lang=lang, history=en_history, use_llm=True)
+        finally:
+            z._am._save_memory = original_save
+
+        if user is not None:
+            existing = set(_user_facts(user))
+            for fact in list(z._am.memory.values()):
+                fact = (fact or '').strip()
+                if fact and fact not in existing:
+                    try:
+                        from .models import Memory
+                        Memory.objects.create(user=user, fact=fact[:500])
+                    except Exception:
+                        pass
     result['elapsed_ms'] = round((time.time() - start) * 1000)
     return result
 

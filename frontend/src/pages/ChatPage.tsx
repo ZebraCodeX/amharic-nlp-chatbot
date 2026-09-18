@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../api/client';
-import type { ChatTurn, SpeechStatus, VoicesResponse } from '../api/types';
+import type { ChatTurn, SpeechStatus } from '../api/types';
+import { useApp } from '../app/AppContext';
 import { AmharicKeyboardPanel } from '../components/AmharicKeyboardPanel';
 import { Composer } from '../components/Composer';
 import { Message, type MessageData } from '../components/Message';
-import { VoicePanel } from '../components/VoicePanel';
 import {
   base64ToBlobUrl,
   createWakeWord,
@@ -14,26 +14,18 @@ import {
   type Recorder,
   type WakeWord,
 } from '../lib/audio';
-import {
-  DEFAULT_VOICE,
-  loadVoicePrefs,
-  paramsFor,
-  saveVoicePrefs,
-  turnParams,
-  type VoicePrefs,
-} from '../lib/voice';
+import { paramsFor, turnParams } from '../lib/voice';
 
 const STARTERS = [
   { text: 'AI ምንድን ነው?', hint: 'በዝርዝር ማብራሪያ' },
   { text: 'ስለ ኢትዮጵያ ንገረኝ', hint: 'ታሪክና ባህል' },
-  { text: 'ፓይቶን ኮድ ጻፍልኝ', hint: 'የሚሠራ ምሳሌ' },
+  { text: 'ፓይቶን ኮድ ጻፍልኝ ድምር', hint: 'በአማርኛ ኮድ' },
   { text: '5 ጠቅላላ 7', hint: 'ሒሳብ' },
   { text: 'ስለ ቡና ግጥም ጻፍልኝ', hint: 'ፈጠራ' },
   { text: 'ስንት ሰዓት ነው?', hint: 'ቀንና ሰዓት' },
 ];
 
 type Phase = 'idle' | 'listening' | 'thinking' | 'speaking';
-
 const PHASE_LABEL: Record<Phase, string> = {
   idle: '',
   listening: '🎧 በማዳመጥ ላይ…',
@@ -44,22 +36,18 @@ const PHASE_LABEL: Record<Phase, string> = {
 let seq = 1;
 
 export function ChatPage() {
+  const app = useApp();
+  const { user, activeId, prefs, speakReplies, langMode, live, setLive, listening, setListening } = app;
+
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [sending, setSending] = useState(false);
   const [translateOn, setTranslateOn] = useState(false);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
-  const [speakReplies, setSpeakReplies] = useState(true);
   const [recording, setRecording] = useState(false);
-  const [listening, setListening] = useState(false);
-  const [live, setLive] = useState(false);
   const [phase, setPhase] = useState<Phase>('idle');
-  const [panelOpen, setPanelOpen] = useState(false);
   const [speech, setSpeech] = useState<SpeechStatus | null>(null);
-  const [voices, setVoices] = useState<VoicesResponse | null>(null);
-  const [prefs, setPrefs] = useState<VoicePrefs>(() => loadVoicePrefs());
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [lastLang, setLastLang] = useState('');
-  const [langMode, setLangMode] = useState<'auto' | 'am' | 'en'>('auto');
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -68,18 +56,39 @@ export function ChatPage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const liveRef = useRef(false);
   const messagesRef = useRef<MessageData[]>([]);
-
+  const convRef = useRef<number | null>(activeId);
   messagesRef.current = messages;
+  convRef.current = activeId;
 
   useEffect(() => {
     api.speechStatus().then(setSpeech).catch(() => setSpeech(null));
-    api.speechVoices().then(setVoices).catch(() => setVoices(null));
   }, []);
 
-  const updatePrefs = useCallback((next: VoicePrefs) => {
-    setPrefs(next);
-    saveVoicePrefs(next);
-  }, []);
+  // Load the selected conversation's turns (signed-in users).
+  const prevActive = useRef<number | null | undefined>(undefined);
+  useEffect(() => {
+    if (!user) return;
+    if (activeId === prevActive.current) return;
+    prevActive.current = activeId;
+    if (activeId == null) {
+      setMessages([]);
+      return;
+    }
+    api
+      .getConversation(activeId)
+      .then((c) =>
+        setMessages(
+          (c.turns || []).map((t) => ({
+            id: seq++,
+            role: t.role === 'user' ? 'user' : 'ai',
+            text: t.text,
+            lang: t.lang,
+            source: t.source,
+          })),
+        ),
+      )
+      .catch(() => {});
+  }, [activeId, user]);
 
   const scrollDown = useCallback(() => {
     requestAnimationFrame(() => endRef.current?.scrollIntoView({ behavior: 'smooth' }));
@@ -101,6 +110,15 @@ export function ChatPage() {
     [],
   );
 
+  const onConversationSaved = useCallback(
+    (convId?: number) => {
+      if (!convId) return;
+      if (convRef.current == null) app.setActiveId(convId);
+      app.refreshConversations();
+    },
+    [app],
+  );
+
   const playUrl = useCallback((url: string, onEnd?: () => void) => {
     audioRef.current?.pause();
     const a = new Audio(url);
@@ -112,7 +130,6 @@ export function ChatPage() {
     a.play().catch(() => onEnd?.());
   }, []);
 
-  /** Zer talks back in the user's language (server TTS, else the browser voice). */
   const speakReply = useCallback(
     async (text: string, lang: string | undefined, onEnd?: () => void) => {
       const l = lang === 'en' ? 'en' : 'am';
@@ -149,7 +166,7 @@ export function ChatPage() {
       setPhase('thinking');
       scrollDown();
       try {
-        const res = await api.chat(text, history(snapshot));
+        const res = await api.chat(text, history(snapshot), activeId ?? undefined);
         addMsg({
           role: 'ai',
           text: res.reply,
@@ -158,6 +175,7 @@ export function ChatPage() {
           followups: res.followups,
         });
         setLastLang(res.lang || '');
+        onConversationSaved((res as { conversation?: number }).conversation);
         if (speakReplies) await speakReply(res.reply, res.lang);
       } catch {
         addMsg({ role: 'ai', text: 'ይቅርታ፣ ስህተት ተፈጥሯል። እንደገና ሞክር።', source: 'error' });
@@ -168,10 +186,9 @@ export function ChatPage() {
         scrollDown();
       }
     },
-    [sending, addMsg, history, scrollDown, speakReplies, speakReply],
+    [sending, activeId, addMsg, history, scrollDown, speakReplies, speakReply, onConversationSaved],
   );
 
-  /** One voice turn; returns after the reply audio starts playing. */
   const doVoiceTurn = useCallback(
     async (blob: Blob, onDone?: () => void) => {
       setSending(true);
@@ -181,7 +198,7 @@ export function ChatPage() {
         const res = await api.voiceTurn(blob, {
           lang: langMode === 'auto' ? undefined : langMode,
           history: history(messagesRef.current),
-          voice: turnParams(prefs),
+          voice: { ...turnParams(prefs), conversation: activeId ?? undefined },
         });
         setSending(false);
         if (!res.transcript) {
@@ -192,6 +209,7 @@ export function ChatPage() {
         setLastLang(res.language || '');
         addMsg({ role: 'user', text: res.transcript, lang: res.language });
         addMsg({ role: 'ai', text: res.reply, source: res.source, followups: res.followups });
+        onConversationSaved((res as { conversation?: number }).conversation);
         setPhase('speaking');
         const next = () => {
           setPhase('idle');
@@ -205,17 +223,15 @@ export function ChatPage() {
         onDone?.();
       }
     },
-    [prefs, langMode, addMsg, history, playUrl, speakReply],
+    [prefs, langMode, activeId, addMsg, history, playUrl, speakReply, onConversationSaved],
   );
 
-  /* ---------------- Live (Gemini-style) conversation loop ---------------- */
+  /* ---------------- Live conversation loop ---------------- */
+  const liveCycleRef = useRef<(() => void) | null>(null);
   const scheduleLive = useCallback(() => {
     if (liveRef.current) setTimeout(() => liveCycleRef.current?.(), 300);
   }, []);
 
-  const liveCycleRef = useRef<(() => void) | null>(null);
-
-  /** Browser-recognition turn (two-pass language detection), then speak back. */
   const browserTurn = useCallback(
     async (onDone?: () => void) => {
       const { text, lang } = await recognizeDetected(langMode);
@@ -227,9 +243,10 @@ export function ChatPage() {
       setSending(true);
       setPhase('thinking');
       try {
-        const reply = await api.chat(text, history(messagesRef.current));
+        const reply = await api.chat(text, history(messagesRef.current), activeId ?? undefined);
         addMsg({ role: 'ai', text: reply.reply, source: reply.source, followups: reply.followups });
         setLastLang(reply.lang || lang);
+        onConversationSaved((reply as { conversation?: number }).conversation);
         setSending(false);
         setPhase('speaking');
         await speakReply(reply.reply, reply.lang || lang, onDone);
@@ -239,12 +256,8 @@ export function ChatPage() {
         onDone?.();
       }
     },
-    [langMode, addMsg, history, speakReply],
+    [langMode, activeId, addMsg, history, speakReply, onConversationSaved],
   );
-
-  const browserLiveTurn = useCallback(() => {
-    browserTurn(scheduleLive);
-  }, [browserTurn, scheduleLive]);
 
   const liveCycle = useCallback(async () => {
     if (!liveRef.current) return;
@@ -255,7 +268,8 @@ export function ChatPage() {
         rec = await startRecording(1300, 15000);
       } catch {
         setVoiceError('Microphone permission was denied.');
-        stopLive();
+        setLive(false);
+        liveRef.current = false;
         return;
       }
       if (!liveRef.current) {
@@ -274,9 +288,9 @@ export function ChatPage() {
       }
       await doVoiceTurn(blob, scheduleLive);
     } else {
-      browserLiveTurn();
+      browserTurn(scheduleLive);
     }
-  }, [speech, doVoiceTurn, scheduleLive, browserLiveTurn]);
+  }, [speech, doVoiceTurn, scheduleLive, browserTurn, setLive]);
   liveCycleRef.current = liveCycle;
 
   const startLive = useCallback(() => {
@@ -286,7 +300,7 @@ export function ChatPage() {
     wakeRef.current?.stop();
     setListening(false);
     liveCycleRef.current?.();
-  }, []);
+  }, [setLive, setListening]);
 
   const stopLive = useCallback(() => {
     liveRef.current = false;
@@ -297,7 +311,7 @@ export function ChatPage() {
     setRecording(false);
     audioRef.current?.pause();
     window.speechSynthesis?.cancel();
-  }, []);
+  }, [setLive]);
 
   const toggleLive = useCallback(() => {
     if (live) stopLive();
@@ -354,12 +368,7 @@ export function ChatPage() {
     wakeRef.current = w;
     setListening(true);
     setVoiceError(null);
-  }, [listening, startListening]);
-
-  const testVoice = useCallback(() => {
-    const sample = 'ሰላም! እኔ ዘር ነኝ። ይህ የድምጼ ሙከራ ነው።';
-    speakReply(sample, 'am');
-  }, [speakReply]);
+  }, [listening, startListening, setListening]);
 
   useEffect(
     () => () => {
@@ -378,9 +387,14 @@ export function ChatPage() {
           <span className="eyebrow">ዘር · Zer</span>
           <h1>ሰላም! እኔ ዘር ነኝ። ምን ልርዳህ?</h1>
           <p>
-            በአማርኛ ወይም በእንግሊዝኛ ጻፍ፣ <b>🎙 ተናገር</b>፣ ወይም <b>🔴 ቀጥታ ውይይት</b> አብርተህ
-            እንደ ስልክ ንግግር ደጋግመህ ተነጋገር — ዘር ቋንቋህን ለይቶ በዚያ ቋንቋ ይመልስልሃል።
+            በአማርኛ ወይም በእንግሊዝኛ ጻፍ፣ <b>🎙 ተናገር</b>፣ ወይም <b>🔴 ቀጥታ ውይይት</b> አብርተህ እንደ
+            ስልክ ንግግር ደጋግመህ ተነጋገር — ዘር ቋንቋህን ለይቶ በዚያ ቋንቋ ይመልስልሃል።
           </p>
+          {!user && (
+            <p className="side-note" style={{ marginBottom: 18 }}>
+              ውይይቶችህን እንዲያስታውስ ከጎኑ ያለውን «ግባ» ተጠቀም።
+            </p>
+          )}
           <div className="starter-grid">
             {STARTERS.map((s) => (
               <button key={s.text} className="starter" onClick={() => sendText(s.text)}>
@@ -421,40 +435,23 @@ export function ChatPage() {
 
       {phase !== 'idle' && <div className={`voice-phase ${phase}`}>{PHASE_LABEL[phase]}</div>}
 
-      {panelOpen && (
-        <VoicePanel
-          voices={voices}
-          prefs={prefs}
-          onChange={updatePrefs}
-          onTest={testVoice}
-          onReset={() => updatePrefs({ ...DEFAULT_VOICE })}
-        />
-      )}
-
       <Composer
         inputRef={inputRef}
         onSend={() => sendText()}
         sending={sending}
+        recording={recording}
+        onToggleMic={toggleMic}
+        live={live}
+        onToggleLive={toggleLive}
+        listening={listening}
+        onToggleWake={toggleWake}
         translateOn={translateOn}
         onToggleTranslate={() => setTranslateOn((v) => !v)}
         keyboardOpen={keyboardOpen}
         onToggleKeyboard={() => setKeyboardOpen((v) => !v)}
-        recording={recording}
-        listening={listening}
-        onToggleMic={toggleMic}
-        onToggleWake={toggleWake}
-        speakReplies={speakReplies}
-        onToggleSpeakReplies={() => setSpeakReplies((v) => !v)}
         voiceAvailable={!!speech?.stt?.available}
         lastLang={lastLang}
         voiceError={voiceError}
-        live={live}
-        onToggleLive={toggleLive}
-        panelOpen={panelOpen}
-        onTogglePanel={() => setPanelOpen((v) => !v)}
-        phase={phase}
-        langMode={langMode}
-        onLangMode={setLangMode}
       />
 
       {keyboardOpen && (

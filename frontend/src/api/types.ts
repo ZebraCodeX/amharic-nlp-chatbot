@@ -14,6 +14,7 @@ export interface ChatReply {
   followups?: string[];
   detail?: boolean;
   elapsed_ms?: number;
+  conversation?: number;
 }
 
 export interface TranslateResult {
@@ -76,6 +77,48 @@ export interface VerifyResult {
 export interface LetterCount {
   letter: string;
   count: number;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  display_name: string;
+  name: string;
+  date_joined?: string;
+  conversations?: number;
+  memories?: number;
+}
+
+export interface AuthPayload {
+  token: string;
+  user: User;
+}
+
+export interface Turn {
+  id: number;
+  role: 'user' | 'assistant';
+  text: string;
+  lang?: string;
+  source?: string;
+  created?: string;
+}
+
+export interface Conversation {
+  id: number;
+  title: string;
+  lang?: string;
+  created: string;
+  updated: string;
+  turn_count?: number;
+  preview?: string;
+  turns?: Turn[];
+}
+
+export interface MemoryItem {
+  id: number;
+  fact: string;
+  created: string;
 }
 
 export interface VoiceOption {

@@ -4,51 +4,38 @@ interface Props {
   inputRef: RefObject<HTMLTextAreaElement>;
   onSend: () => void;
   sending: boolean;
+  recording: boolean;
+  onToggleMic: () => void;
+  live: boolean;
+  onToggleLive: () => void;
+  listening: boolean;
+  onToggleWake: () => void;
   translateOn: boolean;
   onToggleTranslate: () => void;
   keyboardOpen: boolean;
   onToggleKeyboard: () => void;
-  recording: boolean;
-  listening: boolean;
-  onToggleMic: () => void;
-  onToggleWake: () => void;
-  speakReplies: boolean;
-  onToggleSpeakReplies: () => void;
   voiceAvailable: boolean;
   lastLang: string;
   voiceError: string | null;
-  live: boolean;
-  onToggleLive: () => void;
-  panelOpen: boolean;
-  onTogglePanel: () => void;
-  phase: 'idle' | 'listening' | 'thinking' | 'speaking';
-  langMode: 'auto' | 'am' | 'en';
-  onLangMode: (mode: 'auto' | 'am' | 'en') => void;
 }
 
 export function Composer({
   inputRef,
   onSend,
   sending,
+  recording,
+  onToggleMic,
+  live,
+  onToggleLive,
+  listening,
+  onToggleWake,
   translateOn,
   onToggleTranslate,
   keyboardOpen,
   onToggleKeyboard,
-  recording,
-  listening,
-  onToggleMic,
-  onToggleWake,
-  speakReplies,
-  onToggleSpeakReplies,
   voiceAvailable,
   lastLang,
   voiceError,
-  live,
-  onToggleLive,
-  panelOpen,
-  onTogglePanel,
-  langMode,
-  onLangMode,
 }: Props) {
   function onKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -66,7 +53,7 @@ export function Composer({
           <button
             className={`mic-btn small${recording ? ' recording' : ''}`}
             onClick={onToggleMic}
-            disabled={sending}
+            disabled={sending || live}
             type="button"
             title={voiceAvailable ? 'ተናገር (Whisper STT)' : 'ተናገር (browser)'}
           >
@@ -93,34 +80,8 @@ export function Composer({
           >
             <span className="dot" /> 🔴 ቀጥታ ውይይት
           </button>
-          <button
-            className={`tool-toggle${panelOpen ? ' on' : ''}`}
-            onClick={onTogglePanel}
-            type="button"
-            title="Voice type, speed, pitch and volume"
-          >
-            <span className="dot" /> 🎛 ድምጽ
-          </button>
           <button className={`tool-toggle${listening ? ' on' : ''}`} onClick={onToggleWake} type="button">
             <span className="dot" /> Hey Zer
-          </button>
-          <select
-            className="mode-select"
-            value={langMode}
-            onChange={(e) => onLangMode(e.target.value as 'auto' | 'am' | 'en')}
-            title="Spoken language: auto-detect, or force Amharic/English"
-          >
-            <option value="auto">🌐 ቋንቋ ራሱ ይለይ · Auto</option>
-            <option value="am">አማርኛ</option>
-            <option value="en">English</option>
-          </select>
-          <button
-            className={`tool-toggle${speakReplies ? ' on' : ''}`}
-            onClick={onToggleSpeakReplies}
-            type="button"
-            title="Zer replies with audio in your language"
-          >
-            <span className="dot" /> 🔊 መልስ ይናገር
           </button>
           <button className={`tool-toggle${keyboardOpen ? ' on' : ''}`} onClick={onToggleKeyboard} type="button">
             <span className="dot" /> ⌨ ኪቦርድ
@@ -129,9 +90,7 @@ export function Composer({
             <span className="dot" /> EN ⇄ አማ
           </button>
           {(langLabel || voiceError) && (
-            <span className="hint">
-              {voiceError ? voiceError : `የመጨረሻ ቋንቋ፦ ${langLabel}`}
-            </span>
+            <span className="hint">{voiceError ? voiceError : `የመጨረሻ ቋንቋ፦ ${langLabel}`}</span>
           )}
         </div>
       </div>

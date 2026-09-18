@@ -39,6 +39,31 @@ The web app is a **Django REST Framework API** (`backend/`) with a
 Ethiopian-inspired *parchment & fidel* design system. The NLP brain stays pure
 Python stdlib and is reused unchanged behind the API.
 
+## Accounts, conversations & sidebar
+
+Create an account (Django auth, DRF token) and Zer remembers your threads:
+
+- **Sidebar** — sign in / register, **＋ አዲስ ውይይት**, your **conversation list**
+  (resume or delete), and all the **settings** (reply-voice, spoken-language
+  mode, 🎛 voice type/speed/pitch) in one place instead of scattered under the
+  chat.
+- **Conversations are stored** (`Conversation`/`Turn` models) per user and reload
+  when you return; the chat auto-creates a thread on your first message and
+  resumes it after.
+- **Taught facts are remembered** (`Memory`) — «አስታውስ …» is saved to your account
+  and grounds later replies. Everything lives in the SQLite DB on the persistent
+  volume (`/app/userdata/hisar.sqlite3`), and the container migrates on start.
+- Anonymous use still works; sign in only to save history.
+
+### Fine-tuning a model — the legitimate way
+
+A frontier bilingual model can't be *trained* here, and deliberately splitting
+jobs to dodge a GPU provider's limits isn't something this project will do.
+Legitimate, in-policy options I can scaffold: **QLoRA fine-tuning sharded with
+Hugging Face Accelerate/DeepSpeed** across GPUs you legitimately rent, **Kaggle/
+Colab** within their usage rules, **HF Jobs/community GPU grants**, or your own
+hardware — then merge the adapters and serve the model behind `LLM_BASE_URL`.
+
 ## Zer's own brain (no other AI required)
 
 Zer answers, codes and translates **without any external model**:

@@ -46,10 +46,10 @@ RUN rm -rf /app/amharic_nlp/corpora /app/frontend /app/.git /app/.venv \
     && mkdir -p /app/userdata
 
 WORKDIR /app/backend
-RUN python manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput && chmod +x /app/backend/entrypoint.sh
 
 EXPOSE 8000
-CMD ["gunicorn", "config.wsgi:application", \
+CMD ["/app/backend/entrypoint.sh", "gunicorn", "config.wsgi:application", \
      "--bind", "0.0.0.0:8000", \
      "--workers", "1", "--threads", "8", \
      "--timeout", "240", "--access-logfile", "-"]

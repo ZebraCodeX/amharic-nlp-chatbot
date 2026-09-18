@@ -31,9 +31,15 @@ ALLOWED_HOSTS = env_list('DJANGO_ALLOWED_HOSTS', '*')
 CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS', 'https://*.fly.dev')
 
 INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
     'api',
 ]
 
@@ -41,9 +47,14 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 ]
+
+AUTH_USER_MODEL = 'api.User'
 
 ROOT_URLCONF = 'config.urls'
 
@@ -52,7 +63,13 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
-        'OPTIONS': {'context_processors': []},
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
     },
 ]
 
@@ -86,7 +103,11 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.FormParser',
     ],
-    'UNAUTHENTICATED_USER': None,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],
 }
 
 # Voice clips are uploaded to /api/speech|voice. Keep well under Fly's limits.
@@ -99,7 +120,8 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 CORS_ALLOW_ALL_ORIGINS = env_bool('CORS_ALLOW_ALL', DEBUG)
 CORS_ALLOWED_ORIGINS = env_list('CORS_ALLOWED_ORIGINS')
 CORS_ALLOW_METHODS = ['GET', 'POST', 'OPTIONS']
-CORS_ALLOW_HEADERS = ['content-type', 'accept']
+CORS_ALLOW_HEADERS = ['content-type', 'accept', 'authorization']
+CSRF_TRUSTED_ORIGINS += env_list('EXTRA_CSRF_ORIGINS')
 
 # Behind Fly.io's proxy, trust the forwarded scheme.
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -113,6 +135,15 @@ if not DEBUG:
 USER_DATA_DIR = Path(os.environ.get('HISAR_USERDATA_DIR', BASE_DIR / 'userdata'))
 USER_DATA_DIR.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault('HISAR_USERDATA_DIR', str(USER_DATA_DIR))
+
+# The database lives on the writable volume so accounts/conversations persist
+# across deploys (SQLite is plenty for this workload).
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': str(USER_DATA_DIR / 'hisar.sqlite3'),
+    }
+}
 
 LOGGING = {
     'version': 1,

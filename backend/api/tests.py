@@ -158,6 +158,69 @@ class ZerLanguageTest(ApiTestBase):
         self.assertEqual(data['source'], 'intent:greeting')
 
 
+class AuthConversationTest(ApiTestBase):
+    def _register(self, username='zerfan'):
+        resp = self.client.post('/api/auth/register/', {
+            'username': username, 'password': 'secret123', 'display_name': 'Zer Fan',
+        }, format='json')
+        self.assertEqual(resp.status_code, 201)
+        data = resp.json()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + data['token'])
+        return data
+
+    def test_register_login_and_me(self):
+        data = self._register()
+        self.assertEqual(data['user']['name'], 'Zer Fan')
+        me = self.client.get('/api/auth/me/').json()
+        self.assertEqual(me['username'], 'zerfan')
+        # logout invalidates the token
+        self.client.post('/api/auth/logout/', {}, format='json')
+        self.client.credentials()
+        resp = self.client.post('/api/auth/register/', {
+            'username': 'zerfan', 'password': 'x12345'}, format='json')
+        self.assertEqual(resp.status_code, 400)  # taken
+
+    def test_login_rejects_bad_password(self):
+        self._register()
+        self.client.credentials()
+        resp = self.client.post('/api/auth/login/', {
+            'username': 'zerfan', 'password': 'wrong'}, format='json')
+        self.assertEqual(resp.status_code, 400)
+
+    def test_chat_persists_conversation_and_turns(self):
+        self._register()
+        r = self.client.post('/api/chat/', {'text': 'ሰላም'}, format='json').json()
+        self.assertIn('conversation', r)
+        convs = self.client.get('/api/conversations/').json()['conversations']
+        self.assertEqual(len(convs), 1)
+        cid = convs[0]['id']
+        detail = self.client.get(f'/api/conversations/{cid}/').json()
+        self.assertGreaterEqual(len(detail['turns']), 2)
+        r2 = self.client.post('/api/chat/', {
+            'text': 'ስለ ኢትዮጵያ ንገረኝ', 'conversation': cid}, format='json').json()
+        self.assertEqual(r2['conversation'], cid)
+        self.assertEqual(self.client.get('/api/conversations/').json()['conversations'].__len__(), 1)
+
+    def test_anonymous_chat_is_not_persisted(self):
+        self.client.credentials()
+        r = self.client.post('/api/chat/', {'text': 'ሰላም'}, format='json').json()
+        self.assertNotIn('conversation', r)
+
+    def test_conversation_is_private_to_owner(self):
+        self._register('alice')
+        cid = self.client.post('/api/conversations/', {'title': 'mine'}, format='json').json()['id']
+        self.client.credentials()
+        self._register('bob')
+        self.assertEqual(self.client.get(f'/api/conversations/{cid}/').status_code, 404)
+
+    def test_taught_fact_is_remembered_on_account(self):
+        self._register()
+        self.client.post('/api/chat/',
+                         {'text': 'አስታውስ የማርያም ቡና ጥቁር ነው'}, format='json')
+        mems = self.client.get('/api/memories/').json()['memories']
+        self.assertTrue(any('ማርያም' in m['fact'] for m in mems))
+
+
 class ZerBrainTest(ApiTestBase):
     def test_offline_amharic_code_generation(self):
         import codegen
