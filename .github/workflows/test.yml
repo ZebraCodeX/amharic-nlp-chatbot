@@ -27,6 +27,7 @@ jobs:
         working-directory: backend
         env:
           DJANGO_DEBUG: '0'
+          THROTTLE_DISABLE: '1'
         run: python manage.py test api -v 2
 
   brain:

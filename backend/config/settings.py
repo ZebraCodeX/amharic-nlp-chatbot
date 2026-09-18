@@ -108,6 +108,19 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],
+    # Rate-limit only the expensive endpoints (chat / voice / TTS / translate) —
+    # views opt in with `throttle_scope`. This protects the GPU model and the
+    # speech stack from abuse; disable in tests with THROTTLE_DISABLE=1.
+    'DEFAULT_THROTTLE_CLASSES': (
+        [] if env_bool('THROTTLE_DISABLE', False)
+        else ['rest_framework.throttling.ScopedRateThrottle']
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'chat': os.environ.get('THROTTLE_CHAT', '120/hour'),
+        'voice': os.environ.get('THROTTLE_VOICE', '120/hour'),
+        'speech': os.environ.get('THROTTLE_SPEECH', '240/hour'),
+        'translate': os.environ.get('THROTTLE_TRANSLATE', '300/hour'),
+    },
 }
 
 # Voice clips are uploaded to /api/speech|voice. Keep well under Fly's limits.

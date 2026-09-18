@@ -168,6 +168,7 @@ class MemoryListCreateView(APIView):
 class ChatView(APIView):
     """POST {text, history?, lang?, conversation?} → Zer's reply (persisted for
     signed-in users)."""
+    throttle_scope = 'chat'
 
     def post(self, request):
         ser = ChatRequestSerializer(data=request.data)
@@ -198,6 +199,7 @@ class ChatView(APIView):
 
 
 class TranslateView(APIView):
+    throttle_scope = 'translate'
     def get(self, request):
         ser = TranslateQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
@@ -337,6 +339,7 @@ class SpeechVoicesView(APIView):
 
 class TranscribeView(APIView):
     """POST multipart `audio` (+ optional `lang`) → {text, language, …}."""
+    throttle_scope = 'speech'
 
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
@@ -359,6 +362,7 @@ class TranscribeView(APIView):
 
 class SynthesizeView(APIView):
     """POST {text, lang} → audio/wav (open-source TTS)."""
+    throttle_scope = 'speech'
 
     def post(self, request):
         text = (request.data.get('text') or '').strip()
@@ -377,6 +381,7 @@ class SynthesizeView(APIView):
 
 class VoiceTurnView(APIView):
     """One hands-free round trip: audio in → transcript + Zer reply + audio out."""
+    throttle_scope = 'voice'
 
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
