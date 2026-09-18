@@ -30,7 +30,9 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY backend/requirements.txt backend/requirements-speech.txt /app/backend/
-RUN pip install --no-cache-dir \
+# Torch CPU-only (smaller than the default CUDA wheels) then the rest.
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
+    && pip install --no-cache-dir \
         -r /app/backend/requirements.txt \
         -r /app/backend/requirements-speech.txt
 

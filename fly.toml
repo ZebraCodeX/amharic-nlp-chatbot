@@ -13,9 +13,10 @@ primary_region = "sjc"
   HISAR_USERDATA_DIR = "/app/userdata"
   # The bundled Android/iOS/desktop apps call this API from their own origins.
   CORS_ALLOW_ALL = "1"
-  # Zer speech: faster-whisper STT + eSpeak NG TTS; models cached on the volume.
+  # Zer speech: faster-whisper STT + neural TTS (MMS Amharic / Piper English);
+  # models are cached on the volume (HF_HOME) and downloaded on first use.
   ZER_WHISPER_MODEL = "base"
-  ZER_TTS = "espeak"
+  ZER_TTS = "auto"
   HF_HOME = "/app/userdata/hf"
   XDG_CACHE_HOME = "/app/userdata/cache"
 
@@ -33,7 +34,7 @@ primary_region = "sjc"
   destination = "/app/userdata"
 
 [[vm]]
-  # Whisper (base, int8) needs headroom for CPU inference.
-  memory = "2gb"
+  # Whisper + neural TTS (PyTorch/VITS) run on CPU; give them room.
+  memory = "4gb"
   cpu_kind = "shared"
   cpus = 2

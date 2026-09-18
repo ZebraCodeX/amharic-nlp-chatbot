@@ -1,9 +1,13 @@
-# Speech-to-text for Zer (open-source OpenAI Whisper on CTranslate2).
-# Tiny CPU wheels; the model (ZER_WHISPER_MODEL, default "base") is downloaded
-# on first use and cached under HF_HOME.
+# Speech stack for Zer (open source).
+#
+# Speech-to-text — OpenAI Whisper on CTranslate2 (CPU-friendly).
 faster-whisper>=1.0,<2
 
-# Optional higher-quality neural TTS (Meta MMS VITS) instead of eSpeak NG.
-# Uncomment to enable; ~1 GB extra and needs ~1 GB more RAM.
-# torch>=2.2
-# transformers>=4.40
+# Text-to-speech:
+#   MMS-TTS (Meta neural VITS) — the strong Amharic voice; needs torch+transformers.
+#   Piper — fast, natural English ONNX voices.
+# Torch is installed CPU-only in the Dockerfile (smaller, no CUDA); transformers
+# drives MMS here. Uncomment trl separately if you want SFTTrainer.
+transformers>=4.44
+sentencepiece
+piper-tts>=1.2

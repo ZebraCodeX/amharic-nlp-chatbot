@@ -7,9 +7,11 @@ export interface VoicePrefs {
   gap: number;
 }
 
+// Neural voices by default (MMS for Amharic, Piper for English). If a provider
+// is unavailable the server falls back automatically, so these are safe.
 export const DEFAULT_VOICE: VoicePrefs = {
-  voiceAm: 'am',
-  voiceEn: 'en-us',
+  voiceAm: 'mms:am',
+  voiceEn: 'piper:en_US-amy-medium',
   rate: 150,
   pitch: 45,
   volume: 130,

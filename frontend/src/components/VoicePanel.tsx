@@ -11,9 +11,10 @@ interface Props {
 
 function Options({ voices, lang, value }: { voices: VoicesResponse | null; lang: string; value: string }) {
   const list = (voices?.voices || []).filter((v) => v.lang === lang);
-  const extra = value && !list.some((v) => v.value === value);
+  const extra = value && value !== 'auto' && !list.some((v) => v.value === value);
   return (
     <>
+      <option value="auto">Auto · ምርጡ (best available)</option>
       {extra && <option value={value}>{value}</option>}
       {list.map((v) => (
         <option key={v.value} value={v.value}>

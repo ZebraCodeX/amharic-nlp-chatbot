@@ -4,21 +4,24 @@
 zer_speech.py — open-source speech engine for Zer (Amharic + English).
 
 Speech-to-text:  faster-whisper (OpenAI Whisper on CTranslate2) with automatic
-                 language detection → Amharic ('am') or English ('en').
-Text-to-speech:  Meta MMS-TTS VITS models (facebook/mms-tts-amh / -eng) when
-                 torch+transformers are installed, otherwise eSpeak NG (a small,
-                 always-available OSS synthesizer that supports Amharic).
+                 language detection.
 
-Every provider is optional and lazily loaded: if a library/model is missing the
-function returns a clear "unavailable" result and the web client falls back to
-the browser's Web Speech API. Nothing here is required for the text app to work.
+Text-to-speech (human-sounding neural voices, best-first):
+    * MMS-TTS   — Meta's neural VITS models; the strong option for **Amharic**
+                  (`facebook/mms-tts-amh`) and a solid English voice.
+    * Piper     — fast, natural ONNX voices for **English**
+                  (en_US-amy / ryan, en_GB-alan).
+    * eSpeak NG — small rule-based fallback so audio always works.
 
-Env knobs:
-    ZER_WHISPER_MODEL   tiny | base | small | medium | large-v3   (default base)
-    ZER_WHISPER_DEVICE  cpu | cuda                               (default cpu)
-    ZER_WHISPER_COMPUTE int8 | int8_float16 | float16 | float32  (default int8)
-    ZER_TTS             auto | mms | espeak | none               (default auto)
-    HF_HOME             where STT/TTS models are cached (set to a volume)
+A voice is addressed as "<provider>:<id>", e.g. `mms:am`, `piper:en_US-amy-medium`,
+`espeak:am+f3`, or simply `auto` to pick the best available for the language.
+
+Env:
+    ZER_TTS             auto | mms | piper | espeak | none   (default auto)
+    ZER_MMS_AMH_MODEL   default facebook/mms-tts-amh
+    ZER_MMS_ENG_MODEL   default facebook/mms-tts-eng
+    ZER_WHISPER_MODEL   tiny | base | small | medium | large-v3 (default base)
+    HF_HOME             where STT/TTS models are cached (put on the volume)
 """
 
 import io
@@ -28,16 +31,17 @@ import struct
 import subprocess
 import tempfile
 import threading
+import urllib.request
 import wave
 
 _lock = threading.RLock()
 _whisper = None
 _mms_models = {}
+_piper_ready = set()
 _whisper_failed = False
 _mms_failed = False
 
 SUPPORTED_LANGS = ('am', 'en')
-
 
 # ---------------------------------------------------------------------------
 # helpers
@@ -50,87 +54,20 @@ def _espeak_bin():
     return shutil.which('espeak-ng') or shutil.which('espeak')
 
 
-# Default tunable parameters per language. `rate` = words/min, `pitch` 0..99,
-# `volume` 0..200, `gap` = extra word gap (ms * 10) — all eSpeak NG options.
-DEFAULT_PARAMS = {
-    'am': {'voice': 'am', 'rate': 145, 'pitch': 45, 'volume': 130, 'gap': 0},
-    'en': {'voice': 'en-us', 'rate': 165, 'pitch': 50, 'volume': 120, 'gap': 0},
-}
-
-# eSpeak NG vocal variants, so users can pick a different "voice type".
-_VARIANTS = [
-    ('+m1', 'male 1'), ('+m2', 'male 2'), ('+m3', 'male 3'),
-    ('+f1', 'female 1'), ('+f2', 'female 2'), ('+f3', 'female 3'),
-    ('+f4', 'female 4'), ('+croak', 'croak'), ('+whisper', 'whisper'),
-]
-
-_LANG_LABEL = {'am': 'አማርኛ', 'en': 'English'}
-
-
-def voices():
-    """Available TTS voices + tunable ranges for the client's voice settings."""
-    found = []
-    binary = _espeak_bin()
-    if binary:
-        try:
-            out = subprocess.run([binary, '--voices'], capture_output=True,
-                                 text=True, timeout=10).stdout
-            for line in out.splitlines()[1:]:
-                parts = line.split()
-                if len(parts) < 4:
-                    continue
-                lang = parts[1]
-                if lang.split('-')[0] not in SUPPORTED_LANGS:
-                    continue
-                found.append({'value': lang, 'lang': lang.split('-')[0],
-                              'label': lang})
-        except Exception:
-            found = []
-
-    # Guarantee a usable list even without eSpeak (client falls back gracefully).
-    base = {v['value'] for v in found}
-    for value in ('am', 'en-us', 'en-gb', 'en'):
-        if value not in base:
-            found.append({'value': value, 'lang': value.split('-')[0], 'label': value})
-
-    # Add vocal variants for the English voices (and Amharic where supported).
-    expanded = []
-    for v in found:
-        expanded.append(v)
-        if v['lang'] == 'en':
-            for suffix, label in _VARIANTS:
-                expanded.append({'value': f"{v['value']}{suffix}", 'lang': 'en',
-                                 'label': f"{v['value']} {label}"})
-
-    ordered = sorted(expanded, key=lambda v: (v['lang'] != 'am', v['value']))
-    return {
-        'voices': ordered,
-        'defaults': DEFAULT_PARAMS,
-        'ranges': {
-            'rate': [80, 300],
-            'pitch': [0, 99],
-            'volume': [0, 200],
-            'gap': [0, 20],
-        },
-        'engine': 'mms' if tts_available() and os.environ.get('ZER_TTS', 'auto') in ('auto', 'mms') and _has_mms() else ('espeak' if _espeak_bin() else 'none'),
-    }
-
-
-def _has_mms():
-    try:
-        import torch  # noqa: F401
-        import transformers  # noqa: F401
-        return True
-    except Exception:
-        return False
-
-
 def _mms_ids(lang):
-    return 'facebook/mms-tts-amh' if lang == 'am' else 'facebook/mms-tts-eng'
+    if lang == 'am':
+        return os.environ.get('ZER_MMS_AMH_MODEL', 'facebook/mms-tts-amh')
+    return os.environ.get('ZER_MMS_ENG_MODEL', 'facebook/mms-tts-eng')
+
+
+def _cache_dir(sub):
+    base = os.environ.get('HF_HOME') or os.path.join(tempfile.gettempdir(), 'zer-cache')
+    path = os.path.join(base, sub)
+    os.makedirs(path, exist_ok=True)
+    return path
 
 
 def normalize_lang(code):
-    """'en-US'→'en', 'Amharic'→None-safe; empty → None (auto-detect)."""
     if not code:
         return None
     code = str(code).strip().lower().split('-')[0].split('_')[0]
@@ -144,6 +81,24 @@ def normalize_lang(code):
 # ---------------------------------------------------------------------------
 # speech-to-text
 # ---------------------------------------------------------------------------
+_PROMPTS = {
+    'am': 'ሰላም። እንዴት ነህ? እኔ ዘር ነኝ።',
+    'en': 'Hello. How are you? I am Zer.',
+}
+
+
+def detect_spoken_language(text, fallback=None):
+    """Amharic (Ge'ez) and English use different scripts, so the transcript's
+    script is a near-perfect language signal. Falls back to Whisper's guess."""
+    am = sum(1 for c in text if '\u1200' <= c <= '\u137f')
+    en = sum(1 for c in text if 'a' <= c.lower() <= 'z')
+    if am and am >= en:
+        return 'am'
+    if en and en > am:
+        return 'en'
+    return fallback
+
+
 def _load_whisper():
     global _whisper, _whisper_failed
     with _lock:
@@ -170,31 +125,8 @@ def stt_available():
         return _whisper is not None
 
 
-_PROMPTS = {
-    'am': 'ሰላም። እንዴት ነህ? እኔ ዘር ነኝ።',
-    'en': 'Hello. How are you? I am Zer.',
-}
-
-
-def detect_spoken_language(text, fallback=None):
-    """Amharic (Ge'ez) and English use different scripts, so the transcript's
-    script is a near-perfect language signal. Falls back to Whisper's guess."""
-    am = sum(1 for c in text if '\u1200' <= c <= '\u137f')
-    en = sum(1 for c in text if ('a' <= c.lower() <= 'z'))
-    if am and am >= en:
-        return 'am'
-    if en and en > am:
-        return 'en'
-    return fallback
-
-
 def transcribe_bytes(data, filename='audio.webm', language=None):
-    """Transcribe an audio blob and return {text, language, …}.
-
-    ``language=None`` lets Whisper auto-detect; the result is then reconciled
-    against the transcript's script so Amharic speech is never mistaken for
-    English (and vice versa).
-    """
+    """Transcribe an audio blob and return {text, language, …}."""
     if not data:
         return {'error': 'empty audio'}
     model = _load_whisper()
@@ -234,7 +166,7 @@ def transcribe_bytes(data, filename='audio.webm', language=None):
 
 
 # ---------------------------------------------------------------------------
-# text-to-speech
+# text-to-speech — providers
 # ---------------------------------------------------------------------------
 def _resample_pcm(pcm, factor):
     """Speed up (factor>1) or slow down (factor<1) 16-bit mono PCM."""
@@ -253,6 +185,47 @@ def _resample_pcm(pcm, factor):
         frac = pos - j
         out[i] = int(src[j] * (1 - frac) + src[j + 1] * frac) if j + 1 < len(src) else src[-1]
     return out.tobytes()
+
+
+def _wav_bytes(pcm, rate):
+    buf = io.BytesIO()
+    with wave.open(buf, 'wb') as wf:
+        wf.setnchannels(1)
+        wf.setsampwidth(2)
+        wf.setframerate(rate)
+        wf.writeframes(pcm)
+    return buf.getvalue()
+
+
+def _post_process(wav_bytes, rate=None, volume=None):
+    """Apply speed/volume to a 16-bit mono WAV without touching the provider."""
+    try:
+        with wave.open(io.BytesIO(wav_bytes), 'rb') as wf:
+            sr = wf.getframerate()
+            pcm = wf.readframes(wf.getnframes())
+        if volume is not None:
+            gain = max(0.0, min(2.0, float(volume) / 100.0))
+            if abs(gain - 1.0) > 1e-3:
+                import array
+                a = array.array('h')
+                a.frombytes(pcm[:len(pcm) - (len(pcm) % 2)])
+                for i, v in enumerate(a):
+                    a[i] = max(-32768, min(32767, int(v * gain)))
+                pcm = a.tobytes()
+        if rate is not None:
+            pcm = _resample_pcm(pcm, max(0.5, min(2.5, float(rate) / 150.0)))
+        return _wav_bytes(pcm, sr)
+    except Exception:
+        return wav_bytes
+
+
+def _has_torch():
+    try:
+        import torch  # noqa: F401
+        import transformers  # noqa: F401
+        return True
+    except Exception:
+        return False
 
 
 def _synthesize_mms(text, lang, rate=None, volume=None):
@@ -279,19 +252,67 @@ def _synthesize_mms(text, lang, rate=None, volume=None):
             inputs = tokenizer(text, return_tensors='pt')
             with torch.no_grad():
                 waveform = model(**inputs).waveform[0].cpu().numpy()
-            gain = 1.0 if not volume else max(0.0, min(2.0, float(volume) / 100.0))
-            pcm = (waveform * 32767 * gain).clip(-32768, 32767).astype('<i2').tobytes()
-            if rate:
-                pcm = _resample_pcm(pcm, max(0.5, min(2.5, float(rate) / 150.0)))
-            buf = io.BytesIO()
-            with wave.open(buf, 'wb') as wf:
-                wf.setnchannels(1)
-                wf.setsampwidth(2)
-                wf.setframerate(model.config.sampling_rate)
-                wf.writeframes(pcm)
-            return buf.getvalue(), 'audio/wav', f'mms:{model_id.split("/")[-1]}'
+            pcm = (waveform * 32767).clip(-32768, 32767).astype('<i2').tobytes()
+            audio = _wav_bytes(pcm, model.config.sampling_rate)
+            audio = _post_process(audio, rate=rate, volume=volume)
+            return audio, 'audio/wav', f'mms:{model_id.split("/")[-1]}'
         except Exception:
             return None
+
+
+# Piper English voices (the repo path inside rhasspy/piper-voices).
+PIPER_VOICES = {
+    'en_US-amy-medium': 'en/en_US/amy/medium/en_US-amy-medium',
+    'en_US-ryan-high': 'en/en_US/ryan/high/en_US-ryan-high',
+    'en_US-lessac-medium': 'en/en_US/lessac/medium/en_US-lessac-medium',
+    'en_GB-alan-medium': 'en/en_GB/alan/medium/en_GB-alan-medium',
+}
+_PIPER_BASE = 'https://huggingface.co/rhasspy/piper-voices/resolve/main/'
+
+
+def _piper_ensure(key):
+    rel = PIPER_VOICES[key]
+    d = _cache_dir('piper')
+    base = os.path.join(d, os.path.basename(rel))
+    onnx, conf = base + '.onnx', base + '.onnx.json'
+    if not (os.path.exists(onnx) and os.path.exists(conf)):
+        for url, dest in ((_PIPER_BASE + rel + '.onnx', onnx),
+                          (_PIPER_BASE + rel + '.onnx.json', conf)):
+            urllib.request.urlretrieve(url, dest)
+    return onnx, conf
+
+
+def _piper_available():
+    return shutil.which('piper') is not None
+
+
+def _synthesize_piper(text, key='en_US-amy-medium', rate=None, volume=None):
+    if not _piper_available():
+        return None
+    if key not in PIPER_VOICES:
+        key = 'en_US-amy-medium'
+    try:
+        onnx, conf = _piper_ensure(key)
+    except Exception:
+        return None
+    tmp = None
+    try:
+        with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as fh:
+            tmp = fh.name
+        subprocess.run(['piper', '-m', onnx, '-c', conf, '-f', tmp],
+                       input=text.encode('utf-8'), check=True,
+                       capture_output=True, timeout=90)
+        with open(tmp, 'rb') as fh:
+            audio = _post_process(fh.read(), rate=rate, volume=volume)
+        return audio, 'audio/wav', f'piper:{key}'
+    except Exception:
+        return None
+    finally:
+        if tmp and os.path.exists(tmp):
+            try:
+                os.unlink(tmp)
+            except OSError:
+                pass
 
 
 def _synthesize_espeak(text, lang, voice=None, rate=None, pitch=None,
@@ -299,12 +320,11 @@ def _synthesize_espeak(text, lang, voice=None, rate=None, pitch=None,
     binary = _espeak_bin()
     if not binary:
         return None
-    defaults = DEFAULT_PARAMS.get(lang, DEFAULT_PARAMS['am'])
-    voice = voice or defaults['voice']
-    rate = defaults['rate'] if rate is None else rate
-    pitch = defaults['pitch'] if pitch is None else pitch
-    volume = defaults['volume'] if volume is None else volume
-    gap = defaults['gap'] if gap is None else gap
+    voice = voice or ('am' if lang == 'am' else 'en-us')
+    rate = 150 if rate is None else rate
+    pitch = 45 if pitch is None else pitch
+    volume = 130 if volume is None else volume
+    gap = 0 if gap is None else gap
     tmp = None
     try:
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as fh:
@@ -325,58 +345,143 @@ def _synthesize_espeak(text, lang, voice=None, rate=None, pitch=None,
                 pass
 
 
-def _placeholder_wav():
-    """A short silence so clients always get valid audio for an empty reply."""
-    buf = io.BytesIO()
-    with wave.open(buf, 'wb') as wf:
-        wf.setnchannels(1)
-        wf.setsampwidth(2)
-        wf.setframerate(16000)
-        wf.writeframes(struct.pack('<%dh' % 800, *([0] * 800)))
-    return buf.getvalue()
+def _provider_available(name):
+    if name == 'mms':
+        return _has_torch()
+    if name == 'piper':
+        return _piper_available()
+    if name == 'espeak':
+        return bool(_espeak_bin())
+    return False
+
+
+def _espeak_voices():
+    binary = _espeak_bin()
+    out = []
+    if not binary:
+        return out
+    try:
+        listing = subprocess.run([binary, '--voices'], capture_output=True,
+                                 text=True, timeout=10).stdout
+        seen = set()
+        for line in listing.splitlines()[1:]:
+            parts = line.split()
+            if len(parts) < 4:
+                continue
+            code = parts[1]
+            if code.split('-')[0] not in SUPPORTED_LANGS or code in seen:
+                continue
+            seen.add(code)
+            out.append({'value': f'espeak:{code}', 'lang': code.split('-')[0],
+                        'label': f'eSpeak · {code}'})
+    except Exception:
+        pass
+    return out
+
+
+# ---------------------------------------------------------------------------
+# public TTS API
+# ---------------------------------------------------------------------------
+def _dispatch(provider, vid, text, lang, rate, pitch, volume, gap):
+    if provider == 'mms':
+        return _synthesize_mms(text, lang, rate=rate, volume=volume)
+    if provider == 'piper':
+        return _synthesize_piper(text, vid or 'en_US-amy-medium', rate=rate, volume=volume)
+    if provider == 'espeak':
+        return _synthesize_espeak(text, lang, voice=vid, rate=rate, pitch=pitch,
+                                  volume=volume, gap=gap)
+    return None
+
+
+def _candidate_order(lang, voice):
+    """Resolve the "<provider>:<id>" voice (or 'auto') into a fallback chain."""
+    requested = (voice or '').strip()
+    prov = vid = None
+    if ':' in requested:
+        prov, vid = requested.split(':', 1)
+    elif requested and requested not in ('auto', ''):
+        prov, vid = 'espeak', requested      # back-compat: bare eSpeak voice
+
+    choice = os.environ.get('ZER_TTS', 'auto').lower()
+    if choice == 'none':
+        return []
+    allowed = {'auto': {'mms', 'piper', 'espeak'}}.get(choice, {choice})
+
+    best = [('mms', None), ('espeak', None)]
+    if lang == 'en':
+        best = [('piper', 'en_US-amy-medium'), ('mms', None), ('espeak', None)]
+
+    chain = []
+    if prov and prov in allowed:
+        chain.append((prov, vid))
+    for item in best:
+        if item[0] in allowed and item not in chain:
+            chain.append(item)
+    # Per-language MMS id, in case provider was given without an id.
+    return chain
 
 
 def synthesize(text, lang='am', voice=None, rate=None, pitch=None,
                volume=None, gap=None):
-    """Return (audio_bytes, mimetype, provider) or (None, None, None).
-
-    ``rate`` (words/min), ``pitch`` (0-99), ``volume`` (0-200) and ``gap`` let
-    the caller tune the voice; ``voice`` picks a specific eSpeak voice/variant.
-    """
+    """Return (audio_bytes, mimetype, provider) or (None, None, None)."""
     text = (text or '').strip()
     if not text:
-        return _placeholder_wav(), 'audio/wav', 'silence'
+        return _wav_bytes(struct.pack('<800h', *([0] * 800)), 16000), 'audio/wav', 'silence'
     lang = normalize_lang(lang) or 'am'
-    choice = os.environ.get('ZER_TTS', 'auto').lower()
 
-    if choice in ('auto', 'mms'):
-        result = _synthesize_mms(text, lang, rate=rate, volume=volume)
-        if result:
-            return result
-    if choice in ('auto', 'espeak'):
-        result = _synthesize_espeak(text, lang, voice=voice, rate=rate,
-                                    pitch=pitch, volume=volume, gap=gap)
+    for provider, vid in _candidate_order(lang, voice):
+        try:
+            result = _dispatch(provider, vid, text, lang, rate, pitch, volume, gap)
+        except Exception:
+            result = None
         if result:
             return result
     return None, None, None
 
 
 def tts_available():
-    choice = os.environ.get('ZER_TTS', 'auto').lower()
-    if choice in ('auto', 'mms'):
-        try:
-            import torch  # noqa: F401
-            import transformers  # noqa: F401
-            return True
-        except Exception:
-            pass
-    if choice in ('auto', 'espeak') and _espeak_bin():
-        return True
-    return False
+    return any(_provider_available(p) for p in ('mms', 'piper', 'espeak'))
+
+
+def voices():
+    """Available TTS voices + tunable ranges for the client."""
+    out = []
+    if _provider_available('mms'):
+        out.append({'value': 'mms:am', 'lang': 'am', 'label': 'MMS · አማርኛ (neural)'})
+        out.append({'value': 'mms:en', 'lang': 'en', 'label': 'MMS · English (neural)'})
+    if _provider_available('piper'):
+        labels = {
+            'en_US-amy-medium': 'Amy · US English (natural)',
+            'en_US-ryan-high': 'Ryan · US English (expressive)',
+            'en_US-lessac-medium': 'Lessac · US English',
+            'en_GB-alan-medium': 'Alan · UK English',
+        }
+        for key, label in labels.items():
+            out.append({'value': f'piper:{key}', 'lang': 'en', 'label': f'{label} · Piper'})
+    out += _espeak_voices()
+    if not out:
+        out = [
+            {'value': 'espeak:am', 'lang': 'am', 'label': 'eSpeak · አማርኛ (fallback)'},
+            {'value': 'espeak:en-us', 'lang': 'en', 'label': 'eSpeak · English (fallback)'},
+        ]
+
+    providers = [p for p in ('mms', 'piper', 'espeak') if _provider_available(p)]
+    return {
+        'voices': out,
+        'defaults': {
+            'am': {'voice': 'mms:am' if _provider_available('mms') else 'espeak:am',
+                   'rate': 145, 'pitch': 45, 'volume': 130, 'gap': 0},
+            'en': {'voice': 'piper:en_US-amy-medium' if _provider_available('piper')
+                   else ('mms:en' if _provider_available('mms') else 'espeak:en-us'),
+                   'rate': 165, 'pitch': 50, 'volume': 120, 'gap': 0},
+        },
+        'ranges': {'rate': [80, 300], 'pitch': [0, 99], 'volume': [0, 200], 'gap': [0, 20]},
+        'engine': '+'.join(providers) or 'none',
+    }
 
 
 # ---------------------------------------------------------------------------
-# status (drives the client's graceful fallback)
+# status
 # ---------------------------------------------------------------------------
 def status():
     return {
@@ -389,8 +494,9 @@ def status():
         },
         'tts': {
             'available': tts_available(),
-            'mms': os.environ.get('ZER_TTS', 'auto') in ('auto', 'mms'),
-            'espeak': bool(_espeak_bin()),
+            'mms': _provider_available('mms'),
+            'piper': _provider_available('piper'),
+            'espeak': _provider_available('espeak'),
             'languages': list(SUPPORTED_LANGS),
         },
     }
