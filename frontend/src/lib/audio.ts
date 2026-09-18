@@ -14,6 +14,59 @@ export interface Recorder {
   cancel(): void;
 }
 
+/** Best recording format this browser supports (iOS Safari uses audio/mp4). */
+export function pickAudioMime(): { mime: string; ext: string } {
+  const candidates: [string, string][] = [
+    ['audio/webm;codecs=opus', 'webm'],
+    ['audio/webm', 'webm'],
+    ['audio/ogg;codecs=opus', 'ogg'],
+    ['audio/mp4;codecs=mp4a.40.2', 'm4a'],
+    ['audio/mp4', 'm4a'],
+    ['audio/aac', 'aac'],
+  ];
+  const MR = (window as unknown as { MediaRecorder?: { isTypeSupported?: (t: string) => boolean } }).MediaRecorder;
+  if (MR?.isTypeSupported) {
+    for (const [mime, ext] of candidates) {
+      try {
+        if (MR.isTypeSupported(mime)) return { mime, ext };
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+  return { mime: '', ext: 'm4a' }; // let the browser choose
+}
+
+/** Unlock audio + speech output on a user gesture (required on mobile). */
+let _audioUnlocked = false;
+export function unlockAudio(): void {
+  if (_audioUnlocked) return;
+  _audioUnlocked = true;
+  try {
+    const Ctx = (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext });
+    const C = Ctx.AudioContext || Ctx.webkitAudioContext;
+    if (C) {
+      const ctx = new C();
+      const src = ctx.createBufferSource();
+      src.buffer = ctx.createBuffer(1, 1, 22050);
+      src.connect(ctx.destination);
+      src.start(0);
+      ctx.resume?.();
+    }
+  } catch {
+    /* ignore */
+  }
+  try {
+    const a = new Audio(
+      'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACABAAZGF0YQAAAAA=',
+    );
+    a.volume = 0;
+    a.play().catch(() => {});
+  } catch {
+    /* ignore */
+  }
+}
+
 /**
  * Record the mic to webm/opus.
  * - `autoStopMs`: stop after this much silence once speech was heard (0 = never)
@@ -23,10 +76,11 @@ export async function startRecording(autoStopMs = 0, maxMs = 15000): Promise<Rec
   const stream = await navigator.mediaDevices.getUserMedia({
     audio: { echoCancellation: true, noiseSuppression: true },
   });
-  const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-    ? 'audio/webm;codecs=opus'
-    : 'audio/webm';
-  const rec = new MediaRecorder(stream, { mimeType: mime });
+  const picked = pickAudioMime();
+  const rec = picked.mime
+    ? new MediaRecorder(stream, { mimeType: picked.mime })
+    : new MediaRecorder(stream); // Safari: let it pick (audio/mp4)
+  const mime = picked.mime || rec.mimeType || 'audio/webm';
   const chunks: BlobPart[] = [];
   rec.ondataavailable = (e) => {
     if (e.data.size) chunks.push(e.data);

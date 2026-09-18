@@ -11,6 +11,16 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https',
   },
+  android: {
+    // Warm background while the WebView paints; avoids a white flash.
+    backgroundColor: '#f7f3e9',
+    allowMixedContent: false,
+  },
+  ios: {
+    backgroundColor: '#f7f3e9',
+    // Keep content clear of the notch / home indicator.
+    contentInset: 'always',
+  },
   plugins: {
     SplashScreen: {
       launchShowDuration: 900,

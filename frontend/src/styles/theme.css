@@ -42,6 +42,14 @@
 }
 
 * { box-sizing: border-box; }
+*, *::before, *::after { -webkit-tap-highlight-color: transparent; }
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+/* touch: no double-tap zoom on controls, no pull-to-refresh fighting the chat */
+button, a, input, select, textarea, .starter, .chip, .tab, .conv-item, .letter-chip {
+  touch-action: manipulation;
+}
 
 html, body, #root { height: 100%; }
 
@@ -56,6 +64,7 @@ body {
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Ctext x='6' y='38' font-size='34' fill='%2314532d' fill-opacity='0.035' font-family='serif'%3E%E1%88%80%3C/text%3E%3C/svg%3E");
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
 }
 
 a { color: var(--terracotta); }
@@ -168,15 +177,25 @@ a { color: var(--terracotta); }
 .modal { width: min(420px, 100%); padding: 24px; display: flex; flex-direction: column; gap: 11px; }
 .modal .review-input { width: 100%; }
 
+/* safe areas (iPhone notch / Android gesture bar) */
+.sidebar { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+.composer { padding-bottom: calc(18px + env(safe-area-inset-bottom)); }
+.toast { bottom: calc(26px + env(safe-area-inset-bottom)); }
+.modal-backdrop { padding-bottom: calc(18px + env(safe-area-inset-bottom)); }
+
 @media (max-width: 860px) {
   .app-layout { flex-direction: column; }
   .mobile-bar {
     display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 50;
     padding: 9px 14px; background: var(--parchment); border-bottom: 1px solid var(--line);
+    padding-top: calc(9px + env(safe-area-inset-top));
+    padding-left: calc(14px + env(safe-area-inset-left));
+    padding-right: calc(14px + env(safe-area-inset-right));
   }
   .sidebar-wrap {
     position: fixed; left: 0; top: 0; bottom: 0; z-index: 60; width: 292px; height: 100vh;
     transform: translateX(-102%); transition: transform .25s ease; box-shadow: var(--shadow-lg);
+    padding-top: env(safe-area-inset-top);
   }
   .app-layout.menu-open .sidebar-wrap { transform: none; }
   .scrim { position: fixed; inset: 0; background: rgba(36,31,26,.4); z-index: 55; }

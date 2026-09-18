@@ -11,6 +11,7 @@ import {
   recognizeDetected,
   speak,
   startRecording,
+  unlockAudio,
   type Recorder,
   type WakeWord,
 } from '../lib/audio';
@@ -62,6 +63,14 @@ export function ChatPage() {
 
   useEffect(() => {
     api.speechStatus().then(setSpeech).catch(() => setSpeech(null));
+    // Mobile browsers only allow audio after a user gesture.
+    const unlock = () => unlockAudio();
+    window.addEventListener('pointerdown', unlock, { once: true });
+    window.addEventListener('touchstart', unlock, { once: true });
+    return () => {
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('touchstart', unlock);
+    };
   }, []);
 
   // Load the selected conversation's turns (signed-in users).
@@ -294,6 +303,7 @@ export function ChatPage() {
   liveCycleRef.current = liveCycle;
 
   const startLive = useCallback(() => {
+    unlockAudio();
     liveRef.current = true;
     setLive(true);
     setVoiceError(null);
@@ -321,6 +331,7 @@ export function ChatPage() {
   /* ---------------- push-to-talk ---------------- */
   const startListening = useCallback(async () => {
     if (sending || live) return;
+    unlockAudio();
     if (speech?.stt?.available) {
       try {
         recorderRef.current = await startRecording(1900, 20000);

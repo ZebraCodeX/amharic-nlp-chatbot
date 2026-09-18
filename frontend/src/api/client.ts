@@ -226,8 +226,14 @@ export const api = {
       voice?: Record<string, string | number | undefined>;
     } = {},
   ): Promise<VoiceTurn> {
+    const t = (audio.type || '').toLowerCase();
+    const ext = t.includes('mp4') || t.includes('aac')
+      ? 'm4a'
+      : t.includes('ogg')
+        ? 'ogg'
+        : 'webm';
     const form = new FormData();
-    form.append('audio', audio, 'clip.webm');
+    form.append('audio', audio, `clip.${ext}`);
     if (opts.lang) form.append('lang', opts.lang);
     if (opts.history) form.append('history', JSON.stringify(opts.history));
     if (opts.voice) {
