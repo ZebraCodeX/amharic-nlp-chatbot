@@ -40,6 +40,8 @@ _mms_models = {}
 _piper_ready = set()
 _whisper_failed = False
 _mms_failed = False
+_mms_error = None
+_piper_error = None
 
 SUPPORTED_LANGS = ('am', 'en')
 
@@ -229,15 +231,16 @@ def _has_torch():
 
 
 def _synthesize_mms(text, lang, rate=None, volume=None):
-    global _mms_failed
+    global _mms_failed, _mms_error
     if _mms_failed:
         return None
     with _lock:
         try:
             import torch
             from transformers import VitsModel, AutoTokenizer
-        except Exception:
+        except Exception as exc:
             _mms_failed = True
+            _mms_error = f'import: {exc!r}'[:400]
             return None
         model_id = _mms_ids(lang)
         try:
@@ -256,7 +259,8 @@ def _synthesize_mms(text, lang, rate=None, volume=None):
             audio = _wav_bytes(pcm, model.config.sampling_rate)
             audio = _post_process(audio, rate=rate, volume=volume)
             return audio, 'audio/wav', f'mms:{model_id.split("/")[-1]}'
-        except Exception:
+        except Exception as exc:
+            _mms_error = f'{type(exc).__name__}: {exc}'[:500]
             return None
 
 
@@ -287,6 +291,7 @@ def _piper_available():
 
 
 def _synthesize_piper(text, key='en_US-amy-medium', rate=None, volume=None):
+    global _piper_error
     if not _piper_available():
         return None
     if key not in PIPER_VOICES:
@@ -305,7 +310,8 @@ def _synthesize_piper(text, key='en_US-amy-medium', rate=None, volume=None):
         with open(tmp, 'rb') as fh:
             audio = _post_process(fh.read(), rate=rate, volume=volume)
         return audio, 'audio/wav', f'piper:{key}'
-    except Exception:
+    except Exception as exc:
+        _piper_error = f'{type(exc).__name__}: {exc}'[:400]
         return None
     finally:
         if tmp and os.path.exists(tmp):
@@ -498,5 +504,7 @@ def status():
             'piper': _provider_available('piper'),
             'espeak': _provider_available('espeak'),
             'languages': list(SUPPORTED_LANGS),
+            'mms_error': _mms_error,
+            'piper_error': _piper_error,
         },
     }
