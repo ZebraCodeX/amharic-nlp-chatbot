@@ -1,0 +1,54 @@
+name: Deploy to Fly
+
+# Deploys https://am-ai.fly.dev after the "Checks" workflow passes on main.
+# One-time setup (repo → Settings → Secrets and variables → Actions):
+#   secret   FLY_API_TOKEN = `flyctl tokens create deploy -a am-ai`
+#   variable FLY_APP       = am-ai            (optional; defaults to am-ai)
+on:
+  workflow_run:
+    workflows: ["Checks"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fly-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      FLY_APP: ${{ vars.FLY_APP }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Is a Fly token configured?
+        id: guard
+        run: |
+          if [ -n "${FLY_API_TOKEN}" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::FLY_API_TOKEN is not set — add it to enable auto-deploy. Skipping."
+          fi
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+        if: steps.guard.outputs.ready == 'true'
+
+      - name: Deploy
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          APP="${FLY_APP:-am-ai}"
+          echo "Deploying ${GITHUB_SHA} to Fly app '$APP'…"
+          flyctl deploy --remote-only --ha=false --app "$APP"

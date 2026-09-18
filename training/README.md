@@ -167,6 +167,57 @@ the header ✦ AI chip lights up. Ask an open question and it now **generates**.
 - **Latency:** requests now go Fly → your laptop. Keep the laptop awake; expect
   a few seconds per answer on consumer GPUs.
 
+## 5. Rent an A100 → 14B → push to HF → run it on your laptop
+
+The full path you asked for, end to end.
+
+### On the rented A100 (Linux, 80 GB)
+
+```bash
+git clone https://github.com/ZebraCodeX/amharic-nlp-chatbot.git && cd amharic-nlp-chatbot
+python3 -m venv .venv-train && . .venv-train/bin/activate
+pip install -r training/requirements-train.txt
+
+# 14B QLoRA over the ~84k conversations (checkpoint often if the GPU is spot)
+EXTRA="--save-steps 200" OUT=training/out/zer-qwen14b-lora \
+  MODEL=Qwen/Qwen2.5-14B-Instruct BATCH=1 GA=16 MAXLEN=2048 bash training/run.sh
+# → training/out/zer-qwen14b-lora        (adapter)
+# → training/out/zer-qwen14b-lora-merged (merged fp16, ~28 GB)
+
+# persist the ADAPTER to your own private HF repo (survives the rented box)
+export HF_TOKEN=hf_...      # WRITE token from huggingface.co/settings/tokens
+python training/push_adapter.py --folder training/out/zer-qwen14b-lora \
+  --repo YOUR-NAME/zer-qwen14b-lora          # private by default
+# (optionally also push the merged model — but it's ~28 GB; the adapter is enough)
+```
+
+### On your laptop (pull → merge → quantize → serve)
+
+```bash
+# pull the adapter (yours, on your account)
+pip install huggingface_hub
+export HF_TOKEN=hf_...
+python - <<'PY'
+from huggingface_hub import snapshot_download
+snapshot_download('YOUR-NAME/zer-qwen14b-lora', local_dir='training/out/zer-qwen14b-lora')
+PY
+
+# merge with the public base (needs ~28 GB disk; use --device cpu if VRAM is small)
+python training/merge_adapter.py --base Qwen/Qwen2.5-14B-Instruct \
+  --adapter training/out/zer-qwen14b-lora --out training/out/zer-qwen14b-merged \
+  --device cpu
+
+# 14B fp16 won't fit 16 GB — quantize to 4-bit GGUF (~9 GB) for llama.cpp
+bash training/quantize_gguf.sh training/out/zer-qwen14b-merged
+# → training/out/zer-qwen14b-merged.Q4_K_M.gguf
+
+# serve it with an API key + public tunnel
+LLM_API_KEY=$(openssl rand -hex 20) \
+  bash training/serve-llama.sh training/out/zer-qwen14b-merged.Q4_K_M.gguf
+```
+
+Either serving path works — `serve.sh` (vLLM; add `VLLM_EXTRA="--quantization bitsandbytes"` to run a 14B in 4-bit) or `serve-llama.sh` (GGUF, lightest). Then `connect-fly.sh` with the printed URL + key.
+
 ## Using the 1 TB SSD
 
 Put the big stuff there (models, HF cache, checkpoints, dataset):

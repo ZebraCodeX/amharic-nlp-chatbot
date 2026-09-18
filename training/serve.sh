@@ -29,12 +29,12 @@ if ! command -v vllm >/dev/null 2>&1; then
   pip install -q vllm
 fi
 
-echo "▶ Starting vLLM — model=$MODEL port=$PORT name=$SERVED"
+echo "▶ Starting vLLM — model=$MODEL port=$PORT name=$SERVED ${VLLM_EXTRA:-}"
 vllm serve "$MODEL" \
   --served-model-name "$SERVED" \
   --host 127.0.0.1 --port "$PORT" \
   --api-key "$KEY" \
-  --max-model-len "$MAXLEN" &
+  --max-model-len "$MAXLEN" ${VLLM_EXTRA:-} &
 VLLM_PID=$!
 trap 'kill "$VLLM_PID" 2>/dev/null || true' EXIT
 

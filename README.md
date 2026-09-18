@@ -468,6 +468,11 @@ WhiteNoise serving hashed assets). The `hisar_data` volume is mounted at
 `/app/userdata` and persists crowd corrections (`user_translations.json`) and
 taught facts (`user_memory.json`) across restarts (see `HISAR_USERDATA_DIR`).
 
+**Auto-deploy on every commit:** `.github/workflows/deploy.yml` deploys after the
+`Checks` workflow passes on `main`. Enable it once by adding a repository secret
+`FLY_API_TOKEN` (`flyctl tokens create deploy -a am-ai`) and, optionally, the
+variable `FLY_APP=am-ai`. Without the token the workflow skips safely.
+
 ```bash
 flyctl secrets set DJANGO_SECRET_KEY="$(openssl rand -hex 32)"
 flyctl secrets set LLM_BASE_URL=… LLM_API_KEY=… LLM_MODEL=…   # optional: real LLM

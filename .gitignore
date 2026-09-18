@@ -33,3 +33,5 @@ desktop/web/
 training/out/
 training/data/*.jsonl
 training/out/
+training/llama.cpp/
+*.gguf
