@@ -1,0 +1,14 @@
+# Zer QLoRA — Qwen2.5-7B on a single 24 GB GPU (best quality here).
+#   MODEL=Qwen/Qwen2.5-7B-Instruct BATCH=1 GA=16 bash training/run.sh
+model: Qwen/Qwen2.5-7B-Instruct
+out: /path/to/zer-training/out/zer-qwen7b-lora
+epochs: 2
+batch: 1
+grad_accum: 16
+lr: 1.0e-4
+max_len: 2048
+lora_r: 32
+lora_alpha: 64
+lora_dropout: 0.05
+target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+quant: {load_in_4bit: true, bnb_4bit_quant_type: nf4, bnb_4bit_compute_dtype: float16}

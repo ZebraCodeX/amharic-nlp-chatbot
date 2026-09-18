@@ -1,4 +1,5 @@
 """URL configuration: REST API under /api/, and the React SPA for everything else."""
+from django.contrib import admin
 from django.urls import include, path, re_path
 
 from api.views import (
@@ -10,6 +11,7 @@ from api.views import (
 )
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     # PWA / store assets served from the origin root.
     path('manifest.webmanifest', ManifestView.as_view(), name='manifest'),

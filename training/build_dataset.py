@@ -134,13 +134,32 @@ def code_examples():
     return out
 
 
+def conversation_examples():
+    """Real user conversations exported by `manage.py export_training_data`."""
+    path = os.path.join(ROOT, 'training', 'data', 'conversations.jsonl')
+    out = []
+    try:
+        with open(path, encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                obj = json.loads(line)
+                msgs = obj.get('messages')
+                if isinstance(msgs, list) and len(msgs) >= 3:
+                    out.append({'messages': msgs, '_source': 'conversation'})
+    except (OSError, ValueError):
+        pass
+    return out
+
+
 def main():
     random.seed(7)
     kb = load('knowledge_base.json', {})
     rich = load('rich_answers.json', {})
 
     examples = (kb_examples(kb) + rich_examples(kb, rich) + dict_examples(kb)
-                + translation_examples() + code_examples())
+                + translation_examples() + code_examples() + conversation_examples())
 
     # de-duplicate identical (user, assistant) pairs
     seen, unique = set(), []

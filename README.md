@@ -59,10 +59,39 @@ Create an account (Django auth, DRF token) and Zer remembers your threads:
 
 A frontier bilingual model can't be *trained* here, and deliberately splitting
 jobs to dodge a GPU provider's limits isn't something this project will do.
-Legitimate, in-policy options I can scaffold: **QLoRA fine-tuning sharded with
-Hugging Face Accelerate/DeepSpeed** across GPUs you legitimately rent, **Kaggle/
-Colab** within their usage rules, **HF Jobs/community GPU grants**, or your own
-hardware — then merge the adapters and serve the model behind `LLM_BASE_URL`.
+Legitimate, in-policy options: **QLoRA fine-tuning sharded with Hugging Face
+Accelerate/DeepSpeed** across GPUs you legitimately rent, **Kaggle/Colab** within
+their usage rules, **HF Jobs/community GPU grants**, or your own hardware — then
+merge the adapters and serve the model behind `LLM_BASE_URL`.
+
+The pipeline is turnkey and needs a **GPU** (an Intel iGPU won't do it):
+
+```bash
+make dataset                 # build the Amharic SFT seed set (517 examples)
+make export-data             # add real conversations from the DB
+MODEL=Qwen/Qwen2.5-3B-Instruct bash training/run.sh   # train + merge on a GPU
+make eval MODEL=training/out/zer-lora-merged          # language-match sanity check
+# serve it (OpenAI-compatible) and attach:
+vllm serve training/out/zer-lora-merged --served-model-name zer --port 8000
+flyctl secrets set LLM_BASE_URL=https://YOUR-GPU-HOST/v1 LLM_MODEL=zer
+```
+
+### Operate: accounts, admin, backups
+
+The deployment runs migrations on start; the SQLite DB lives on the persistent
+volume. Handy targets (`make help` lists all):
+
+```bash
+make deploy                  # build the SPA + flyctl deploy
+make superuser               # create an admin (Django admin at /admin/)
+make backup                  # timestamped, consistent DB backup (keeps 7)
+make logs                    # tail the live app
+make release V=1.7.0         # tag v1.7.0 (CI builds apk/aab/exe/dmg/AppImage/deb)
+```
+
+Create the admin non-interactively in CI/Fly with
+`DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`,
+`DJANGO_SUPERUSER_PASSWORD` then `python manage.py createsuperuser --noinput`.
 
 ## Zer's own brain (no other AI required)
 
