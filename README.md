@@ -64,6 +64,15 @@ Accelerate/DeepSpeed** across GPUs you legitimately rent, **Kaggle/Colab** withi
 their usage rules, **HF Jobs/community GPU grants**, or your own hardware — then
 merge the adapters and serve the model behind `LLM_BASE_URL`.
 
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ZebraCodeX/amharic-nlp-chatbot/blob/main/training/colab_zer_qlora.ipynb)
+[![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://kaggle.com/kernels/welcome?src=https://github.com/ZebraCodeX/amharic-nlp-chatbot/blob/main/training/colab_zer_qlora.ipynb)
+
+Free-GPU path: open **[`training/colab_zer_qlora.ipynb`](training/colab_zer_qlora.ipynb)**
+in Colab or Kaggle — it clones the repo, builds the dataset, QLoRA-trains Qwen2.5
+(1.5 B fits any T4; 3 B for better quality), merges, evals, and downloads the
+adapter. Use the free tiers **within their rules** (no multi-account / parallel
+evasion).
+
 The pipeline is turnkey and needs a **GPU** (an Intel iGPU won't do it):
 
 ```bash

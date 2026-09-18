@@ -22,6 +22,18 @@ This is a **seed** set. For a model that generalises, mix in larger corpora
 datasets, the EthioNLP collections, and your own `/review` corrections
 (`data/user_translations.json` is picked up automatically).
 
+## Free GPU: Colab / Kaggle (in-policy)
+
+Open **[`colab_zer_qlora.ipynb`](colab_zer_qlora.ipynb)** in Colab or Kaggle. It
+clones the repo, installs the stack, builds the dataset, QLoRA-trains **Qwen2.5**
+(1.5 B fits any T4; 3 B for better quality), merges the adapter, runs the eval,
+and downloads `zer-lora.zip`. Kaggle saves your `/kaggle/working` outputs.
+
+Respect the free tiers: one account, one session at a time — no parallel/multi-
+account tricks to get more quota.
+
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ZebraCodeX/amharic-nlp-chatbot/blob/main/training/colab_zer_qlora.ipynb)
+
 ## 2. Fine-tune
 
 ```bash
