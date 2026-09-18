@@ -56,6 +56,10 @@ def build_args():
     p.add_argument('--lora-dropout', type=float, default=0.05)
     p.add_argument('--target-modules', default='auto')
     p.add_argument('--max-steps', type=int, default=-1)
+    p.add_argument('--save-steps', type=int, default=0,
+                   help='checkpoint every N steps (0 = per epoch). Use on spot GPUs.')
+    p.add_argument('--resume', action='store_true',
+                   help='resume from the latest checkpoint in --out (spot recovery)')
     p.add_argument('--no-4bit', action='store_true')
     p.add_argument('--device', default='auto', choices=['auto', 'cuda', 'cpu'])
     p.add_argument('--seed', type=int, default=42)
@@ -147,11 +151,14 @@ def main():
         'fp16': (device == 'cuda'), 'report_to': [],
         'warmup_ratio': 0.03, 'lr_scheduler_type': 'cosine', 'seed': args.seed,
     }
+    if args.save_steps > 0:
+        wanted['save_strategy'] = 'steps'
+        wanted['save_steps'] = args.save_steps
     accepted = set(inspect.signature(TrainingArguments.__init__).parameters)
     targs = TrainingArguments(**{k: v for k, v in wanted.items() if k in accepted})
     trainer = Trainer(model=model, args=targs, train_dataset=ds,
                       data_collator=collator)
-    trainer.train()
+    trainer.train(resume_from_checkpoint=args.resume or None)
     trainer.save_model(args.out)
     tokenizer.save_pretrained(args.out)
     with open(os.path.join(args.out, 'zer_train_meta.json'), 'w', encoding='utf-8') as f:

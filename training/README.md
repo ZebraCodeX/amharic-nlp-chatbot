@@ -34,6 +34,38 @@ account tricks to get more quota.
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ZebraCodeX/amharic-nlp-chatbot/blob/main/training/colab_zer_qlora.ipynb)
 
+## Renting a GPU (cheap, best quality)
+
+QLoRA keeps a 7B–14B model inside 24 GB, so you rarely need a big card. Live
+rates (mid-2026, verify before booking):
+
+| Renter | GPU | ≈$/hr | Notes |
+| --- | --- | --- | --- |
+| Vast.ai (marketplace) | RTX 4090 24GB | $0.27–0.50 | Cheapest; unverified hosts vary, spot can interrupt |
+| RunPod Community | RTX 4090 24GB | $0.34 | Cheap + stable; per-second billing |
+| TensorDock | RTX 4090 24GB | $0.35 | Stable, spot-friendly |
+| RunPod Secure / Lambda | RTX 4090 / A10G | $0.50–0.69 | SLA-backed |
+| Vast.ai / JarvisLabs | A100 80GB | $0.71–0.89 | For 14B–32B QLoRA or faster runs |
+| RunPod Community | A100 80GB | $1.19 | Good 80GB option |
+
+- **Cheapest solid model:** RTX 4090 (any of the first three) + **Qwen2.5-7B**.
+  A 2-epoch run over the ~84k set is roughly 4–8 h → **~$2–4 total**.
+- **Best model per dollar:** A100 80GB + **Qwen2.5-14B** (better Amharic); a few
+  hours → **~$5–15**. 32B QLoRA also fits 80 GB but costs more time.
+- **Don't rent an H100** for adapter training — a 7B QLoRA won't saturate it.
+- **Spot/interruptible** halves the price but can evict you: checkpoint often and
+  resume:
+
+  ```bash
+  # on the rented box (Linux + CUDA); clone the repo (now pushed) and run:
+  EXTRA="--save-steps 200" bash training/run.sh   # checkpoints every 200 steps
+  # after an eviction, on a fresh box with the same --out restored:
+  EXTRA="--save-steps 200 --resume" bash training/run.sh
+  ```
+
+- Use `pip install unsloth` if you want ~2× faster steps (optional; the shipped
+  trainer uses plain HF `Trainer` so it works everywhere).
+
 ## 2. Fine-tune
 
 ```bash
