@@ -1,7 +1,7 @@
 const { app, BrowserWindow, Menu, shell, session } = require('electron');
 const path = require('path');
 
-const API_BASE = process.env.HISAR_API_BASE || 'https://hisar-amharic-ai.fly.dev';
+const API_BASE = process.env.HISAR_API_BASE || 'https://am-ai.fly.dev';
 
 /** The bundled SPA is shipped in resources/web (packaged) or ../frontend/dist (dev). */
 function webRoot() {

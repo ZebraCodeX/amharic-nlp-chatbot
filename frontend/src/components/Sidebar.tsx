@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { api } from '../api/client';
 import type { VoicesResponse } from '../api/types';
+import { playBlob } from '../lib/audio';
 import { useApp } from '../app/AppContext';
 import { DEFAULT_VOICE } from '../lib/voice';
 import { AuthDialog } from './AuthDialog';
@@ -17,7 +18,15 @@ function relTime(iso: string): string {
   return `${Math.floor(hrs / 24)} ቀን`;
 }
 
-export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
+interface SidebarProps {
+  onNavigate?: () => void;
+  online?: boolean;
+  llmAvailable?: boolean;
+  canInstall?: boolean;
+  onInstall?: () => void;
+}
+
+export function Sidebar({ onNavigate, online = true, llmAvailable = false, canInstall = false, onInstall }: SidebarProps) {
   const app = useApp();
   const [authOpen, setAuthOpen] = useState(false);
   const [voices, setVoices] = useState<VoicesResponse | null>(null);
@@ -27,13 +36,18 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
     api.speechVoices().then(setVoices).catch(() => setVoices(null));
   }, []);
 
-  const testVoice = () => {
-    api.synthesize('ሰላም! እኔ ዘር ነኝ።', 'am', {
-      voice: app.prefs.voiceAm,
-      rate: app.prefs.rate,
-      pitch: app.prefs.pitch,
-      volume: app.prefs.volume,
-    });
+  const testVoice = async () => {
+    try {
+      const blob = await api.synthesize('ሰላም! እኔ ዘር ነኝ።', 'am', {
+        voice: app.prefs.voiceAm,
+        rate: app.prefs.rate,
+        pitch: app.prefs.pitch,
+        volume: app.prefs.volume,
+      });
+      if (blob) playBlob(blob);
+    } catch {
+      /* ignore — the voice test is best-effort */
+    }
   };
 
   return (
@@ -148,6 +162,16 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       </div>
 
       <div className="side-section side-bottom">
+        <div className="side-status">
+          <span className={`status-dot${online ? ' on' : ' off'}`} />
+          <span>{online ? 'በመስረር ላይ · online' : 'ከመስመር ውጭ · offline'}</span>
+          {llmAvailable && <span className="badge">✦ AI</span>}
+        </div>
+        {canInstall && (
+          <button className="btn btn-sm" style={{ width: '100%', marginTop: 8 }} type="button" onClick={onInstall}>
+            ⤓ መተግበሪያውን ጫን · Install app
+          </button>
+        )}
         <NavLink to="/review" className="nav-link" onClick={onNavigate}>
           🌱 ትርጉም አስተምር
         </NavLink>

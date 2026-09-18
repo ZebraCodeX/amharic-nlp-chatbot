@@ -50,6 +50,24 @@ SHORT_TAGS = {
     'small_talk',
 }
 
+# Question/request words that must not drive intent matching (they appear in
+# almost every intent and cause wrong-topic answers). Identity words like
+# ማን/የት are kept — they are handled by the identity gate below.
+_MATCH_STOP = {
+    'ስንት', 'አስረዳኝ', 'ንገረኝ', 'አብራራልኝ',
+    'ግለጽልኝ', 'ስጠኝ', 'what', 'which', 'tell', 'explain',
+}
+
+# Identity intents only answer when the question is really about Zer — gated on
+# their own markers so they can't hijack topical questions on a shared word.
+_IDENTITY_RE = {
+    'who_are_you': r'ማን\s*ነ(ህ|ሽ|ው|ችሁ|ት)|who\s+are\s+you|what\s+are\s+you',
+    'your_name': r'ስም(ህ|ሽ|ዎ)|your\s+name',
+    'your_age': r'(እ|ዕ)ድሜ|how\s+old',
+    'origin': r'ከየት|የት\s+ነ(ህ|ሽ|ው)|where\s+are\s+you\s+from|ሀገር(ህ|ሽ)',
+}
+IDENTITY_TAGS = set(_IDENTITY_RE)
+
 # Phrasings that ask for a concise reply, or for an in-depth one.
 _SHORT_RE = re.compile(r'በአጭሩ|በአጭር|አጭር|በአጭሩ ንገረኝ|\bshort\b|briefly', re.IGNORECASE)
 _DETAIL_RE = re.compile(
@@ -162,7 +180,7 @@ class AmharicAssistant:
         self.normalizer = AmharicNormalizer()
         self.tokenizer = AmharicTokenizer()
         self.stemmer = AmharicStemmer()
-        self.stop_filter = StopWordFilter()
+        self.stop_filter = StopWordFilter(_MATCH_STOP)
         self.data = self._load(knowledge_base_path)
         self.intents = self.data['intents']
         self.dictionary = self.data.get('dictionary', {})
@@ -273,9 +291,12 @@ class AmharicAssistant:
         results = self._index.search(q, k=3)
         if not results:
             return None, 0.0
-        top_score, top_idx = results[0]
-        tag = self._idx_to_tag[top_idx]
-        return tag, top_score
+        for score, idx in results:
+            tag = self._idx_to_tag[idx]
+            if tag in IDENTITY_TAGS and not re.search(_IDENTITY_RE[tag], text, re.I):
+                continue
+            return tag, score
+        return None, 0.0
 
     def _build_kw_index(self):
         """token → tags inverted index + per-tag token sets (built once)."""
@@ -323,11 +344,29 @@ class AmharicAssistant:
             return None, 0.0
         return best, min(1.0, total / max(1, len(q)))
 
-    def _respond_for(self, tag, exclude=None):
+    def _try_reason(self, text):
+        """Deterministic 'thinking': word problems, comparisons, facts."""
+        try:
+            import reasoning
+        except Exception:
+            return None
+        return reasoning.solve(text, 'am')
+
+    def _respond_for(self, tag, exclude=None, query=None):
         for intent in self.intents:
             if intent['tag'] == tag:
                 pool = [r for r in intent['responses'] if r != exclude]
-                resp = random.choice(pool or intent['responses'])
+                if not pool:
+                    pool = intent['responses']
+                # Stay relevant to the wording, but vary among equally-good
+                # phrasings so the same prompt doesn't return byte-identical text.
+                if query and len(pool) > 1:
+                    qt = set(self._tokens(query))
+                    scores = [(len(qt & set(self._tokens(r))), r) for r in pool]
+                    top = max(s for s, _ in scores)
+                    resp = random.choice([r for s, r in scores if s == top])
+                else:
+                    resp = random.choice(pool)
                 if tag == 'greeting':
                     resp = self._time_greeting() + '! ' + resp
                 if self.user_name and tag in ('greeting', 'how_are_you'):
@@ -819,6 +858,12 @@ class AmharicAssistant:
         if math:
             return self._result(math, 'math', 0.99)
 
+        # reasoning: word problems, comparisons, dates, curated facts
+        reasoned = self._try_reason(text)
+        if reasoned:
+            self._push_history(text, reasoned, 'reasoning')
+            return self._result(reasoned, 'reasoning', 0.95)
+
         # real clock / Amharic date / fun randomness
         clock = self._try_time(text)
         if clock:
@@ -842,7 +887,7 @@ class AmharicAssistant:
             if ktag and kscore >= 0.5:
                 tag, score = ktag, max(score, kscore)
         if tag and score >= 0.30:
-            resp = self._respond_for(tag)
+            resp = self._respond_for(tag, query=text)
             self._last = (tag, resp)
             rule_only = tag in ('greeting', 'how_are_you', 'goodbye', 'thanks')
             prefers_llm = (use_llm and not rule_only and
@@ -889,8 +934,18 @@ class AmharicAssistant:
                     self._push_history(text, offline, 'creative')
                     return self._result(offline, 'creative', 0.7)
 
-        return self._result(self._fallback(), 'fallback', 0.12,
+        return self._result(self._resolve_fallback(text), 'fallback', 0.12,
                             followups=self._fallback_followups())
+
+    def _resolve_fallback(self, text):
+        """For a factual/number question we can't ground, say so honestly
+        instead of returning an unrelated generic line."""
+        try:
+            import reasoning
+            honest = reasoning.unknown_reply(text, 'am')
+        except Exception:
+            honest = None
+        return honest or self._fallback()
 
     def _fallback_followups(self):
         return ['ስለ AI ንገረኝ', 'ስለ ቴክኖሎጂ ንገረኝ', 'ስለ ኢትዮጵያ ንገረኝ']

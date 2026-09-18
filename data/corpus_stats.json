@@ -7,22 +7,28 @@
       "unique_words": 200392
     },
     "articles": {
-      "files": 60,
-      "sentences": 6923,
-      "tokens": 71411,
-      "unique_words": 15211
+      "files": 78,
+      "sentences": 8926,
+      "tokens": 93812,
+      "unique_words": 18332
     },
     "other": {
-      "files": 1,
-      "sentences": 150000,
-      "tokens": 1377889,
+      "files": 2,
+      "sentences": 300000,
+      "tokens": 2755778,
       "unique_words": 185105
+    },
+    "conversation": {
+      "files": 3,
+      "sentences": 163124,
+      "tokens": 1486077,
+      "unique_words": 80527
     }
   },
-  "total_sentences": 337100,
-  "total_tokens": 2938903,
-  "total_unique_words": 323098,
+  "total_sentences": 652227,
+  "total_tokens": 5825270,
+  "total_unique_words": 359860,
   "dictionary_words": 20000,
-  "sentence_bank": 14965,
+  "sentence_bank": 60000,
   "data_dir": "/home/zee/Work/amharic-nlp-chatbot/data"
 }

@@ -31,7 +31,7 @@ from . import model as ngram
 from . import corpus as corpuslib
 from . import DATA_DIR, CORPORA_DIR
 
-DOMAINS = ('books', 'movies', 'articles', 'other')
+DOMAINS = ('books', 'movies', 'articles', 'other', 'conversation')
 
 
 def collect(path, bible_path=None, limit=None, per_domain=None):
@@ -222,6 +222,10 @@ def main():
                     help='unigram words kept in nl_model.json')
     ap.add_argument('--max-prev', type=int, default=36000,
                     help='predictor (prev-word) vocabulary size')
+    ap.add_argument('--max-trigram', type=int, default=60000,
+                    help='cap trigram keys (keeps nl_model.json compact)')
+    ap.add_argument('--max-next', type=int, default=10,
+                    help='cap next-word continuations kept per prefix')
     ap.add_argument('--list-corpora', action='store_true',
                     help='show what is on disk in corpora/ and exit')
     args = ap.parse_args()
@@ -240,7 +244,9 @@ def main():
                     limit=args.limit, out_dir=args.out, top_words=args.top_words,
                     per_domain=args.per_domain,
                     ngram_caps={'max_uni': args.max_uni,
-                                'max_prev_vocab': args.max_prev})
+                                'max_prev_vocab': args.max_prev,
+                                'max_trigram_keys': args.max_trigram,
+                                'max_next': args.max_next})
     _print_summary(summary)
 
 

@@ -31,8 +31,8 @@ stable download URLs are:
 | --- | --- |
 | App id / bundle id | `com.zebracodex.hisar` |
 | Product name | `Hisar` (display name ሕሳር) |
-| Backend API | `https://hisar-amharic-ai.fly.dev` |
-| Privacy URL (stores) | `https://hisar-amharic-ai.fly.dev/privacy` |
+| Backend API | `https://am-ai.fly.dev` |
+| Privacy URL (stores) | `https://am-ai.fly.dev/privacy` |
 
 The native/desktop apps **bundle the UI locally** and call the hosted Django API
 (resolved at runtime — see `frontend/src/api/client.ts`). The backend allows
@@ -126,3 +126,54 @@ Bump `version` in `frontend/package.json` and `desktop/package.json`, then tag:
 ```bash
 git tag v1.0.0 && git push origin v1.0.0
 ```
+
+## Store submission checklist
+
+The live backend is **https://am-ai.fly.dev**; the privacy policy is served at
+**https://am-ai.fly.dev/privacy** (required by both stores). Nothing below can
+be done from CI alone — it needs your store accounts and signing credentials.
+
+### One-time setup
+- [ ] Google Play Console account (one-off US$25) → creates the app under
+      package `com.zebracodex.hisar`.
+- [ ] Apple Developer Program (US$99/yr) → register App ID
+      `com.zebracodex.hisar` in Certificates, Identifiers & Profiles.
+- [ ] Generate the Android upload keystore and add the four repo secrets
+      (see *Android — Google Play* above).
+- [ ] Export the iOS distribution certificate + provisioning profile and add
+      the five repo secrets (see *iOS — App Store* above).
+- [ ] Push a `v*` tag so CI produces a **signed** `Hisar.aab` and `.ipa`.
+
+### Store listing assets (same for both)
+- [ ] App name and short/full description (Amharic + English).
+- [ ] Feature graphic 1024×500 (Play) and 6.7"/+6.5" screenshots (both).
+- [ ] App icon 512×512 (already in `frontend/public/`).
+- [ ] Privacy policy URL: `https://am-ai.fly.dev/privacy`.
+- [ ] Support contact (GitHub issues URL or an email).
+
+### Google Play specifics
+- [ ] **Data safety** form: account optional; if signed in, conversations,
+      taught facts and translations are stored; audio is processed for speech
+      recognition and **not** retained.
+- [ ] Content rating questionnaire; declare the microphone permission
+      (`RECORD_AUDIO`, added by `.github/workflows/android.yml`).
+- [ ] Target API level / Play App Signing (upload the `.aab`, not the APK).
+- [ ] Closed testing track first, then production rollout.
+
+### App Store specifics
+- [ ] **App Privacy** labels: *User Content* (conversations) and *Audio Data*
+      (voice) collected only while using the feature; used for app
+      functionality, not tracking.
+- [ ] `NSMicrophoneUsageDescription` + `NSSpeechRecognitionUsageDescription`
+      are already injected by `.github/workflows/ios.yml`.
+- [ ] Export compliance: the app uses standard HTTPS (exempt encryption) — set
+      `ITSAppUsesNonExemptEncryption = NO`.
+- [ ] App Review notes: explain that the assistant answers offline and that
+      live voice sends audio to the app's own server for transcription.
+- [ ] Upload the `.ipa` with Transporter / `xcrun altool`, then TestFlight.
+
+> **Naming:** the shipped product name is currently **Hisar** with bundle id
+> `com.zebracodex.hisar`, while the assistant and docs call it **Zer (ዘር)**.
+> Decide the public store name before submitting; changing it later means a new
+> listing/identifier.
+

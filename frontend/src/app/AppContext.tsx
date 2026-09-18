@@ -24,6 +24,7 @@ interface AppState {
   conversations: Conversation[];
   activeId: number | null;
   setActiveId: (id: number | null) => void;
+  resetNonce: number;
   refreshConversations: () => Promise<void>;
   newConversation: () => void;
   removeConversation: (id: number) => Promise<void>;
@@ -54,6 +55,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeId, setActiveId] = useState<number | null>(null);
+  const [resetNonce, setResetNonce] = useState(0);
 
   const [prefs, setPrefsState] = useState<VoicePrefs>(() => loadVoicePrefs());
   const [speakReplies, setSpeakReplies] = useState(true);
@@ -103,9 +105,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
           const u = await api.me();
           persistUser(u, token);
           await refreshConversations();
-        } catch {
-          persistUser(null, null);
-          setAuthToken(null);
+        } catch (err) {
+          // Only a real 401 invalidates the session; a network failure (offline
+          // PWA launch) must keep the cached sign-in so the app still works.
+          if (((err as Error).message || '').startsWith('401')) {
+            persistUser(null, null);
+            setAuthToken(null);
+          } else {
+            setAuthToken(token);
+          }
         }
       }
       setReady(true);
@@ -130,7 +138,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [refreshConversations],
   );
 
-  const newConversation = useCallback(() => setActiveId(null), []);
+  const newConversation = useCallback(() => {
+    setActiveId(null);
+    setResetNonce((n) => n + 1);   // clears the chat even when already unset
+  }, []);
 
   const removeConversation = useCallback(
     async (id: number) => {
@@ -160,6 +171,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     conversations,
     activeId,
     setActiveId,
+    resetNonce,
     refreshConversations,
     newConversation,
     removeConversation,

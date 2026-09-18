@@ -150,7 +150,24 @@ class ZerLanguageTest(ApiTestBase):
         from zer import get_zer
         r = get_zer().respond('hello there', use_llm=False)
         self.assertEqual(r['lang'], 'en')
-        self.assertIn('Zer', r['reply'])
+        self.assertTrue(r['reply'])
+        # Zer must never tell users to connect a language model.
+        self.assertNotIn('language model', r['reply'].lower())
+        self.assertNotIn('offline right now', r['reply'].lower())
+
+    def test_english_skills_without_llm(self):
+        from zer import get_zer
+        z = get_zer()
+        self.assertIn('96', z.respond('what is 12 times 8', use_llm=False)['reply'])
+        self.assertEqual(z.respond('who are you', use_llm=False)['lang'], 'en')
+        self.assertTrue(z.respond('tell me about Ethiopia',
+                                  use_llm=False)['reply'])
+
+    def test_geez_script_beats_wrong_voice_language(self):
+        from zer import get_zer
+        # A bad Whisper guess of 'en' must not push Amharic text to English.
+        r = get_zer().respond('ሰላም እንዴት ነህ', lang='en', use_llm=False)
+        self.assertEqual(r['lang'], 'am')
 
     def test_amharic_chat_still_works(self):
         resp, data = self.post_json('/api/chat/', {'text': 'ሰላም'})

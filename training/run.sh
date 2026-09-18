@@ -36,12 +36,23 @@ except Exception:
     pass
 PY
 
+# Pull the free conversational corpora once, so the SFT set has ~84k real
+# Amharic conversations and not just the 517 seed examples. Non-fatal.
+if [ ! -f training/data/conversations_free.jsonl ] && [ "${SKIP_FETCH:-0}" != "1" ]; then
+  echo "▶ Fetching free Amharic conversation corpora (one-time)…"
+  python tools/fetch_conversation_corpus.py || \
+    echo "  ⚠ fetch failed — continuing with the smaller seed set"
+fi
+
+python training/build_dataset.py
+
 python training/train_qlora.py \
   --model "$MODEL" --dataset "$DATASET" --out "$OUT" \
   --epochs "$EPOCHS" --batch "$BATCH" --grad-accum "$GA" \
-  --lr "$LR" --max-len "$MAXLEN"
+  --lr "$LR" --max-len "$MAXLEN" ${EXTRA:-}
 
-python training/merge_adapter.py --base "$MODEL" --adapter "$OUT" --out "${OUT}-merged"
+python training/merge_adapter.py --base "$MODEL" --adapter "$OUT" --out "${OUT}-merged" \
+  ${MERGE_DEVICE:+--device "$MERGE_DEVICE"}
 
 cat <<EOF
 

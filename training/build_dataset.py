@@ -135,21 +135,28 @@ def code_examples():
 
 
 def conversation_examples():
-    """Real user conversations exported by `manage.py export_training_data`."""
-    path = os.path.join(ROOT, 'training', 'data', 'conversations.jsonl')
+    """Real conversations: exported turns + free Amharic dialogue corpora.
+
+    `conversations.jsonl` comes from `manage.py export_training_data`;
+    `conversations_free.jsonl` is written by
+    `tools/fetch_conversation_corpus.py --sft` (AddisGPT + FineTome).
+    """
     out = []
-    try:
-        with open(path, encoding='utf-8') as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                obj = json.loads(line)
-                msgs = obj.get('messages')
-                if isinstance(msgs, list) and len(msgs) >= 3:
-                    out.append({'messages': msgs, '_source': 'conversation'})
-    except (OSError, ValueError):
-        pass
+    for name in ('conversations.jsonl', 'conversations_free.jsonl'):
+        path = os.path.join(ROOT, 'training', 'data', name)
+        source = 'conversation' if name == 'conversations.jsonl' else 'free_conversation'
+        try:
+            with open(path, encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    obj = json.loads(line)
+                    msgs = obj.get('messages')
+                    if isinstance(msgs, list) and len(msgs) >= 3:
+                        out.append({'messages': msgs, '_source': source})
+        except (OSError, ValueError):
+            pass
     return out
 
 

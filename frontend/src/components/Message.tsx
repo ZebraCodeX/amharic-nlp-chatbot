@@ -16,14 +16,20 @@ const SOURCE_LABEL: Record<string, string> = {
   creative: '✦ ፈጠራ',
   memory: 'ትዝታ',
   math: 'ሒሳብ',
+  reasoning: 'ማሰብ · reasoning',
   dictionary: 'መዝገበ ቃላት',
   time: 'ሰዓት',
   date: 'ቀን',
+  learned: 'የተማረ',
+  rules_en: 'English',
+  en_reason: 'ማሰብ · reasoning',
+  en_fallback: 'English',
+  error: 'ስህተት',
 };
 
 function label(source?: string): string | null {
   if (!source) return null;
-  if (source.startsWith('intent:')) return 'እውቀት';
+  if (source.startsWith('intent:') || source.startsWith('en_intent:')) return 'እውቀት';
   return SOURCE_LABEL[source] ?? null;
 }
 
@@ -55,7 +61,7 @@ export function Message({ msg, translateOn, translate, onFollowup }: Props) {
 
   return (
     <div className={`msg ${isUser ? 'user' : 'ai'}`}>
-      <div className="avatar">{isUser ? 'አን' : 'ሕ'}</div>
+      <div className="avatar">{isUser ? 'አን' : 'ዘ'}</div>
       <div className="body">
         <div className="bubble">
           {isUser ? <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{msg.text}</p> : <Rich text={msg.text} />}

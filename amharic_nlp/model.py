@@ -62,7 +62,8 @@ def kb_sentences(path):
 
 def build_from_sentences(sentences, out=MODEL_PATH, max_prev_vocab=MAX_PREV_VOCAB,
                          max_uni=MAX_UNI, min_bigram=MIN_BIGRAM,
-                         min_trigram=MIN_TRIGRAM, starters=400):
+                         min_trigram=MIN_TRIGRAM, starters=400,
+                         max_trigram_keys=0, max_next=0):
     """Train unigram/bigram/trigram/starters from an iterable of sentences.
 
     Shared by the legacy `build()` entry point and the full corpus training
@@ -102,6 +103,19 @@ def build_from_sentences(sentences, out=MODEL_PATH, max_prev_vocab=MAX_PREV_VOCA
     for (a, b, d), c in trigram.items():
         if c >= min_trigram and a in prev_vocab and b in prev_vocab:
             tri.setdefault(a + '|' + b, {})[d] = c
+
+    # Keep the model compact: a large conversational corpus explodes the
+    # continuation counts, so retain only the top next-word(s) per prefix.
+    if max_next:
+        bi = {a: dict(sorted(d.items(), key=lambda kv: kv[1], reverse=True)[:max_next])
+              for a, d in bi.items()}
+        tri = {a: dict(sorted(d.items(), key=lambda kv: kv[1], reverse=True)[:max_next])
+               for a, d in tri.items()}
+
+    if max_trigram_keys and len(tri) > max_trigram_keys:
+        keep = sorted(tri.items(), key=lambda kv: sum(kv[1].values()),
+                      reverse=True)[:max_trigram_keys]
+        tri = dict(keep)
 
     payload = {
         'n_sentences': n_sent,

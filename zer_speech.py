@@ -162,6 +162,21 @@ def transcribe_bytes(data, filename='audio.webm', language=None):
         text = ' '.join(s.text.strip() for s in segments).strip()
         whisper_lang = normalize_lang(info.language)
         lang = forced or detect_spoken_language(text, whisper_lang) or whisper_lang
+
+        # Auto mode: Whisper sometimes romanizes Amharic or guesses a third
+        # language. Re-run forced-Amharic and keep it when it recovers Ge'ez,
+        # so Amharic speech never lands on the English path by mistake.
+        if forced is None and (not text or lang not in ('am', 'en')):
+            am_segments, am_info = model.transcribe(
+                tmp, language='am', beam_size=1, vad_filter=True,
+                condition_on_previous_text=False,
+                initial_prompt=_PROMPTS['am'])
+            am_text = ' '.join(s.text.strip() for s in am_segments).strip()
+            if am_text and detect_spoken_language(am_text) == 'am':
+                segments, info, text = am_segments, am_info, am_text
+                whisper_lang = normalize_lang(am_info.language) or whisper_lang
+                lang = 'am'
+
         return {
             'text': text,
             'language': lang,

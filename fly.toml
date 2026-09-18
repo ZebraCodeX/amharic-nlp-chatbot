@@ -1,6 +1,6 @@
 # fly.toml — Fly.io config for ሕሳር (Django/DRF API + React SPA).
 # Deploy:  flyctl deploy --remote-only --ha=false
-app = "hisar-amharic-ai"
+app = "am-ai"
 primary_region = "sjc"
 
 [build]
@@ -9,7 +9,7 @@ primary_region = "sjc"
 [env]
   DJANGO_DEBUG = "0"
   DJANGO_ALLOWED_HOSTS = "*"
-  CSRF_TRUSTED_ORIGINS = "https://hisar-amharic-ai.fly.dev"
+  CSRF_TRUSTED_ORIGINS = "https://am-ai.fly.dev"
   HISAR_USERDATA_DIR = "/app/userdata"
   # The bundled Android/iOS/desktop apps call this API from their own origins.
   CORS_ALLOW_ALL = "1"

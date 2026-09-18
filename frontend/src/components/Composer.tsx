@@ -17,6 +17,8 @@ interface Props {
   voiceAvailable: boolean;
   lastLang: string;
   voiceError: string | null;
+  speaking: boolean;
+  onStopSpeaking: () => void;
 }
 
 export function Composer({
@@ -36,6 +38,8 @@ export function Composer({
   voiceAvailable,
   lastLang,
   voiceError,
+  speaking,
+  onStopSpeaking,
 }: Props) {
   function onKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -89,6 +93,16 @@ export function Composer({
           <button className={`tool-toggle${translateOn ? ' on' : ''}`} onClick={onToggleTranslate} type="button">
             <span className="dot" /> EN ⇄ አማ
           </button>
+          {speaking && (
+            <button
+              className="tool-toggle stop-speaking"
+              onClick={onStopSpeaking}
+              type="button"
+              title="ዘር እየተናገረ ነው — አቁመው"
+            >
+              <span className="dot" /> ⏹ አቁም · stop
+            </button>
+          )}
           {(langLabel || voiceError) && (
             <span className="hint">{voiceError ? voiceError : `የመጨረሻ ቋንቋ፦ ${langLabel}`}</span>
           )}

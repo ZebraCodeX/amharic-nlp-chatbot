@@ -17,16 +17,24 @@ def main():
     ap.add_argument('--base', required=True)
     ap.add_argument('--adapter', required=True)
     ap.add_argument('--out', required=True)
+    ap.add_argument('--device', default='auto', choices=['auto', 'cuda', 'cpu'],
+                    help='merge on CPU if the GPU is too small for the full model')
     args = ap.parse_args()
 
+    device = args.device
+    if device == 'auto':
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
     tokenizer = AutoTokenizer.from_pretrained(args.base)
-    dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+    # fp16 halves memory; on CPU this avoids needing ~28 GB RAM for a 7B model.
+    dtype = torch.float16
     base = AutoModelForCausalLM.from_pretrained(args.base, torch_dtype=dtype)
     model = PeftModel.from_pretrained(base, args.adapter)
     model = model.merge_and_unload()
+    model.to(device)
     model.save_pretrained(args.out)
     tokenizer.save_pretrained(args.out)
-    print(f'merged model → {args.out}')
+    print(f'merged model → {args.out} (device={device})')
 
 
 if __name__ == '__main__':

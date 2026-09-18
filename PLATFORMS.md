@@ -64,6 +64,6 @@ Manual checks worth doing on a real device:
 
 1. `make test` green.
 2. `make frontend-build` and `make frontend-app-build` succeed.
-3. `make deploy` (web) verified at https://hisar-amharic-ai.fly.dev.
+3. `make deploy` (web) verified at https://am-ai.fly.dev.
 4. `make release V=x.y.z` → CI builds APK/AAB, exe/dmg/AppImage/deb, iOS build,
    and publishes to GitHub Releases.

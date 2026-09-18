@@ -163,6 +163,19 @@ export async function startRecording(autoStopMs = 0, maxMs = 15000): Promise<Rec
   };
 }
 
+/** Play an audio Blob once (used by the "test voice" button). */
+export function playBlob(blob: Blob, onEnd?: () => void): void {
+  const url = URL.createObjectURL(blob);
+  const a = new Audio(url);
+  const done = () => {
+    URL.revokeObjectURL(url);
+    onEnd?.();
+  };
+  a.onended = done;
+  a.onerror = done;
+  a.play().catch(done);
+}
+
 /** Speak with the browser voice; resolves when it finishes. */
 export function speak(text: string, lang: 'am' | 'en', onEnd?: () => void): void {
   if (!('speechSynthesis' in window) || !text) {

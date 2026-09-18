@@ -4,7 +4,7 @@
 #                        then the rest below except bitsandbytes/trl.
 
 torch>=2.2
-transformers>=4.44
+transformers>=4.44,<5
 peft>=0.12
 accelerate>=0.33
 datasets>=2.20

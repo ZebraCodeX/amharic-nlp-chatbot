@@ -7,6 +7,7 @@ data/bible_index.json
 data/amharic_bible.json
 data/user_memory.json
 data/user_translations.json
+data/.kb_en_cache.json
 # downloaded raw corpora (rebuild with `python3 -m amharic_nlp.tools.download_corpora`)
 amharic_nlp/corpora/
 

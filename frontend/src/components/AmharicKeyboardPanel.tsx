@@ -1,4 +1,5 @@
 import { useEffect, useRef, type MutableRefObject } from 'react';
+import { apiUrl } from '../api/client';
 import '../vendor/amharic-keyboard.js';
 import '../vendor/amharic-keyboard.css';
 
@@ -47,9 +48,9 @@ export function AmharicKeyboardPanel({
     const kbd = new AK({
       container,
       input,
-      dictUrl: '/api/words/',
-      ngramUrl: '/api/ngram/',
-      suggestUrl: '/api/suggest/',
+      dictUrl: apiUrl('/api/words/'),
+      ngramUrl: apiUrl('/api/ngram/'),
+      suggestUrl: apiUrl('/api/suggest/'),
       phonetic: false, // Amharic Fidel layout by default; toggle for phonetic
       storageKey: 'hisar.phonetic.react',
       onSubmit: (t: string) => onSubmitRef.current?.(t),

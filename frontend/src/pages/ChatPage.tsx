@@ -38,7 +38,7 @@ let seq = 1;
 
 export function ChatPage() {
   const app = useApp();
-  const { user, activeId, prefs, speakReplies, langMode, live, setLive, listening, setListening } = app;
+  const { user, activeId, prefs, speakReplies, langMode, live, setLive, listening, setListening, resetNonce } = app;
 
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [sending, setSending] = useState(false);
@@ -55,6 +55,8 @@ export function ChatPage() {
   const recorderRef = useRef<Recorder | null>(null);
   const wakeRef = useRef<WakeWord | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioUrlRef = useRef<string | null>(null);
+  const pendingEndRef = useRef<(() => void) | null>(null);
   const liveRef = useRef(false);
   const messagesRef = useRef<MessageData[]>([]);
   const convRef = useRef<number | null>(activeId);
@@ -76,7 +78,11 @@ export function ChatPage() {
   // Load the selected conversation's turns (signed-in users).
   const prevActive = useRef<number | null | undefined>(undefined);
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      // Remember where we were so signing in doesn't wipe an anonymous chat.
+      prevActive.current = activeId;
+      return;
+    }
     if (activeId === prevActive.current) return;
     prevActive.current = activeId;
     if (activeId == null) {
@@ -98,6 +104,15 @@ export function ChatPage() {
       )
       .catch(() => {});
   }, [activeId, user]);
+
+  // "＋ አዲስ ውይይት" clears the chat even for anonymous users (where activeId
+  // is already null, so the effect above would not fire).
+  useEffect(() => {
+    if (resetNonce === 0) return;
+    setMessages([]);
+    setLastLang('');
+    inputRef.current?.focus();
+  }, [resetNonce]);
 
   const scrollDown = useCallback(() => {
     requestAnimationFrame(() => endRef.current?.scrollIntoView({ behavior: 'smooth' }));
@@ -130,13 +145,32 @@ export function ChatPage() {
 
   const playUrl = useCallback((url: string, onEnd?: () => void) => {
     audioRef.current?.pause();
+    if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
     const a = new Audio(url);
     audioRef.current = a;
+    audioUrlRef.current = url;
+    const finish = () => {
+      if (pendingEndRef.current === onEnd) pendingEndRef.current = null;
+      if (onEnd) onEnd();
+    };
     if (onEnd) {
-      a.onended = onEnd;
-      a.onerror = onEnd;
+      pendingEndRef.current = onEnd;
+      a.onended = finish;
+      a.onerror = finish;
     }
-    a.play().catch(() => onEnd?.());
+    a.play().catch(finish);
+  }, []);
+
+  /** Kill switch — stop Zer reading its reply out loud (server or browser TTS). */
+  const stopSpeaking = useCallback(() => {
+    audioRef.current?.pause();
+    audioRef.current = null;
+    window.speechSynthesis?.cancel();
+    const end = pendingEndRef.current;
+    pendingEndRef.current = null;
+    setPhase('idle');
+    // Let the live loop keep going after a manual stop.
+    end?.();
   }, []);
 
   const speakReply = useCallback(
@@ -444,7 +478,16 @@ export function ChatPage() {
         </div>
       )}
 
-      {phase !== 'idle' && <div className={`voice-phase ${phase}`}>{PHASE_LABEL[phase]}</div>}
+      {phase !== 'idle' && (
+        <div
+          className={`voice-phase ${phase}`}
+          onClick={phase === 'speaking' ? stopSpeaking : undefined}
+          role={phase === 'speaking' ? 'button' : undefined}
+          style={phase === 'speaking' ? { cursor: 'pointer' } : undefined}
+        >
+          {phase === 'speaking' ? `${PHASE_LABEL[phase]} · ⏹ አቁም (ንካ)` : PHASE_LABEL[phase]}
+        </div>
+      )}
 
       <Composer
         inputRef={inputRef}
@@ -463,6 +506,8 @@ export function ChatPage() {
         voiceAvailable={!!speech?.stt?.available}
         lastLang={lastLang}
         voiceError={voiceError}
+        speaking={phase === 'speaking'}
+        onStopSpeaking={stopSpeaking}
       />
 
       {keyboardOpen && (

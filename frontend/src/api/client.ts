@@ -29,7 +29,7 @@ declare global {
   }
 }
 
-const HOSTED_API = 'https://hisar-amharic-ai.fly.dev';
+const HOSTED_API = 'https://am-ai.fly.dev';
 const strip = (s: string) => s.replace(/\/+$/, '');
 
 /**
@@ -49,6 +49,16 @@ function resolveOrigin(): string {
 
 const ORIGIN = resolveOrigin();
 const BASE = `${ORIGIN}/api`;
+
+/** Absolute API origin for non-`request` callers (the keyboard web component). */
+export function apiOrigin(): string {
+  return ORIGIN;
+}
+
+/** Build an absolute URL to a backend path (works on native/desktop shells). */
+export function apiUrl(path: string): string {
+  return `${ORIGIN}${path.startsWith('/') ? path : `/${path}`}`;
+}
 
 let _token: string | null = null;
 let _onUnauthorized: (() => void) | null = null;

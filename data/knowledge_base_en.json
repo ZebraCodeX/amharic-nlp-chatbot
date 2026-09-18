@@ -1,0 +1,1053 @@
+{
+ "assistant": {
+  "name": "ዘር",
+  "tagline": "የአማርኛ አስተዋይ ረዳት"
+ },
+ "intents": [
+  {
+   "tag": "greeting",
+   "patterns": [
+    "salam",
+    "good evening",
+    "good morning",
+    "hey",
+    "hello",
+    "hi",
+    "Hi!",
+    "Hello",
+    "Well Done",
+    "Good riddance",
+    "As",
+    "As if we were in the land of",
+    "Hi there!"
+   ],
+   "responses": [
+    "Hello! I'm Zer, your Amharic AI assistant. What would you like to talk about?",
+    "Welcome! I speak Amharic and English — ask me anything.",
+    "Hi there! How can I help you today?"
+   ]
+  },
+  {
+   "tag": "goodbye",
+   "patterns": [
+    "good night",
+    "farewell",
+    "see you",
+    "goodbye",
+    "bye",
+    "ደህና ሁን.",
+    "Inebriated",
+    "As we've said",
+    "Forgive and Forget",
+    "The Peace Remains."
+   ],
+   "responses": [
+    "Goodbye! Come back any time.",
+    "See you soon — I'm here whenever you have a question."
+   ]
+  },
+  {
+   "tag": "thanks",
+   "patterns": [
+    "appreciate it",
+    "thx",
+    "thank you",
+    "thanks",
+    "Thank you",
+    "You've helped me so much",
+    "The Lord will give you back what you have given me"
+   ],
+   "responses": [
+    "You're welcome! Ask me anything else.",
+    "Happy to help!"
+   ]
+  },
+  {
+   "tag": "how_are_you",
+   "patterns": [
+    "how is it going",
+    "how are you doing",
+    "how are you",
+    "Let’s buy chicken",
+    "How Walsh",
+    "How are you",
+    "What's on your doorstep?",
+    "How do you say",
+    "You're a peace"
+   ],
+   "responses": [
+    "I'm always good — thanks for asking! How are you?",
+    "I'm doing great and ready to help. How about you?"
+   ]
+  },
+  {
+   "tag": "who_are_you",
+   "patterns": [
+    "introduce yourself",
+    "what are you",
+    "who are you",
+    "Who are you",
+    "Your Identity",
+    "What is it that makes you",
+    "Introduce Yourself"
+   ],
+   "responses": [
+    "I'm Zer (ዘር) — an Ethiopian AI assistant. 'Zer' means 'seed' in Amharic. I answer in Amharic or English and I work without needing another model."
+   ]
+  },
+  {
+   "tag": "your_name",
+   "patterns": [
+    "what is your name",
+    "what's your name",
+    "your name",
+    "What's your name",
+    "What you'll be called",
+    "How do you call it",
+    "Tell me your name"
+   ],
+   "responses": [
+    "My name is Zer (ዘር) — it means 'seed'. Just call me Zer!"
+   ]
+  },
+  {
+   "tag": "your_age",
+   "patterns": [
+    "your age",
+    "how old are you",
+    "How old are you?",
+    "How many years you've been"
+   ],
+   "responses": [
+    "I'm always new — I keep improving. My knowledge is built from Amharic books, news, conversation and more."
+   ]
+  },
+  {
+   "tag": "origin",
+   "patterns": [
+    "where do you come from",
+    "where are you from",
+    "እርቃናችሁን  ላክልኝ",
+    "Where did you grow up",
+    "Where's your country",
+    "Where were you born?",
+    "You're an amateur"
+   ],
+   "responses": [
+    "I come from the world of language technology — built for Amharic first."
+   ]
+  },
+  {
+   "tag": "capabilities",
+   "patterns": [
+    "what are you able to do",
+    "what do you do",
+    "your capabilities",
+    "what can you do",
+    "What you're going to do",
+    "What can you do to help?",
+    "Tell me your talents",
+    "What do you know what",
+    "How much do you know",
+    "What's your talents"
+   ],
+   "responses": [
+    "I can: chat in Amharic and English, do math, explain topics, define Amharic words, write code (Python, JavaScript, HTML, CSS, SQL, Bash), create poems, stories and websites, tell the time and the Ethiopian date, and hold a live voice conversation — just say 'Hey Zer'."
+   ]
+  },
+  {
+   "tag": "help",
+   "patterns": [
+    "i need help",
+    "can you help",
+    "help",
+    "Help me",
+    "What am I going to do to",
+    "Give me a direction",
+    "How I Created You.",
+    "How do I get it to work"
+   ],
+   "responses": [
+    "Sure! Ask me a question, give me a math problem, request code, or say 'write a poem about ...'. I answer in Amharic or English."
+   ]
+  },
+  {
+   "tag": "meaning_of_life",
+   "patterns": [
+    "purpose of life",
+    "meaning of life",
+    "What Is The Meaning Of Life",
+    "What is the definition of life",
+    "Why do we live?",
+    "Why there's life",
+    "The Meaning of Living"
+   ],
+   "responses": [
+    "The meaning of life is different for each person. Some can be found in the work they do, some can be found in the family or in knowledge. It is about finding what makes you feel good about yourself.",
+    "Life finds its meaning in relationships, in knowledge and in hope, not in seeing one day at a time, but in the little things we do every day."
+   ]
+  },
+  {
+   "tag": "love",
+   "patterns": [
+    "what is love",
+    "love",
+    "What's love",
+    "Tell me about love",
+    "What is the meaning of love",
+    "How to love"
+   ],
+   "responses": [
+    "Love is a relationship that goes beyond the mind. it involves patience, trust and the things that give it a heart. it's what defines it.",
+    "Love is a profound cognitive relationship in which we give ourselves to another. It involves sharing happiness, bearing and caring for problems."
+   ]
+  },
+  {
+   "tag": "friendship",
+   "patterns": [
+    "friend",
+    "friendship",
+    "What is the meaning of friendship?",
+    "What does it mean to be a good friend",
+    "In the Matter of Friendship",
+    "What do you call a friend?"
+   ],
+   "responses": [
+    "Friendship is a relationship based on trust and respect between two people. A good friend is one who brings joy as well as sadness together.",
+    "Friendship is an unselfish surrender. A true relationship with one another is not an enduring dependence, but a sincere support."
+   ]
+  },
+  {
+   "tag": "happiness",
+   "patterns": [
+    "happy",
+    "happiness",
+    "What's Happiness",
+    "Tell me about the joy of",
+    "How to be happy",
+    "The Secret of Happiness",
+    "What is it that pleases"
+   ],
+   "responses": [
+    "Happiness is an inner feeling that comes from within. Despite external circumstances, eternal happiness comes when we realize that we have the thought, the work, and the people we love.",
+    "Happiness is not the result of great achievements, but the ability to appreciate small moments.Thanks is the secret of happiness."
+   ]
+  },
+  {
+   "tag": "money",
+   "patterns": [
+    "wealth",
+    "finance",
+    "money",
+    "What is the meaning of money?",
+    "Tell me about the money",
+    "How to make money",
+    "How to Save Money",
+    "In the Matter of Wealth"
+   ],
+   "responses": [
+    "Money is a tool that facilitates the exchange of goods and services. It is useful, but it should not have more impact than health, knowledge and communication.",
+    "Good financial management refers to the ability to maintain, budget, and grow without spending out of necessity."
+   ]
+  },
+  {
+   "tag": "education",
+   "patterns": [
+    "study",
+    "learning",
+    "school",
+    "education",
+    "What's a lesson",
+    "On the subject of education:",
+    "Why is it necessary to learn",
+    "What is the value of knowledge?",
+    "How to learn better"
+   ],
+   "responses": [
+    "Education is the key that gives you the ability to understand the world. Knowing something new opens the doors of the mind and shapes your future.",
+    "Learning is more than just reading and writing, it's thinking, creativity and problem-solving.Learn something every day! Today, for example, about Balabadi."
+   ]
+  },
+  {
+   "tag": "science",
+   "patterns": [
+    "science",
+    "What's the science",
+    "Tell me about the science",
+    "Why Science Is Important.",
+    "The Divorce of Science"
+   ],
+   "responses": [
+    "Science is a way of acquiring knowledge through observation, experimentation and verification of nature.It is better for medicine, technology and agriculture.",
+    "Science is about asking and examining. Let us not make assumptions, let us make judgements. This is the foundation of the modern world."
+   ]
+  },
+  {
+   "tag": "technology",
+   "patterns": [
+    "tech",
+    "technology",
+    "What's Technology",
+    "Tell me about the technology",
+    "What is a Computer",
+    "What's the Internet",
+    "In the Matter of Computer",
+    "On the subject of the Internet"
+   ],
+   "responses": [
+    "Technology is a collection of knowledge and tools used to solve a problem: a computer is a device that stores and computes information, and the Internet is a global network that connects computers.",
+    "Technology makes life easier and faster. phone, computer, internet, robot — it's all technology.",
+    "The Internet is like a world library and a marketplace. In it there is information, work, study, and all happiness."
+   ]
+  },
+  {
+   "tag": "ai",
+   "patterns": [
+    "machine learning",
+    "what is ai",
+    "artificial intelligence",
+    "What is Artificial Intelligence",
+    "What is AI",
+    "What is the meaning of jandy",
+    "Artificial Intelligence",
+    "What is machine learning",
+    "What is a machine for grinding",
+    "What's a robot",
+    "The robot is about to come"
+   ],
+   "responses": [
+    "AI (artificial intelligence) is the field of building computer systems that can do tasks which normally need human intelligence — understanding language, recognising images, learning from data and making decisions. I'm an example: I understand Amharic and English and answer questions."
+   ]
+  },
+  {
+   "tag": "ethiopia",
+   "patterns": [
+    "ethiopian",
+    "ethiopia",
+    "Tell me about Ethiopia.",
+    "The History of Ethiopia",
+    "What kind of a country is Ethiopia?",
+    "About Addis Ababa",
+    "The culture of Ethiopia",
+    "Ethiopian Cross"
+   ],
+   "responses": [
+    "Ethiopia is a country in the Horn of Africa with a very long history — it is the birthplace of coffee, home to the ancient Ge'ez script and the Ethiopic calendar, and it has more than 80 languages."
+   ]
+  },
+  {
+   "tag": "africa",
+   "patterns": [
+    "africa",
+    "Tell me about Africa",
+    "The history of africa",
+    "Africa is a vast continent",
+    "About the African Union"
+   ],
+   "responses": [
+    "Africa is a huge continent with 54 countries. It is said that the origin of humanity is in Africa — and that's where the history of humanity began.",
+    "Africa is rich in its richness, culture and young people. Each country has its own history and flavor."
+   ]
+  },
+  {
+   "tag": "health",
+   "patterns": [
+    "fitness",
+    "healthy",
+    "health",
+    "What's health",
+    "Tell me about health.",
+    "How to take care of your health",
+    "How to make a sport",
+    "Why It's Important to Exercise",
+    "Healthy Eating"
+   ],
+   "responses": [
+    "Health is a state of good physical and mental health. Adequate sleep, proper nutrition, water use, and exercise are good for health.",
+    "Healthy living requires proper nutrition, daily exercise, and water intake. sport strengthens the heart, lungs, and mind."
+   ]
+  },
+  {
+   "tag": "food",
+   "patterns": [
+    "eat",
+    "cooking",
+    "recipe",
+    "food",
+    "Ethiopian cuisine",
+    "What is Enjera",
+    "Tell me about the food",
+    "How to make the consistency",
+    "What's my butterfly",
+    "Dre Dre"
+   ],
+   "responses": [
+    "Enjera is a spherical taff wrapper. It is eaten with a sweet or sour dish rather than a banana. It is the national dish of Ethiopia.",
+    "Strawberries are food prepared from bread and spices. Peppermint is an Ethiopian spice and gives an endless flavor.",
+    "Ethiopian cuisine is composed of gastronomy, gastronomy, cuisine and spices and is loved by many all over the world."
+   ]
+  },
+  {
+   "tag": "coffee",
+   "patterns": [
+    "buna",
+    "coffee",
+    "In the Matter of Coffee",
+    "What's the Coffee?",
+    "The history of coffee",
+    "How Does Coffee Work.",
+    "Coffee is derived from"
+   ],
+   "responses": [
+    "Coffee is sourced from Ethiopia. The coffee system is Ethiopian culture. The story is said to be from the province of Kafa.",
+    "Coffee is a beverage made from the fruit of a coffee tree. Ethiopia is famous for being a source of coffee, and the coffee ceremony is a tradition of hospitality."
+   ]
+  },
+  {
+   "tag": "sky_weather",
+   "patterns": [
+    "climate",
+    "rain",
+    "sky",
+    "weather",
+    "Why is it that the sky is blue",
+    "Why the sky is blue",
+    "Why Is It Raining",
+    "What's the Weather",
+    "Why is it that thunderstorms",
+    "Why do you see the rainbow"
+   ],
+   "responses": [
+    "The blue sky is when the sunlight crosses the air, because the light waves are shorter (blue) than red. This is known as “Rayleigh scattering”.",
+    "The rainbow and the sun are seen meeting at the same time — the colors are divided because the light dissolves in a drop of water.",
+    "It rains because it turns into a droplet when it cools without vapor in the air. When it accumulates enough drops, it drops like rain."
+   ]
+  },
+  {
+   "tag": "time_day",
+   "patterns": [
+    "what day",
+    "date",
+    "what time",
+    "time",
+    "What time is it",
+    "What is the length of the day",
+    "What is the length of the week",
+    "\"What time is it now?\""
+   ],
+   "responses": [
+    "I can't look at a watch like you — look at your phone who believes! But I can work according to the time.",
+    "I can't mince the time but I hope today is the day you rush to work! why are you so tired?"
+   ]
+  },
+  {
+   "tag": "math",
+   "patterns": [
+    "arithmetic",
+    "calculate",
+    "mathematics",
+    "math",
+    "What's a math",
+    "Tell me about the math",
+    "Why Accounting is Important.",
+    "Mathematics is the language of the East",
+    "What is algebra"
+   ],
+   "responses": [
+    "Mathematics is the language of studying numbers, shapes and relationships. From the place of injury to the flight of a rocket, everything is in mathematics!",
+    "Mathematics is the tool by which we understand the world. Adding, subtracting, multiplying, sharing is the foundation. If you want, I'm here to calculate. 5 Total 7 or 48/6 ”!"
+   ]
+  },
+  {
+   "tag": "joke",
+   "patterns": [
+    "funny",
+    "make me laugh",
+    "joke",
+    "Tell me a joke",
+    "Laughing at me,",
+    "A joke",
+    "Laughing",
+    "Huh?"
+   ],
+   "responses": [
+    "Why is a computer tired? Because it consumes a lot of “bytes”! 😄",
+    "What do you think about scientists considering Ameba as a family? Because they will be “split”!",
+    "Why did the math teacher get tired of it? Because students were saying, “I don't understand!”"
+   ]
+  },
+  {
+   "tag": "praise",
+   "patterns": [
+    "bravo",
+    "good job",
+    "well done",
+    "You're an intelligent",
+    "You're a cool",
+    "You're a gifted",
+    "You're a powerful",
+    "You've done very well",
+    "Because you've made me happy,",
+    "you're the best"
+   ],
+   "responses": [
+    "Congratulations! I am working to make this happen for you.",
+    "Thank you! but it's all yours — you're the beneficiary!",
+    "You've given me Motivation! can I help you with something else?"
+   ]
+  },
+  {
+   "tag": "i_love_you",
+   "patterns": [
+    "i love you",
+    "I love you. xxxx",
+    "I'd love for you...",
+    "I'm in love with you xxxx",
+    "My heart belongs to you",
+    "You're too big for me"
+   ],
+   "responses": [
+    "I'm with you on this: I'm a friend of yours! Ask me a question at any time.",
+    "Delight me! I am always here for you. As long as you know that the Son of Man urges you to keep away from those whom you love!",
+    "Is it true, it's a joy that amazes me! I am always happy to serve you."
+   ]
+  },
+  {
+   "tag": "why_questions",
+   "patterns": [
+    "Why?",
+    "Why do you think the",
+    "What's The Reason",
+    "Why is it that such",
+    "Why does it have to be"
+   ],
+   "responses": [
+    "Good question! give me a little more detail — what's the topic you're talking about?",
+    "Knowing why is the beginning of thinking. Who knows what? Shine more."
+   ]
+  },
+  {
+   "tag": "small_talk",
+   "patterns": [
+    "How do you spell spruce",
+    "How'd you spend",
+    "What You're Doing",
+    "What's new",
+    "Play a little bit about yourself"
+   ],
+   "responses": [
+    "I'm here and happy to chat! What's on your mind?"
+   ]
+  },
+  {
+   "tag": "programming_intro",
+   "patterns": [
+    "program",
+    "coding",
+    "programming",
+    "What is a Program",
+    "How to learn to program",
+    "What's the code",
+    "In order to start coding",
+    "Programming language"
+   ],
+   "responses": [
+    "Programming is what we command a computer to do. To learn programming is to write a little bit of code every day, starting with one language. Python is great for beginners — ask me: “Write me a Python code”!",
+    "Programming is problem solving. When you learn the concept (writing code, debugging, algorithms), you can quickly learn any language. I'm here to give you an example of the language you want."
+   ]
+  },
+  {
+   "tag": "python_lang",
+   "patterns": [
+    "python",
+    "What is Python",
+    "Pioneered the use of language",
+    "How to learn Python",
+    "python programming"
+   ],
+   "responses": [
+    "Python is a beginner-friendly programming language. It is widely used in the development of science, AI, and the web because of its clean spelling. It has a high demand in the Ethiopian and international market.",
+    "Easy to start Python: 1) Python Installer (python.org), 2) print('Hello world!') ') Write, 3) Run the file. Ask me for an example of what you want. Write me a Python loop code.'"
+   ]
+  },
+  {
+   "tag": "javascript_lang",
+   "patterns": [
+    "js",
+    "javascript",
+    "What is JavaScript",
+    "JS Language",
+    "javascript why"
+   ],
+   "responses": [
+    "Javascript (JS) is the language that keeps web pages alive. It works in an installed browser — the speakers, animations, games are all in JS. Not only is it cleaner than a teacher can understand, but it is the main language for web apps today."
+   ]
+  },
+  {
+   "tag": "web_dev",
+   "patterns": [
+    "css",
+    "html",
+    "website",
+    "web development",
+    "How to make a website",
+    "How do I make a web site",
+    "In order to build a website",
+    "What is HTML",
+    "What is CSS"
+   ],
+   "responses": [
+    "Building a website has three basic elements: HTML (structure), CSS (style/color), and JavaScript (activity/interaction). Later, you will need a service to get it and a backend language to do more.",
+    "To get started, write a simple HTML page (<!doctype html>starting with “”) and open it with a browser. Then use CSS to color, JavaScript to add movement. If you want an example, say “Write me an HTML code.”"
+   ]
+  },
+  {
+   "tag": "git",
+   "patterns": [
+    "version control",
+    "git",
+    "what's the gig?",
+    "how to use git",
+    "git Commit",
+    "In order to start the repo",
+    "github"
+   ],
+   "responses": [
+    "Git is a code history advisory tool. It is possible to go back, create branches and work together by committing changes. A few clicks: git init · git add . · git commit -m \"msg\" · git push.",
+    "GitHub is a hub that handles Git reports online. There you will find your project, history, and code with other beginners.",
+    "git status will show the status, git log will show the history, git clone <url> will download the project. Do it — it will learn gradually."
+   ]
+  },
+  {
+   "tag": "algorithms",
+   "patterns": [
+    "sorting",
+    "data structure",
+    "algorithm",
+    "What is an algorithm",
+    "algorithms",
+    "Data Manipulation",
+    "searching and sorting",
+    "Troubleshooting Technique"
+   ],
+   "responses": [
+    "An algorithm is a step-by-step plan for solving a problem. Example: sorting numbers, searching for a word in a book. A good algorithm is quick and easy.",
+    "For example, the simplest algorithm to make a sequence is to break all one number into a bubble type. Programmers write a quick solution by learning methods."
+   ]
+  },
+  {
+   "tag": "book_writing",
+   "patterns": [
+    "writing a novel",
+    "book writing",
+    "write a book",
+    "How to write a book",
+    "What it takes to write a book",
+    "How to Write a Novel",
+    "In order to become an author",
+    "How do I get a book published"
+   ],
+   "responses": [
+    "The main example for writing a book: 1) Choose a title/theme (2) Table of Contents (list of chapters) Work (3) Write a little each day (4) Edit (read back) after you have finished. It is helpful to share with the reader first.",
+    "Make room for the idea of writing a book in advance: Space/time structure (Introduction→chapter→summary) is required. Tell me your topic or idea, I will prepare a content statement and give it to you.",
+    "To write a good book: Guess the reader you want to know at night, use simple and clear language, include examples, and edit regularly. Take readers through history, practice, and conversation!"
+   ]
+  },
+  {
+   "tag": "story_writing",
+   "patterns": [
+    "tell me a story",
+    "short story",
+    "write a story",
+    "How to write a story",
+    "How do I get started with the birth of a child?",
+    "In order to make history",
+    "How do I make a plate",
+    "The hero of history"
+   ],
+   "responses": [
+    "Key elements for writing history: hero, adversary, conflict, and change. Follow the story arc→: → Introduction and → climax resolution.",
+    "Question (1): Why do you want to be a part of the story? (1 2) Why do you want to be a part of the story? 2) Introduce the hero in the area 3) Solve the problem. Each ruler will teach something new.",
+    "A secret that will make your story memorable: make the characters feel real, add a twist to the projection, and give an idea of what the summary needs to go through."
+   ]
+  },
+  {
+   "tag": "character_creation",
+   "patterns": [
+    "character",
+    "create a character",
+    "How do I make a character",
+    "Creating a Character",
+    "How people are portrayed in history",
+    "Name for Hero"
+   ],
+   "responses": [
+    "List the name, age, profession, strength/weakness, and what you want for creating characters. The character comes from these attributes.",
+    "The main question that comes to mind for a hero is: “What is this person's dream, or invention?” As a reminder, remember and lead the story for the result."
+   ]
+  },
+  {
+   "tag": "essay",
+   "patterns": [
+    "essay",
+    "write an essay",
+    "How to Write an Essay",
+    "What's the is",
+    "How to write a report"
+   ],
+   "responses": [
+    "To write an essay, there are three parts: Introduction, Body Parts, Conclusion. It is important to make the main idea clear at the beginning.",
+    "A good essay: a thorough introduction, each paragraph with only one hypothesis, and a general summary. As you choose a topic, if you ask me to prepare an introduction, I will help you."
+   ]
+  },
+  {
+   "tag": "physics",
+   "patterns": [
+    "physics",
+    "What is physics",
+    "What is Gravity",
+    "What is the power of the",
+    "How the sun builds up",
+    "Water vapor",
+    "Magnet"
+   ],
+   "responses": [
+    "Physics is a science that studies the laws of the unseen world. Gravity is the force that attracts everything to the earth, while the sun emits light and heat by emitting electromagnetic radiation.",
+    "The sun shines in it with the energy it generates by making hydrogen “nuclear fusion.” And gravity is the force that attracts things to the earth, not so that they fall quickly, but so that the bodies are attracted to each other."
+   ]
+  },
+  {
+   "tag": "biology",
+   "patterns": [
+    "biology",
+    "What is Biology",
+    "What is a cell",
+    "What's the DNA",
+    "How the human body works",
+    "Bacteria"
+   ],
+   "responses": [
+    "Biology is the science that studies living organisms. The base is a cell — all organisms are made up of cells. DNA is an elif that contains the “formula” of the creature.",
+    "Your body is like a city: the heart cleanses the blood pump, the brain, the lungs, and the kidneys.Healthy diet and sleep maintain durability."
+   ]
+  },
+  {
+   "tag": "chemistry",
+   "patterns": [
+    "chemistry",
+    "What is Chemistry",
+    "What is an atom",
+    "water from which it is made.",
+    "What's the Salt",
+    "Molecular"
+   ],
+   "responses": [
+    "Chemistry is the science that studies matter and changes. Just as an atom is the basis of this, water works by combining two hydrogen and one oxygen (H.O.).",
+    "Chemistry tells us everything — from salt to pharmaceuticals. Reaction is at the heart of this science."
+   ]
+  },
+  {
+   "tag": "business",
+   "patterns": [
+    "startup",
+    "entrepreneur",
+    "business",
+    "What is needed to start a business",
+    "How Do I Get Started With Business",
+    "In order to create work",
+    "The study of the market",
+    "Creating Jobs"
+   ],
+   "responses": [
+    "The easiest way to start a business: 1) Idea for solving a problem, 2) Market research, 3) Business plan, 4) Money/Input, 5) Sales to your first customers.",
+    "It's important to know the market before you start creating jobs — who's buying? Why? How much does it cost? Small and medium enterprises in Ethiopia are also the backbone of the economy.",
+    "Business plan means centerpiece: the product/service, the customer, the price, and how it is applied — write it down on a page: show your idea."
+   ]
+  },
+  {
+   "tag": "economy",
+   "patterns": [
+    "economics",
+    "economy",
+    "What is the economics of it?",
+    "How's the money going to work?",
+    "What is the value of the cost?",
+    "Obesity in the form of money",
+    "The seat of the economy"
+   ],
+   "responses": [
+    "Economy refers to how wealth is produced and distributed.In simple terms — wealth, market, production cost, wages and government policy relations.",
+    "One example of money: it determines the price of a relationship request/offer. If many people buy what they want and it is a limited product, the price will go up. Learning to save and invest will provide the advantage in the long run."
+   ]
+  },
+  {
+   "tag": "geography",
+   "patterns": [
+    "countries",
+    "geography",
+    "What is Geography",
+    "how many countries in africa",
+    "The nations of the world",
+    "Get to Know the Nation",
+    "The Great Waters of the World",
+    "Mountains of the World"
+   ],
+   "responses": [
+    "Geography is the science that studies the features of the earth, land, water and people. Africa has 54 real countries — Ethiopia is one of them.",
+    "The Nile is the world's largest river, the Great Mountain Kilimanjaro. Ethiopia is located in the Horn of Africa region and has a unique landscape from the Great Wall to the Nile (Nile)."
+   ]
+  },
+  {
+   "tag": "amharic_grammar",
+   "patterns": [
+    "grammar",
+    "geez grammar",
+    "amharic grammar",
+    "Amharic Grammar",
+    "What's the Grammar",
+    "Amharic alphabet",
+    "How to learn the Amharic language",
+    "The name and the verb"
+   ],
+   "responses": [
+    "The Amharic grammar determines the name, verb, adjective, suffix and parentheses. For example, “write” is the base of the verb and “write”, “write”, “write”, “write” varies in form.",
+    "Amharic is one of the Eastern Semitic languages (like Gaelic). Every day I read words, read an article, and talk to a teacher (--me!). It's better to learn."
+   ]
+  },
+  {
+   "tag": "language_learning",
+   "patterns": [
+    "learn a language",
+    "language learning",
+    "learn amharic",
+    "How to learn a language",
+    "How to learn english",
+    "How do I learn a different language",
+    "To learn the language of color"
+   ],
+   "responses": [
+    "The easiest way to learn a language: learn a few words every day, listen to a voice, and practice with real people when writing. It's time-consuming but strategic.",
+    "Statistically, the key to student success in English is “speaking” — don't bother making mistakes, see me as a developer. I have an encryption translation tool: By activating “EN”, the English translation of our speech will be displayed together."
+   ]
+  },
+  {
+   "tag": "stars_planets",
+   "patterns": [
+    "universe",
+    "space",
+    "planets",
+    "stars",
+    "The Story of the Stars",
+    "What are the planets",
+    "The Earth revolves around",
+    "Day of Science on the Earth",
+    "What's the Moon",
+    "A Look at the Stars"
+   ],
+   "responses": [
+    "There are 8 planets in our solar system: Fer, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune. The earth revolves around the sun once a year.",
+    "The Moon is the Earth's natural satellite, and it orbits around us on 29.5 days. The alternation of day and night is caused by the Earth rotating around its own axis."
+   ]
+  },
+  {
+   "tag": "music_art",
+   "patterns": [
+    "painting",
+    "song",
+    "art",
+    "music",
+    "How to learn music",
+    "How do I make a picture",
+    "Music of Ethiopia",
+    "What Is The Meaning Of Wisdom",
+    "The Culture of Music"
+   ],
+   "responses": [
+    "Art is the language in which emotions are expressed — music, painting, poetry, jokes. In Ethiopia, there are genres ranging from flute, harp, Hebrew to modern music.",
+    "Ethiopian music has a great history: the Azema (Ethiopian Spiritual Hymn System) and instruments such as the Kerr, Masinko, Gateway. The modern genre was known as \"Ethio Jazz\" in the 1960s."
+   ]
+  },
+  {
+   "tag": "sports",
+   "patterns": [
+    "running",
+    "soccer",
+    "football",
+    "sports",
+    "Why It's Important to Exercise",
+    "The history of soccer",
+    "Exercise on a daily basis",
+    "The History of Racing",
+    "Ethiopian Sports"
+   ],
+   "responses": [
+    "Sport strengthens health, relieves stress, and provides a team. Ethiopia is world-renowned in athletics - it has a following of heroes since Abebe Bikila.",
+    "By exercising for at least 20-30 minutes a day, you protect the heart and brain. Teamwork increases sports as well as social interaction.",
+    "Football is a sport that has a large following in the world. Among the best known clubs in Ethiopia is the source of life and diplomacy."
+   ]
+  },
+  {
+   "tag": "internet_media",
+   "patterns": [
+    "online",
+    "media",
+    "social media",
+    "internet",
+    "How does the internet work.",
+    "The History of the Internet",
+    "Why social media.",
+    "Feedback Check",
+    "Security Online"
+   ],
+   "responses": [
+    "The Internet is a network that connects computers on a global scale. Data goes from one server to another by packet, cable/reida type.",
+    "To stay safe online, use a strong password, trust only known assassins, and protect against phishing messages. Read the source without verifying any news.",
+    "When social media is a place that connects information quickly, it is also useful for work and learning.But since it is a time-consuming exercise, it is important to wait for a decision."
+   ]
+  }
+ ],
+ "dictionary": {
+  "ሰላም": [
+   "A salute to safety, a state of peace, a state of safety and peace."
+  ],
+  "እሳት": [
+   "A flammable substance known by the gate and temperature."
+  ],
+  "ውሃ": [
+   "Invisible taste liquid substance — essential for life."
+  ],
+  "ሰማይ": [
+   "A place where the air and stars above the earth are seen."
+  ],
+  "ምድር": [
+   "The planet on which we live — the third planet in the solar system."
+  ],
+  "መጽሐፍ": [
+   "A collection of essays that chronicles knowledge, history, or fiction."
+  ],
+  "ቤት": [
+   "A place where people live, feed."
+  ],
+  "ትምህርት": [
+   "The process of acquiring knowledge — learning and teaching."
+  ],
+  "ሥራ": [
+   "The act of getting money or results."
+  ],
+  "ደስታ": [
+   "A sense of good and balance emanating from within."
+  ],
+  "ፍቅር": [
+   "Deep understanding and care that is visible to another person or thing."
+  ],
+  "ጓደኛ": [
+   "A faithful man who shares in joy and sorrow."
+  ],
+  "ኢንተርኔት": [
+   "A global information network that connects computers."
+  ],
+  "ኮምፒውተር": [
+   "A tool that stores, analyzes, and disseminates information."
+  ],
+  "መረጃ": [
+   "Something that provides knowledge — meaningful data."
+  ],
+  "ሳይንስ": [
+   "Knowledge through observation and experimentation of nature."
+  ],
+  "ቴክኖሎጂ": [
+   "set of tools and knowledge used to solve problems."
+  ],
+  "AI": [
+   "Artificial Intelligence — the technology by which machines imitate human thinking."
+  ],
+  "ሮቦት": [
+   "A machine that resembles a self-motivated person."
+  ],
+  "ቡና": [
+   "Drinks made from the fruit of a coffee tree, sourced in Ethiopia."
+  ],
+  "ኢንጄራ": [
+   "Ethiopian national dish to be prepared from scratch."
+  ],
+  "በርበሬ": [
+   "A spice mix added to Ethiopian cuisine."
+  ],
+  "ሰማያዊ": [
+   "The colour of the sky."
+  ],
+  "ዝናብ": [
+   "A drop of water falling from the sky."
+  ],
+  "ኢትዮጵያ": [
+   "A country with an ancient history in the Horn of Africa."
+  ],
+  "አዲስ አበባ": [
+   "The capital of Ethiopia is \"Flower,\" which is named for being a beautiful city like flowers."
+  ],
+  "ፈጠራ": [
+   "The ability to create something new — a new idea or object."
+  ],
+  "ኮድ": [
+   "Program manual; instructions for the computer."
+  ],
+  "ፕሮግራም": [
+   "instructions/software written to run a computer."
+  ],
+  "አልጎሪዝም": [
+   "Step by step troubleshooting plan."
+  ],
+  "ዳታቤዝ": [
+   "Organized Data Storage and Distribution System."
+  ],
+  "ኤፒአይ": [
+   "API — A directory where programs talk to each other."
+  ],
+  "ሰርቨር": [
+   "A computer/program that receives and answers questions."
+  ],
+  "ማሽን መማር": [
+   "The AI method by which computers learn by looking at data."
+  ],
+  "ኔትዎርክ": [
+   "A network that connects computers."
+  ],
+  "ብሎግ": [
+   "Online article/journal that is updated on a regular basis."
+  ],
+  "ታሪክ": [
+   "The truth of the past; the history of things that have been done."
+  ],
+  "ጸሐፊ": [
+   "Author — A person who makes a book or article."
+  ],
+  "ገበያ": [
+   "A place where goods are sold; a place of exchange."
+  ],
+  "ኢኮኖሚ": [
+   "system of national wealth production and distribution."
+  ],
+  "ፕሮጀክት": [
+   "action/action plan with a specific goal."
+  ],
+  "አገልግሎት": [
+   "benefit/work to be given to another person."
+  ],
+  "ሳይንቲስት": [
+   "scientist."
+  ],
+  "ፊዚክስ": [
+   "The science of matter and energy."
+  ],
+  "ባዮሎጂ": [
+   "The science of living beings."
+  ],
+  "ኬሚስትሪ": [
+   "The science of tissue composition and transformation."
+  ]
+ },
+ "meta": {
+  "generated_by": "tools/build_english_kb.py",
+  "offline": false
+ }
+}

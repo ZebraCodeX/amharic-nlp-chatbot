@@ -32,14 +32,6 @@ ZER_SYSTEM = (
     "JavaScript and most languages)."
 )
 
-# Short offline English rules so the assistant still works without an LLM.
-_EN_GREET = re.compile(r'\b(hi|hey|hello|good (morning|afternoon|evening)|salam)\b', re.I)
-_EN_THANKS = re.compile(r'\b(thanks|thank you|thx)\b', re.I)
-_EN_WHO = re.compile(r"\b(who are you|your name|what are you|what'?s your name)\b", re.I)
-_EN_CAPS = re.compile(r'\b(what can you do|help|capabilities|features)\b', re.I)
-_EN_BYE = re.compile(r'\b(bye|goodbye|see you)\b', re.I)
-
-
 def detect_language(text):
     """Return 'am', 'en' or 'unknown' from the script used in ``text``."""
     text = text or ''
@@ -63,6 +55,25 @@ def _normalize_lang(lang):
     if lang in ('en', 'eng', 'english'):
         return 'en'
     return None
+
+
+def _resolve_language(text, lang=None):
+    """Decide the reply language, letting the script override a wrong STT guess.
+
+    Ge'ez script is an essentially perfect Amharic signal, so it always wins:
+    a Whisper/voice guess of ``en`` must never send Amharic text down the
+    English path. When the script is not decisive we trust an explicit
+    ``lang`` (the caller's setting or the STT result), and only then fall back
+    to the script.
+    """
+    script = detect_language(text)
+    provided = _normalize_lang(lang)
+    if script == 'am':
+        return 'am'
+    if provided:
+        return provided
+    return script
+
 
 
 class Zer:
@@ -117,26 +128,14 @@ class Zer:
         return llm_chat(system, text, hist)
 
     def _english_offline(self, text):
-        t = text.strip()
-        if _EN_THANKS.search(t):
-            return "You're welcome! Ask me anything else."
-        if _EN_WHO.search(t):
-            return (f"I'm {ASSISTANT_NAME} ({ASSISTANT_NAME_EN}) — an Ethiopian AI assistant. "
-                    "'ዘር' means 'seed' in Amharic. I speak Amharic and English, can do math, "
-                    "explain topics, write Amharic/English code, and translate.")
-        if _EN_CAPS.search(t):
-            return ("I can: chat in Amharic and English, do math, define Amharic words, "
-                    "translate Amharic⇄English, write code and creative text, and hold a "
-                    "live voice conversation — just say 'Hey Zer'.")
-        if _EN_GREET.search(t):
-            return f"Hello! I'm {ASSISTANT_NAME_EN} (ዘር). What would you like to talk about?"
-        if _EN_BYE.search(t):
-            return "Goodbye! Come back any time."
-        math = self._am._try_math(text)
-        if math:
-            return math
-        return ("I can answer that best with a language model connected, but I'm running "
-                "offline right now. Ask me about Amharic words, math, or say 'what can you do'.")
+        """Answer English from Zer's own data — no model, no translation."""
+        try:
+            import english_brain
+            return english_brain.respond(text, assistant=self._am)['reply']
+        except Exception:
+            return ("I'm here and happy to help! Ask me about technology, "
+                    "science, Ethiopia or Amharic words, give me some math, or "
+                    "ask me to write code.")
 
     # -- public -----------------------------------------------------------
     def respond(self, text, lang=None, history=None, use_llm=True):
@@ -145,9 +144,7 @@ class Zer:
             return {'reply': 'ምን ልርዳህ? / How can I help?', 'source': 'empty',
                     'confidence': 1.0, 'lang': lang or 'unknown', 'followups': []}
 
-        resolved = _normalize_lang(lang) or detect_language(text)
-        if resolved == 'unknown':
-            resolved = detect_language(text)
+        resolved = _resolve_language(text, lang)
 
         # Use translations the user taught us, before anything else.
         learned = self._learned_reply(text)

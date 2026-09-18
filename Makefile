@@ -2,7 +2,7 @@
 SHELL := /bin/bash
 VENV ?= .venv
 PY := ../$(VENV)/bin/python
-FLY_APP ?= hisar-amharic-ai
+FLY_APP ?= am-ai
 NPM := npm
 
 help: ## list targets
@@ -34,11 +34,27 @@ dev-backend: ## run Django dev server
 dataset: ## build the Amharic SFT seed dataset
 	python3 training/build_dataset.py
 
+conversation: ## fetch free Amharic conversational corpora (needs .venv-train)
+	.venv-train/bin/python tools/fetch_conversation_corpus.py
+
+english-kb: ## compile the English knowledge base (no model at runtime)
+	python3 tools/build_english_kb.py
+
+retrain: ## retrain the n-gram/dictionary model from all corpora
+	python3 -m amharic_nlp.training --per-domain 150000 --max-trigram 60000 --max-next 10 --bible amharic_nlp/corpora/books/amharic_bible.json
+	python3 -m amharic_nlp.tools.build_dictionary
+
 export-data: ## export real conversations as training data
 	cd backend && $(PY) manage.py export_training_data
 
 train: ## QLoRA fine-tune + merge (run on a GPU)
 	bash training/run.sh
+
+serve: ## serve the merged model with vLLM + a public tunnel (GPU box)
+	bash training/serve.sh $(MODEL)
+
+connect-llm: ## point the Fly app at your GPU host (LLM_BASE_URL/LLM_API_KEY)
+	bash training/connect-fly.sh
 
 eval: ## sanity-check a model (MODEL=…)
 	python3 training/eval.py --model $(MODEL)
@@ -64,4 +80,5 @@ release: ## tag a release:  make release V=1.7.0
 	git tag v$(V) && git push origin v$(V)
 
 .PHONY: help test backend-test brain-test smoke frontend-build frontend-app-build \
-	dev-backend dataset export-data train eval superuser backup migrate deploy logs release
+	dev-backend dataset conversation english-kb retrain export-data train eval \
+	serve connect-llm superuser backup migrate deploy logs release

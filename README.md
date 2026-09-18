@@ -1,10 +1,10 @@
 # ዘር (Zer) — Amharic AI
 
-[![Live on Fly.io](https://img.shields.io/badge/live-hisar--amharic--ai.fly.dev-e94560)](https://hisar-amharic-ai.fly.dev)
+[![Live on Fly.io](https://img.shields.io/badge/live-hisar--amharic--ai.fly.dev-e94560)](https://am-ai.fly.dev)
 
-**▶ Live app / PWA: <https://hisar-amharic-ai.fly.dev>** — the chat, the Amharic
+**▶ Live app / PWA: <https://am-ai.fly.dev>** — the chat, the Amharic
 keyboard and the translation review UI at
-[`/review`](https://hisar-amharic-ai.fly.dev/review), deployed on Fly.io.
+[`/review`](https://am-ai.fly.dev/review), deployed on Fly.io.
 Open it and choose **Install app** to add it to your device (Android, iOS,
 Windows, macOS, Linux).
 
@@ -15,7 +15,7 @@ Get native builds from
 
 | Platform | Download | Stores |
 | --- | --- | --- |
-| **Web / PWA** | [hisar-amharic-ai.fly.dev](https://hisar-amharic-ai.fly.dev) | installable from the browser |
+| **Web / PWA** | [am-ai.fly.dev](https://am-ai.fly.dev) | installable from the browser |
 | **Android** | [`Hisar.apk`](https://github.com/ZebraCodeX/amharic-nlp-chatbot/releases/latest/download/Hisar.apk) · [`Hisar.aab`](https://github.com/ZebraCodeX/amharic-nlp-chatbot/releases/latest/download/Hisar.aab) | Google Play |
 | **iOS** | simulator build via CI · signed `.ipa` needs Apple signing | App Store / TestFlight |
 | **Windows** | [`Hisar-Setup.exe`](https://github.com/ZebraCodeX/amharic-nlp-chatbot/releases/latest/download/Hisar-Setup.exe) | Microsoft Store |
@@ -107,9 +107,15 @@ Create the admin non-interactively in CI/Fly with
 Zer answers, codes and translates **without any external model**:
 
 - **Language detection** — spoken Amharic vs English is decided from the
-  transcript's script (Ge'ez vs Latin), which is essentially exact, then
-  reconciled with Whisper's guess. `Auto` mode handles both; you can also force
-  አማርኛ/English. Zer replies and speaks in the detected language.
+  transcript's script (Ge'ez vs Latin), which is essentially exact, and **Ge'ez
+  always wins** over a wrong Whisper/voice guess. `Auto` mode handles both; you
+  can also force አማርኛ/English. Zer replies and speaks in the detected language.
+- **English answers with no model and no translation** (`english_brain.py`) —
+  English is served from `data/knowledge_base_en.json`, a compiled English
+  mirror of the knowledge base (`make english-kb`), plus the shared skills:
+  math in words or digits, the clock and Ethiopian date, Amharic word meanings,
+  code generation and everyday topics. No runtime LLM call, no translation
+  round-trip — so live voice never falls back to "connect a language model".
 - **Amharic code generation** (`codegen.py`) — real, runnable code for Python,
   JavaScript, HTML, CSS, SQL and Bash with **Amharic comments, Amharic string
   literals and Amharic identifiers** (e.g. `def ድምር(ቁጥሮች): return sum(ቁጥሮች)`),
@@ -176,8 +182,9 @@ transparently falls back to the browser's Web Speech API. Endpoints:
 backend/    Django 6 + DRF  — REST API, serves the built SPA with gunicorn
 frontend/   Vite + React 18 + TypeScript — chat, keyboard, translation review
 chatbot.py  the assistant brain (used by backend/api/services.py)          ─┐
+english_brain.py  self-contained English answers (no model/translation)     │
 translator.py  Amharic ⇄ English + user-correction store                    ├─ shared
-amharic_nlp/   trained n-gram / dictionaries / suggester                   ─┘
+amharic_nlp/   trained n-gram / dictionaries / suggester                    ─┘
 chat_app.py + templates/ + static/   legacy stdlib server (kept for reference)
 ```
 
@@ -338,33 +345,44 @@ server only talks to its public API (`amharic_nlp/__init__.py`).
 ### Language model (`data/nl_model.json`)
 - Trained by `python3 -m amharic_nlp.training` over a *balanced multi-domain
   corpus*: **books** (Amharic Wikipedia dump + the full Amharic Bible),
-  **articles** (BBC Amharic + Leipzig news), **movies** (drop subtitles/scripts
-  into `corpora/movies/`) and **other** web text (CC-100 Amharic). The bundled
-  trained model: ~337,000 sentences, ~323,000 unique words, 30,000-word
-  unigram, bigram + trigram continuations, and a 15,000-sentence bank.
+  **articles** (BBC Amharic + Leipzig news), **conversation** (free, real
+  Amharic dialogue — see below), **movies** (drop subtitles/scripts into
+  `corpora/movies/`) and **other** web text (CC-100 Amharic). The bundled
+  trained model: ~652,000 sentences, ~360,000 unique words, 30,000-word
+  unigram, bigram + capped trigram continuations, and a 60,000-sentence bank.
 - `NLModel.next_words((ቃል1, ቃል2))` → top continuation words (trigram
   preferred, bigram backup). Powers the keyboard's *next-word hints*.
 - `Suggester.suggest(partial)` → `{words, next, sentences}` for the training
   UI's smart type-ahead (served at `GET /api/suggest`).
 
+### Conversational data (free, no signup)
+`make conversation` pulls real Amharic dialogue into
+`amharic_nlp/corpora/conversation/` (`tools/fetch_conversation_corpus.py`):
+AddisGPT's human-verified user conversations, the 83k FineTome Amharic
+instruction conversations and Tatoeba's everyday sentences.
+
 ### Retrieving & retraining on more Amharic text
 ```bash
 # 1) fetch the free sources (Wikipedia, Bible, BBC articles, CC-100 web)
 python3 -m amharic_nlp.tools.download_corpora
+.venv-train/bin/python tools/fetch_conversation_corpus.py   # + conversation
 
 # 2) drop your own corpus text files into the matching folders:
-#      amharic_nlp/corpora/books/     (books, encyclopedias, መጻሕፍት)
-#      amharic_nlp/corpora/movies/    (movie/series subtitles, scripts)
-#      amharic_nlp/corpora/articles/  (news, magazines, blog posts)
-#      amharic_nlp/corpora/other/     (anything else)
+#      amharic_nlp/corpora/books/        (books, encyclopedias, መጻሕፍት)
+#      amharic_nlp/corpora/movies/       (movie/series subtitles, scripts)
+#      amharic_nlp/corpora/articles/     (news, magazines, blog posts)
+#      amharic_nlp/corpora/conversation/ (dialogue, chat, everyday speech)
+#      amharic_nlp/corpora/other/        (anything else)
 #    — plain UTF-8 .txt works; Leipzig *_sentences.txt and Wikipedia dumps too.
 
 # 3) retrain (flags keep one giant dump from crowding out the others)
-python3 -m amharic_nlp.training --per-domain 150000 --bible amharic_nlp/corpora/books/amharic_bible.json
+make retrain
 ```
 The trainer writes `nl_model.json`, `amharic_words.json` (20,000-word spelling
 dictionary), `vocabulary.txt` (every word + frequency), `sentences.json`
 (frequent-sentence completion bank) and `corpus_stats.json` into `data/`.
+Run `python3 -m amharic_nlp.tools.build_dictionary` afterwards to rebuild the
+per-letter dictionary index.
 
 ### LLM client (`llm.py`)
 - Zero-config auto-detection: local **Ollama** at `localhost:11434`, or any
@@ -435,11 +453,11 @@ python3 chatbot.py
 
 ### Deploy to Fly.io
 
-The live app runs on [Fly.io](https://fly.io): <https://hisar-amharic-ai.fly.dev>.
+The live app runs on [Fly.io](https://fly.io): <https://am-ai.fly.dev>.
 The repo ships a `Dockerfile`, `.dockerignore` and `fly.toml`, so redeploying is:
 
 ```bash
-flyctl apps create hisar-amharic-ai          # once
+flyctl apps create am-ai          # once
 flyctl volumes create hisar_data --region sjc --size 1   # once
 flyctl deploy --remote-only --ha=false       # build + release
 ```

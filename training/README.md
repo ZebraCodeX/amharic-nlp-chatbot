@@ -79,6 +79,62 @@ Zer automatically prefers the LLM for creative/open questions and keeps the
 offline brain (`codegen.py`, knowledge base, translation) for everything else —
 so the app works with or without the model.
 
+## 4. Connect your own GPU laptop to the deployed app
+
+Your laptop is behind a home router, so the Fly app can't reach it directly —
+you open a tunnel. One command serves the model and opens it; one command points
+the app at it. There is **no redeploy** and the offline brain stays as fallback.
+
+### On the GPU laptop (Linux, or Windows via WSL2)
+
+```bash
+# one-time: CUDA build of torch + the training stack
+python3 -m venv .venv-train && . .venv-train/bin/activate
+pip install -r training/requirements-train.txt
+
+# 1) build the dataset (fetch real conversations first, then the SFT set)
+.venv-train/bin/python tools/fetch_conversation_corpus.py   # needs pyarrow
+python training/build_dataset.py                            # ~84k conversations
+
+# 2) fine-tune + merge  (pick the model by VRAM — see the table below)
+MODEL=Qwen/Qwen2.5-1.5B-Instruct bash training/run.sh
+python training/eval.py --model training/out/zer-lora-merged
+
+# 3) serve it with an API key + a public tunnel
+LLM_API_KEY=$(openssl rand -hex 20) bash training/serve.sh training/out/zer-lora-merged
+#   → prints a https://….trycloudflare.com URL and the key
+```
+
+Then, in a second terminal (can be any machine with `flyctl`):
+
+```bash
+LLM_BASE_URL=https://THAT-URL/v1 LLM_MODEL=zer LLM_API_KEY=THE-KEY \
+  bash training/connect-fly.sh          # or: make connect-llm
+```
+
+Verify: `curl https://am-ai.fly.dev/api/llm-status` → `{"available":true,…}` and
+the header ✦ AI chip lights up. Ask an open question and it now **generates**.
+
+### Which Qwen fits?
+
+| GPU VRAM | Model | Notes |
+| --- | --- | --- |
+| 6–8 GB | `Qwen/Qwen2.5-1.5B-Instruct` | QLoRA fits; fast inference |
+| 10–12 GB | `Qwen/Qwen2.5-3B-Instruct` | better Amharic, batch 1–2 |
+| 16–24 GB | `Qwen/Qwen2.5-7B-Instruct` | best quality, `BATCH=2 GA=8` |
+
+- **Windows:** run all of this inside **WSL2** (vLLM is Linux-only). Native
+  Windows alternative: convert the merged model to GGUF with `llama.cpp`
+  (`convert_hf_to_gguf.py`) and `ollama create zer -f Modelfile`; Ollama serves
+  an OpenAI-compatible `/v1` too — use that URL with `connect-fly.sh`.
+- **Quick tunnels change URL** on every restart — just re-run `connect-fly.sh`
+  with the new URL. For a stable URL use a named Cloudflare tunnel or Tailscale
+  Funnel.
+- **Security:** the tunnel exposes your model. Always keep `LLM_API_KEY` set
+  (vLLM enforces it) and stop `serve.sh` (Ctrl-C) when you're done.
+- **Latency:** requests now go Fly → your laptop. Keep the laptop awake; expect
+  a few seconds per answer on consumer GPUs.
+
 ## Using the 1 TB SSD
 
 Put the big stuff there (models, HF cache, checkpoints, dataset):

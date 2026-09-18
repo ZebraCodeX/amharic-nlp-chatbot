@@ -14,14 +14,23 @@ export function AuthDialog({ open, onClose }: { open: boolean; onClose: () => vo
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    setBusy(true);
     setError(null);
+    const name = username.trim();
+    if (name.length < 3) {
+      setError('የተጠቃሚ ስም ቢያንስ 3 ፊደል ይሁን። / username must be at least 3 characters');
+      return;
+    }
+    if (mode === 'register' && password.length < 6) {
+      setError('የይለፍ ቃል ቢያንስ 6 ፊደል ይሁን። / password must be at least 6 characters');
+      return;
+    }
+    setBusy(true);
     try {
-      if (mode === 'login') await login(username.trim(), password);
-      else await register({ username: username.trim(), password, display_name: displayName.trim() });
+      if (mode === 'login') await login(name, password);
+      else await register({ username: name, password, display_name: displayName.trim() });
       onClose();
     } catch (err) {
-      setError((err as Error).message || 'ተሳክቷል የለም / failed');
+      setError((err as Error).message || 'አልተሳካም። እንደገና ሞክር። / failed');
     } finally {
       setBusy(false);
     }
@@ -68,7 +77,10 @@ export function AuthDialog({ open, onClose }: { open: boolean; onClose: () => vo
         <button
           className="link-btn"
           type="button"
-          onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+          onClick={() => {
+            setMode(mode === 'login' ? 'register' : 'login');
+            setError(null);
+          }}
         >
           {mode === 'login' ? 'አዲስ መለያ ክፈት' : 'ቀድሞ መለያ አለኝ'}
         </button>

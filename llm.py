@@ -38,15 +38,18 @@ _detect_lock = threading.RLock()
 _detected = None
 
 
-def _post_json(url, payload, timeout):
+def _post_json(url, payload, timeout, api_key=None):
+    headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'User-Agent': 'Hisar-Amharic-AI/1.0',
+    }
+    if api_key:
+        headers['Authorization'] = f'Bearer {api_key}'
     req = urllib.request.Request(
         url,
         data=json.dumps(payload).encode('utf-8'),
-        headers={
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'User-Agent': 'Hisar-Amharic-AI/1.0',
-        },
+        headers=headers,
         method='POST',
     )
     with urllib.request.urlopen(req, timeout=timeout) as resp:
@@ -142,7 +145,7 @@ def chat(system, user, history=None, model=None, max_tokens=_MAX_TOKENS, timeout
             return _cache[cache_key]
 
     try:
-        raw = _post_json(url, payload, timeout)
+        raw = _post_json(url, payload, timeout, api_key=key)
         data = json.loads(raw)
         reply = data['choices'][0]['message']['content'].strip()
     except Exception:
