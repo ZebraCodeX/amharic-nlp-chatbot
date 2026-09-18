@@ -218,6 +218,44 @@ LLM_API_KEY=$(openssl rand -hex 20) \
 
 Either serving path works — `serve.sh` (vLLM; add `VLLM_EXTRA="--quantization bitsandbytes"` to run a 14B in 4-bit) or `serve-llama.sh` (GGUF, lightest). Then `connect-fly.sh` with the printed URL + key.
 
+## 6. Run training from GitHub → RunPod (one button)
+
+`.github/workflows/train-runpod.yml` rents a GPU on RunPod, trains, pushes the
+adapter to your HF repo, and (optionally) deletes the pod — all from the
+**Actions** tab. Nothing runs on the app server.
+
+### One-time setup (2 secrets)
+
+Repo → *Settings → Secrets and variables → Actions*:
+
+| Kind | Name | Value |
+| --- | --- | --- |
+| secret | `RUNPOD_API_KEY` | runpod.io → Settings → API Keys |
+| secret | `HF_TOKEN` | huggingface.co → Settings → Access Tokens (**Write**) |
+
+### Launch it
+
+Repo → **Actions → “Train on RunPod” → Run workflow**, and fill:
+
+| Input | Example | Notes |
+| --- | --- | --- |
+| `model` | `Qwen/Qwen2.5-14B-Instruct` | or 7B/32B |
+| `gpu` | `NVIDIA A100 80GB PCIe` | RunPod GPU type id |
+| `cloud` | `SECURE` | or `COMMUNITY` (cheaper) |
+| `epochs`, `batch`, `grad_accum`, `max_len` | `2`, `1`, `16`, `2048` | 14B on 80 GB |
+| `hf_repo` | `yourname/zer-qwen14b-lora` | adapter destination (private) |
+| `push_merged` | `0` / `1` | 1 uploads the ~28 GB merged model too |
+| `self_terminate` | `1` | pod deletes itself when done (recommended) |
+| `wait` | `0` / `1` | 1 watches the pod from the job (≤ ~5h30m) |
+
+The pod runs `training/runpod_bootstrap.sh` (clone → install → build the ~84k
+conversation set → QLoRA → merge → push to HF → self-terminate). Watch it live at
+`https://console.runpod.io/pods/<id>`; the finished adapter appears in your HF
+repo. Use **action = terminate** with a `pod_id` to kill a pod any time.
+
+> Prefer to run it by hand? Start any RunPod PyTorch pod and paste `runpod_bootstrap.sh`
+> into its terminal with `HF_TOKEN`, `HF_REPO`, `MODEL` set — same result.
+
 ## Using the 1 TB SSD
 
 Put the big stuff there (models, HF cache, checkpoints, dataset):

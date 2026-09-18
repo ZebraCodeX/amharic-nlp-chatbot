@@ -1,0 +1,154 @@
+name: Train on RunPod
+
+# Launch a full Zer training run on a rented RunPod GPU from GitHub, or tear a
+# pod down. Results are pushed to YOUR Hugging Face repo by the pod itself.
+#
+# One-time repo secrets (Settings → Secrets and variables → Actions):
+#   RUNPOD_API_KEY   runpod.io → Settings → API Keys
+#   HF_TOKEN         huggingface.co → Settings → Access Tokens (WRITE)
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "create a training pod | terminate a pod"
+        type: choice
+        default: create
+        options: [create, terminate]
+      pod_id:
+        description: "pod id (only for terminate)"
+        required: false
+        default: ""
+      model:
+        description: "base model"
+        default: Qwen/Qwen2.5-14B-Instruct
+      gpu:
+        description: "RunPod GPU type id"
+        default: NVIDIA A100 80GB PCIe
+      gpus:
+        default: "1"
+      cloud:
+        description: "SECURE or COMMUNITY"
+        default: SECURE
+      disk_gb:
+        description: "container disk (GB) — 200 fits the dataset + 28 GB model"
+        default: "200"
+      epochs:
+        default: "2"
+      batch:
+        default: "1"
+      grad_accum:
+        default: "16"
+      max_len:
+        default: "2048"
+      hf_repo:
+        description: "your HF repo for the adapter, e.g. yourname/zer-qwen14b-lora"
+        default: ""
+      push_merged:
+        description: "also upload the merged model (~28 GB)"
+        type: choice
+        default: "0"
+        options: ["0", "1"]
+      self_terminate:
+        description: "pod deletes itself when training finishes"
+        type: choice
+        default: "1"
+        options: ["1", "0"]
+      wait:
+        description: "keep the job watching the pod (best-effort, max ~5h30m)"
+        type: choice
+        default: "0"
+        options: ["0", "1"]
+
+permissions:
+  contents: read
+
+jobs:
+  control:
+    runs-on: ubuntu-latest
+    env:
+      RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Require the RunPod API key
+        run: |
+          if [ -z "${RUNPOD_API_KEY}" ]; then
+            echo "::error::Add the repository secret RUNPOD_API_KEY first."
+            exit 1
+          fi
+
+      - name: Terminate a pod
+        if: ${{ github.event.inputs.action == 'terminate' }}
+        run: |
+          if [ -z "${{ github.event.inputs.pod_id }}" ]; then
+            echo "::error::Provide pod_id to terminate."; exit 1
+          fi
+          python3 training/runpod_api.py terminate --id "${{ github.event.inputs.pod_id }}"
+
+      - name: Build pod environment
+        if: ${{ github.event.inputs.action == 'create' }}
+        run: |
+          python3 - <<'PY' > /tmp/pod_env.json
+          import json, os
+          i = os.environ
+          def gi(name, default=''):
+              return os.environ.get('INPUT_' + name.upper(), default)
+          env = {
+            'MODEL': gi('model'),
+            'EPOCHS': gi('epochs', '2'),
+            'BATCH': gi('batch', '1'),
+            'GA': gi('grad_accum', '16'),
+            'MAXLEN': gi('max_len', '2048'),
+            'EXTRA': '--save-steps 200',
+            'HF_REPO': gi('hf_repo'),
+            'HF_TOKEN': os.environ.get('HF_TOKEN', ''),
+            'RUNPOD_API_KEY': os.environ.get('RUNPOD_API_KEY', ''),
+            'SELF_TERMINATE': gi('self_terminate', '1'),
+            'PUSH_MERGED': gi('push_merged', '0'),
+          }
+          print(json.dumps(env))
+          PY
+        env:
+          INPUT_MODEL: ${{ github.event.inputs.model }}
+          INPUT_EPOCHS: ${{ github.event.inputs.epochs }}
+          INPUT_BATCH: ${{ github.event.inputs.batch }}
+          INPUT_GRAD_ACCUM: ${{ github.event.inputs.grad_accum }}
+          INPUT_MAX_LEN: ${{ github.event.inputs.max_len }}
+          INPUT_HF_REPO: ${{ github.event.inputs.hf_repo }}
+          INPUT_SELF_TERMINATE: ${{ github.event.inputs.self_terminate }}
+          INPUT_PUSH_MERGED: ${{ github.event.inputs.push_merged }}
+
+      - name: Launch the pod
+        if: ${{ github.event.inputs.action == 'create' }}
+        id: launch
+        run: |
+          set -o pipefail
+          python3 training/runpod_api.py create \
+            --name "zer-train-${GITHUB_RUN_ID}" \
+            --gpu "${{ github.event.inputs.gpu }}" \
+            --gpus "${{ github.event.inputs.gpus }}" \
+            --cloud "${{ github.event.inputs.cloud }}" \
+            --disk "${{ github.event.inputs.disk_gb }}" \
+            --env-json /tmp/pod_env.json \
+            --command 'bash -lc "curl -fsSL https://raw.githubusercontent.com/ZebraCodeX/amharic-nlp-chatbot/main/training/runpod_bootstrap.sh | bash"' \
+            | tee /tmp/pod.json
+          POD_ID=$(python3 -c "import json;print(json.load(open('/tmp/pod.json')).get('id',''))")
+          echo "pod_id=$POD_ID" >> "$GITHUB_OUTPUT"
+          echo "### Pod \`$POD_ID\` launched 🚀" >> "$GITHUB_STEP_SUMMARY"
+          echo "Watch it: https://console.runpod.io/pods/$POD_ID" >> "$GITHUB_STEP_SUMMARY"
+          echo "When it finishes it pushes the adapter to your HF repo and self-terminates (if enabled)." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Wait for completion (best effort)
+        if: ${{ github.event.inputs.action == 'create' && github.event.inputs.wait == '1' }}
+        run: |
+          POD_ID="${{ steps.launch.outputs.pod_id }}"
+          echo "Polling $POD_ID (the pod disappears when it terminates)…"
+          for i in $(seq 1 330); do
+            PRESENT=$(python3 training/runpod_api.py status --id "$POD_ID" | python3 -c "import json,sys; print('yes' if json.load(sys.stdin) else 'no')")
+            if [ "$PRESENT" = "no" ]; then
+              echo "✓ pod $POD_ID is gone (finished or terminated)."
+              break
+            fi
+            sleep 60
+          done
