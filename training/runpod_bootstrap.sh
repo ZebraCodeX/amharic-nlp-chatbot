@@ -19,9 +19,9 @@
 set -euo pipefail
 
 REPO_URL="${REPO_URL:-https://github.com/ZebraCodeX/amharic-nlp-chatbot.git}"
-WORKDIR="${WORKDIR:-/workspace}"
 MODEL="${MODEL:-Qwen/Qwen2.5-14B-Instruct}"
-OUT="${OUT:-$WORKDIR/zer-training/out/zer-lora}"
+NEED_GB="${NEED_GB:-60}"   # 14B ≈ 28 GB base + 28 GB merged + dataset/slack
+OUT="${OUT:-}"
 EPOCHS="${EPOCHS:-2}"
 BATCH="${BATCH:-1}"
 GA="${GA:-16}"
@@ -45,8 +45,36 @@ if command -v apt-get >/dev/null 2>&1; then
   apt-get install -y --no-install-recommends git python3-venv python3-pip >/dev/null 2>&1 || true
 fi
 
-mkdir -p "$WORKDIR/zer-training/out" "${HF_HOME:-$WORKDIR/hf-cache}"
-export HF_HOME="${HF_HOME:-$WORKDIR/hf-cache}"
+# --- disk: use the biggest writable filesystem; fail FAST if it's too small ---
+# (a half-downloaded 14B that dies on ENOSPC wastes GPU money — check up front)
+pick_base() {
+  local best="" best_avail=-1 d avail
+  for d in /workspace /root /tmp /; do
+    [ -d "$d" ] || continue
+    avail=$(df -Pk "$d" 2>/dev/null | awk 'NR==2{print $4}')
+    [ -n "$avail" ] || continue
+    if [ "$avail" -gt "$best_avail" ]; then best_avail=$avail; best=$d; fi
+  done
+  printf '%s' "$best"
+}
+BASE_DIR="${ZER_BASE_DIR:-$(pick_base)}"
+[ -n "$BASE_DIR" ] || BASE_DIR="/workspace"
+WORKDIR="${WORKDIR:-$BASE_DIR/zer-run}"
+free_gb=$(( $(df -Pk "$BASE_DIR" | awk 'NR==2{print $4}') / 1024 / 1024 ))
+export HF_HOME="${ZER_HF_HOME:-$WORKDIR/hf-cache}"
+OUT="${OUT:-$WORKDIR/zer-training/out/zer-lora}"
+
+log "disk: base=$BASE_DIR (${free_gb} GiB free) — need ~${NEED_GB} GiB for $MODEL"
+df -h "$BASE_DIR" 2>/dev/null || true
+if [ "$free_gb" -lt "$NEED_GB" ]; then
+  cat >&2 <<EOF
+✗ Not enough disk: ${free_gb} GiB free on $BASE_DIR, need ~${NEED_GB} GiB.
+  Recreate the pod with a bigger CONTAINER DISK (e.g. 200 GB) or attach a large
+  volume, then rerun.  For a smaller model set MODEL and a lower NEED_GB.
+EOF
+  exit 1
+fi
+mkdir -p "$WORKDIR/zer-training/out" "$HF_HOME"
 
 # --- code -------------------------------------------------------------------
 cd "$WORKDIR"

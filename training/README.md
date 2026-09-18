@@ -235,6 +235,13 @@ Repo → *Settings → Secrets and variables → Actions*:
 
 ### Launch it
 
+> **Disk matters.** A 14B run needs ~60–70 GB free (28 GB base weights + 28 GB
+> merged model + dataset). Create the pod with a **container disk of 200 GB**
+> (the workflow does this by default). The bootstrap prints free space and
+> **aborts in seconds** if the pod is too small — before downloading anything —
+> so a mis-sized pod costs cents, not a wasted GPU hour. Override the threshold
+> with `NEED_GB` for smaller/larger models.
+
 Repo → **Actions → “Train on RunPod” → Run workflow**, and fill:
 
 | Input | Example | Notes |

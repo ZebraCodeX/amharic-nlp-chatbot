@@ -16,8 +16,15 @@ except ImportError:
     os.environ.pop('HF_HUB_ENABLE_HF_TRANSFER', None)
 
 import torch
+import transformers
 from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
+
+def dtype_kwargs(dtype):
+    """`torch_dtype` was renamed to `dtype` in transformers 4.56 — support both."""
+    ver = tuple(int(p) for p in transformers.__version__.split('.')[:2] if p.isdigit())
+    return {'dtype' if ver >= (4, 56) else 'torch_dtype': dtype}
 
 
 def main():
@@ -36,7 +43,7 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained(args.base)
     # fp16 halves memory; on CPU this avoids needing ~28 GB RAM for a 7B model.
     dtype = torch.float16
-    base = AutoModelForCausalLM.from_pretrained(args.base, torch_dtype=dtype)
+    base = AutoModelForCausalLM.from_pretrained(args.base, **dtype_kwargs(dtype))
     model = PeftModel.from_pretrained(base, args.adapter)
     model = model.merge_and_unload()
     model.to(device)

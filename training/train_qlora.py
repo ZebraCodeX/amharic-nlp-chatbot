@@ -36,6 +36,7 @@ except ImportError:
     os.environ.pop('HF_HUB_ENABLE_HF_TRANSFER', None)
 
 import torch
+import transformers
 from datasets import load_dataset
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from transformers import (
@@ -47,6 +48,12 @@ from transformers import (
 )
 
 IGNORE = -100
+
+
+def dtype_kwargs(dtype):
+    """`torch_dtype` was renamed to `dtype` in transformers 4.56 — support both."""
+    ver = tuple(int(p) for p in transformers.__version__.split('.')[:2] if p.isdigit())
+    return {'dtype' if ver >= (4, 56) else 'torch_dtype': dtype}
 
 
 def build_args():
@@ -112,7 +119,7 @@ def main():
         )
     model = AutoModelForCausalLM.from_pretrained(
         args.model, quantization_config=quant,
-        torch_dtype=torch.float16 if device == 'cuda' else torch.float32,
+        **dtype_kwargs(torch.float16 if device == 'cuda' else torch.float32),
     )
     if use_4bit:
         model = prepare_model_for_kbit_training(model)
