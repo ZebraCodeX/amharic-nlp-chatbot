@@ -37,8 +37,8 @@ primary_region = "sjc"
   destination = "/app/userdata"
 
 [[vm]]
-  # Whisper + neural TTS (PyTorch/VITS) + the embedded Zer GGUF run on CPU;
-  # the ~1 GB model stays resident, so give the machine room.
-  memory = "8gb"
+  # Whisper + neural TTS (PyTorch/VITS) + the embedded Zer GGUF run on CPU.
+  # llama.cpp mmaps the model, so the machine stays at the plan's 4096 MiB cap.
+  memory = "4gb"
   cpu_kind = "shared"
   cpus = 2
