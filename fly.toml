@@ -5,6 +5,9 @@ primary_region = "sjc"
 
 [build]
   dockerfile = "Dockerfile"
+  # The embedded GGUF stays out of git (940 MB); the Fly builder downloads it
+  # from this public Hugging Face repo at image build time and bakes it in.
+  args = { ZER_GGUF_URL = "https://huggingface.co/zee713/zer-qwen-lite-gguf/resolve/main/zer-qwen-q4_k_m.gguf" }
 
 [env]
   DJANGO_DEBUG = "0"
@@ -23,9 +26,9 @@ primary_region = "sjc"
 [http_service]
   internal_port = 8000
   force_https = true
-  auto_stop_machines = "stop"
-  auto_start_machines = true
-  min_machines_running = 0
+  auto_stop_machines = "off"
+  auto_start_machines = "on"
+  min_machines_running = 1
   processes = ["app"]
 
 # Persist crowd corrections + taught facts across restarts.
@@ -34,7 +37,8 @@ primary_region = "sjc"
   destination = "/app/userdata"
 
 [[vm]]
-  # Whisper + neural TTS (PyTorch/VITS) run on CPU; give them room.
-  memory = "4gb"
+  # Whisper + neural TTS (PyTorch/VITS) + the embedded Zer GGUF run on CPU;
+  # the ~1 GB model stays resident, so give the machine room.
+  memory = "8gb"
   cpu_kind = "shared"
   cpus = 2

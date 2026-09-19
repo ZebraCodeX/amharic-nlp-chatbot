@@ -7,12 +7,19 @@ reachable. Priority when picking a backend:
 
   1. $LLM_BASE_URL / $LLM_API_KEY / $LLM_MODEL  (explicit config,
      e.g. point it at any OpenAI, OpenRouter, Groq, Together… endpoint)
-  2. $OPENAI_API_KEY + optional $OPENAI_BASE_URL (classic OpenAI)
-  3. A local Ollama server at http://localhost:11434  (auto-detected)
+  2. The embedded Zer model (zer_model.py — the fine-tuned Qwen GGUF loaded
+     in-process through llama.cpp). This makes the deployed app self-contained:
+     no external host, no network call, no API key.
+  3. $OPENAI_API_KEY + optional $OPENAI_BASE_URL (classic OpenAI)
+  4. A local Ollama server at http://localhost:11434  (auto-detected)
 
-To go "full LLM" on this machine:
-    curl -fsSL https://ollama.com/install.sh | sh
-    ollama pull qwen3:1.7b        # or gemma2:2b, llama3.2:1b, …
+To go "full LLM" on this machine with the embedded model:
+    pip install llama-cpp-python
+    python3 chat_app.py        # loads models/zer-qwen-q4_k_m.gguf automatically
+
+Or with a remote OpenAI-compatible endpoint:
+    LLM_BASE_URL=https://api.groq.com/openai/v1 \
+    LLM_API_KEY=… LLM_MODEL=llama-3.3-70b-versatile python3 chat_app.py
 
 When no backend is reachable the engine silently falls back to the local
 rule-based brain — the chat keeps working offline.
@@ -36,6 +43,31 @@ _cache = {}
 _cache_lock = threading.Lock()
 _detect_lock = threading.RLock()
 _detected = None
+
+_embedded_cached = None
+_embedded_lock = threading.RLock()
+
+
+def _embedded_available():
+    """The in-process Zer engine is usable (file present + llama.cpp installed)."""
+    global _embedded_cached
+    with _embedded_lock:
+        if _embedded_cached is None:
+            try:
+                import zer_model
+                _embedded_cached = bool(zer_model.available())
+            except Exception:
+                _embedded_cached = False
+        return _embedded_cached
+
+
+def _embedded_backend_info():
+    try:
+        import zer_model
+        st = zer_model.status()
+        return (True, st.get('model') or 'zer-embedded')
+    except Exception:
+        return (False, None)
 
 
 def _post_json(url, payload, timeout, api_key=None):
@@ -91,10 +123,26 @@ def _ollama_endpoint():
 
 
 def available():
-    """"True if an LLM backend (explicit config or local Ollama) is reachable."""
+    """"True if an LLM backend (embedded, explicit config or local Ollama) is reachable."""
     if _configured_backend():
         return True
+    if _embedded_available():
+        return True
     return bool(_ollama_endpoint())
+
+
+def which():
+    """Return (backend, model) for status pages, in priority order."""
+    backend = _configured_backend()
+    if backend:
+        return ('configured', backend[2] or 'gpt-4o-mini')
+    if _embedded_available():
+        _, model = _embedded_backend_info()
+        return ('embedded', model)
+    ollama = _ollama_endpoint()
+    if ollama:
+        return ('ollama', (ollama[3][0] if ollama[3] else None))
+    return (None, None)
 
 
 def _pick_model(model, available_models):
@@ -109,6 +157,15 @@ def _pick_model(model, available_models):
     return available_models[0]
 
 
+def _build_messages(system, user, history):
+    messages = [{'role': 'system', 'content': system}]
+    for turn in (history or [])[-6:]:
+        if isinstance(turn, dict) and 'role' in turn and 'content' in turn:
+            messages.append({'role': turn['role'], 'content': str(turn['content'])[:4000]})
+    messages.append({'role': 'user', 'content': user})
+    return messages
+
+
 def chat(system, user, history=None, model=None, max_tokens=_MAX_TOKENS, timeout=_TIMEOUT):
     """
     Send a chat request to the best reachable backend. Returns the text reply
@@ -117,6 +174,23 @@ def chat(system, user, history=None, model=None, max_tokens=_MAX_TOKENS, timeout
     backend = _configured_backend()
     avail_models = None
     if not backend:
+        if _embedded_available():
+            import zer_model
+            # Keep generation bounded on CPU: long replies compound latency.
+            cap = int(os.environ.get('LLM_MAX_TOKENS', '512'))
+            payload_cache_key = hashlib.sha1(json.dumps(
+                [_build_messages(system, user, history), max_tokens],
+                ensure_ascii=False).encode('utf-8')).hexdigest()
+            with _cache_lock:
+                if payload_cache_key in _cache:
+                    return _cache[payload_cache_key]
+            reply = zer_model.chat(system, user, history, model=model,
+                                   max_tokens=min(max_tokens, cap))
+            if reply:
+                with _cache_lock:
+                    if len(_cache) < 200:
+                        _cache[payload_cache_key] = reply
+            return reply
         ollama = _ollama_endpoint()
         if not ollama:
             return None
@@ -124,11 +198,7 @@ def chat(system, user, history=None, model=None, max_tokens=_MAX_TOKENS, timeout
         avail_models = ollama[3]
     url, key, cfg_model = backend
 
-    messages = [{'role': 'system', 'content': system}]
-    for turn in (history or [])[-6:]:
-        if isinstance(turn, dict) and 'role' in turn and 'content' in turn:
-            messages.append({'role': turn['role'], 'content': str(turn['content'])[:4000]})
-    messages.append({'role': 'user', 'content': user})
+    messages = _build_messages(system, user, history)
 
     payload = {
         'messages': messages,

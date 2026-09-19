@@ -20,13 +20,19 @@ ENV PYTHONUNBUFFERED=1 \
     HF_HOME=/app/userdata/hf \
     XDG_CACHE_HOME=/app/userdata/cache \
     ZER_WHISPER_MODEL=base \
-    ZER_TTS=espeak
+    ZER_TTS=espeak \
+    ZER_MODEL=/app/models/zer-qwen-q4_k_m.gguf
 
 WORKDIR /app
 
+# Optional: hosted GGUF for remote builds (Fly) where the 940 MB file is not
+# in git. When it is bundled locally (models/) the build does not download.
+ARG ZER_GGUF_URL=
+
 # espeak-ng: open-source TTS with Amharic support. ffmpeg: audio decoding.
+# build-essential + cmake let llama-cpp-python compile if no wheel matches.
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends espeak-ng ffmpeg \
+    && apt-get install -y --no-install-recommends espeak-ng ffmpeg build-essential cmake \
     && rm -rf /var/lib/apt/lists/*
 
 COPY backend/requirements.txt backend/requirements-speech.txt /app/backend/
@@ -34,10 +40,27 @@ COPY backend/requirements.txt backend/requirements-speech.txt /app/backend/
 RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
     && pip install --no-cache-dir \
         -r /app/backend/requirements.txt \
-        -r /app/backend/requirements-speech.txt
+        -r /app/backend/requirements-speech.txt \
+    && pip install --no-cache-dir llama-cpp-python \
+        --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
 
 # Application code (frontend sources are dropped after the copy).
 COPY . /app
+
+# Embedded Zer model: bundled file wins; otherwise fetch from ZER_GGUF_URL.
+RUN python - <<'PY'
+import os, urllib.request
+dest = '/app/models/zer-qwen-q4_k_m.gguf'
+if os.path.exists(dest) and os.path.getsize(dest) > 10_000_000:
+    print('embedded model: bundled', os.path.getsize(dest) // (1024 * 1024), 'MB')
+elif os.environ.get('ZER_GGUF_URL'):
+    print('embedded model: downloading from ZER_GGUF_URL…')
+    urllib.request.urlretrieve(os.environ['ZER_GGUF_URL'], dest)
+    print('embedded model: downloaded', os.path.getsize(dest) // (1024 * 1024), 'MB')
+else:
+    print('embedded model: NOT bundled and no ZER_GGUF_URL — '
+          'the app will use the offline rule brain / remote LLM')
+PY
 
 # React build from stage 1.
 COPY --from=webbuild /app/backend/static/spa /app/backend/static/spa

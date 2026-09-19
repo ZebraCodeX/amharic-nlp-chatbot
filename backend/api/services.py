@@ -258,13 +258,9 @@ def synthesize(text, lang='am', **params):
 def llm_status():
     try:
         import llm
-        backend = llm._configured_backend()
+        backend, model = llm.which()
         if backend:
-            return {'available': True, 'backend': 'configured', 'model': backend[2]}
-        raw = llm._ollama_endpoint()
-        if raw:
-            return {'available': True, 'backend': 'ollama',
-                    'model': (raw[3][0] if raw[3] else None)}
+            return {'available': True, 'backend': backend, 'model': model}
     except Exception:
         pass
     return {'available': False, 'backend': None, 'model': None}

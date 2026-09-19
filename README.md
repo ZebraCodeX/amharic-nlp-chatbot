@@ -385,11 +385,24 @@ Run `python3 -m amharic_nlp.tools.build_dictionary` afterwards to rebuild the
 per-letter dictionary index.
 
 ### LLM client (`llm.py`)
-- Zero-config auto-detection: local **Ollama** at `localhost:11434`, or any
-  OpenAI-compatible endpoint via `$LLM_BASE_URL`, `$LLM_API_KEY`, `$LLM_MODEL`
-  (works with OpenAI, Groq, Together, OpenRouter, vLLM…).
+- Zero-config auto-detection: the **embedded Zer model** first, then local
+  **Ollama** at `localhost:11434`, or any OpenAI-compatible endpoint via
+  `$LLM_BASE_URL`, `$LLM_API_KEY`, `$LLM_MODEL` (works with OpenAI, Groq,
+  Together, OpenRouter, vLLM…).
 - Small built-in reply cache; thread-safe; falls back to `None` (→ rule brain)
   when no backend responds.
+
+### Embedded model framework (`zer_model.py`)
+- The deployed app is **self-contained**: `models/zer-qwen-q4_k_m.gguf` — the
+  fine-tuned Zer Qwen2.5-1.5B, QLoRA-merged and quantized to Q4_K_M (~1 GB) —
+  is loaded in-process through `llama.cpp` (`llama-cpp-python`). No external
+  GPU host, no network round-trip, no API key: `python3 chat_app.py` just works
+  (`bash run-with-zer.sh` / `make run-zer`).
+- Lazy + background warm-up (Django preloads it in `entrypoint.sh`), tuned for
+  CPU speed (`ZER_CTX`, `ZER_BATCH`, `ZER_THREADS`, `ZER_MAX_TOKENS`), and a
+  streaming generator (`zer_model.chat_stream`) ready for SSE replies.
+- The mechanism degrades cleanly: no GGUF / no `llama-cpp-python` → the app
+  keeps running on the offline rule brain or a remote endpoint.
 
 ### Translation (`translator.py`)
 - `translate(text, src, dst)` — free, keyless Amharic ⇄ English.

@@ -102,24 +102,36 @@ def probe_llm():
     """Detect an LLM backend once in the background so first chat isn't slowed."""
     global _llm_status
     try:
-        from llm import _configured_backend, _ollama_endpoint
+        from llm import which
         with _llm_lock:
             if _llm_status['checked']:
                 return
-            backend = _configured_backend()
+            backend, model = which()
             if backend:
-                _llm_status = {'available': True, 'model': backend[2],
-                               'backend': 'configured', 'checked': True}
+                _llm_status = {'available': True, 'model': model,
+                               'backend': backend, 'checked': True}
                 return
-            raw = _ollama_endpoint()
-            if raw:
-                _llm_status = {'available': True, 'model': (raw[3][0] if raw[3] else None),
-                               'backend': 'ollama', 'checked': True}
-            else:
-                _llm_status = {'available': False, 'model': None, 'backend': None, 'checked': True}
+            _llm_status = {'available': False, 'model': None, 'backend': None, 'checked': True}
     except Exception:
         with _llm_lock:
             _llm_status = {'available': False, 'model': None, 'backend': None, 'checked': True}
+
+
+def _llm_available_now():
+    """Re-evaluate backend availability lazily (embedded model may warm later)."""
+    if not _llm_status.get('checked'):
+        return None
+    if _llm_status.get('available'):
+        return _llm_status
+    try:
+        from llm import which
+        backend, model = which()
+        with _llm_lock:
+            _llm_status = {'available': bool(backend), 'model': model,
+                           'backend': backend, 'checked': True}
+    except Exception:
+        pass
+    return _llm_status
 
 
 class ChatHandler(BaseHTTPRequestHandler):

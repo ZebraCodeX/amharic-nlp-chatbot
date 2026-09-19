@@ -50,6 +50,15 @@ export-data: ## export real conversations as training data
 train: ## QLoRA fine-tune + merge (run on a GPU)
 	bash training/run.sh
 
+model: ## place the embedded Zer GGUF at models/zer-qwen-q4_k_m.gguf
+	@test -f models/zer-qwen-q4_k_m.gguf && echo "embedded model present ✓" || \
+	  { echo "embedded model missing — fetch it, e.g.:"; \
+	    echo "  scp me@192.168.1.160:/home/me/zer-qwen-q4_k_m.gguf models/"; \
+	    exit 2; }
+
+run-zer: ## run ሕሳር with the embedded Zer model (self-contained)
+	bash run-with-zer.sh
+
 serve: ## serve the merged model with vLLM + a public tunnel (GPU box)
 	bash training/serve.sh $(MODEL)
 
@@ -80,5 +89,5 @@ release: ## tag a release:  make release V=1.7.0
 	git tag v$(V) && git push origin v$(V)
 
 .PHONY: help test backend-test brain-test smoke frontend-build frontend-app-build \
-	dev-backend dataset conversation english-kb retrain export-data train eval \
-	serve connect-llm superuser backup migrate deploy logs release
+	dev-backend dataset conversation english-kb retrain export-data train model \
+	run-zer eval serve connect-llm superuser backup migrate deploy logs release
