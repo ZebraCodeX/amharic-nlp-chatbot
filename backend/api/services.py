@@ -44,7 +44,7 @@ def _user_facts(user):
         return []
 
 
-def chat(text, history=None, lang=None, user=None):
+def chat(text, history=None, lang=None, user=None, on_delta=None):
     """One bilingual Zer turn, serialized so concurrent requests can't interleave.
 
     When ``user`` is given, the user's taught facts ground the reply and any new
@@ -75,7 +75,8 @@ def chat(text, history=None, lang=None, user=None):
             z._am._save_memory = lambda: None       # per-user facts live in the DB
         try:
             start = time.time()
-            result = z.respond(text, lang=lang, history=en_history, use_llm=True)
+            result = z.respond(text, lang=lang, history=en_history,
+                               use_llm=True, on_delta=on_delta)
         finally:
             z._am._save_memory = original_save
 
@@ -112,6 +113,41 @@ def suggest(text, elapsed=True):
     if elapsed:
         result['elapsed_ms'] = round((time.time() - start) * 1000)
     return result
+
+
+def chat_stream(text, history=None, lang=None, user=None):
+    """One Zer turn as Server-Sent Events:  '{'delta': …}' then a final result.
+
+    Runs the (locked) chat pipeline in a worker thread so the reply streams as
+    the LLM generates it; rule-brain replies arrive as a single result with no
+    deltas, exactly as the non-streaming path today.
+    """
+    import queue as _queue
+    q = _queue.Queue(maxsize=16)
+
+    def _emit(delta):
+        if delta:
+            q.put(('delta', delta))
+
+    def _work():
+        try:
+            q.put(('result', chat(text, history, lang, user, on_delta=_emit)))
+        except Exception as exc:  # never let a stream die silently
+            q.put(('result', {'reply': 'ይቅርታ፣ ስህተት ተፈጥሯል። እንደገና ሞክር።',
+                              'source': 'error', 'confidence': 0.0,
+                              'lang': lang or 'unknown',
+                              'elapsed_ms': 0, 'followups': []}))
+
+    thread = threading.Thread(target=_work, name='chat-stream', daemon=True)
+    thread.start()
+    while True:
+        try:
+            kind, payload = q.get(timeout=300)
+        except Exception:
+            return
+        yield (kind, payload)
+        if kind == 'result':
+            return
 
 
 def _data_path(name):

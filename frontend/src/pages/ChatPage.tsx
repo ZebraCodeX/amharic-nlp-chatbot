@@ -122,6 +122,23 @@ export function ChatPage() {
     setMessages((prev) => [...prev, { ...m, id: seq++ }]);
   }, []);
 
+  /** Live-update the last AI bubble while an SSE reply streams in. */
+  const patchLastMsg = useCallback(
+    (patch: Partial<Pick<MessageData, 'text' | 'source' | 'elapsed' | 'followups'>> |
+              ((current: string) => Partial<Pick<MessageData, 'text'>>)) => {
+      setMessages((prev) => {
+        const idx = prev.length - 1;
+        if (idx < 0 || prev[idx].role !== 'ai') return prev;
+        const base = prev[idx];
+        const merged = typeof patch === 'function' ? patch(base.text) : patch;
+        const next = prev.slice();
+        next[idx] = { ...base, ...merged };
+        return next;
+      });
+    },
+    [],
+  );
+
   const history = useCallback(
     (from: MessageData[]): ChatTurn[] =>
       from
@@ -209,9 +226,17 @@ export function ChatPage() {
       setPhase('thinking');
       scrollDown();
       try {
-        const res = await api.chat(text, history(snapshot), activeId ?? undefined);
-        addMsg({
-          role: 'ai',
+        addMsg({ role: 'ai', text: '' });
+        const res = await api.chatStream(
+          text,
+          history(snapshot),
+          activeId ?? undefined,
+          (d) => {
+            patchLastMsg((t) => ({ text: t + d }));
+            scrollDown();
+          },
+        );
+        patchLastMsg({
           text: res.reply,
           source: res.source,
           elapsed: res.elapsed_ms,
@@ -221,7 +246,7 @@ export function ChatPage() {
         onConversationSaved((res as { conversation?: number }).conversation);
         if (speakReplies) await speakReply(res.reply, res.lang);
       } catch {
-        addMsg({ role: 'ai', text: 'ይቅርታ፣ ስህተት ተፈጥሯል። እንደገና ሞክር።', source: 'error' });
+        patchLastMsg({ text: 'ይቅርታ፣ ስህተት ተፈጥሯል። እንደገና ሞክር።', source: 'error' });
       } finally {
         setSending(false);
         setPhase('idle');
@@ -229,7 +254,7 @@ export function ChatPage() {
         scrollDown();
       }
     },
-    [sending, activeId, addMsg, history, scrollDown, speakReplies, speakReply, onConversationSaved],
+    [sending, activeId, addMsg, patchLastMsg, history, scrollDown, speakReplies, speakReply, onConversationSaved],
   );
 
   const doVoiceTurn = useCallback(
@@ -286,8 +311,22 @@ export function ChatPage() {
       setSending(true);
       setPhase('thinking');
       try {
-        const reply = await api.chat(text, history(messagesRef.current), activeId ?? undefined);
-        addMsg({ role: 'ai', text: reply.reply, source: reply.source, followups: reply.followups });
+        addMsg({ role: 'ai', text: '' });
+        const reply = await api.chatStream(
+          text,
+          history(messagesRef.current),
+          activeId ?? undefined,
+          (d) => {
+            patchLastMsg((t) => ({ text: t + d }));
+            scrollDown();
+          },
+        );
+        patchLastMsg({
+          text: reply.reply,
+          source: reply.source,
+          followups: reply.followups,
+          elapsed: reply.elapsed_ms,
+        });
         setLastLang(reply.lang || lang);
         onConversationSaved((reply as { conversation?: number }).conversation);
         setSending(false);
@@ -299,7 +338,7 @@ export function ChatPage() {
         onDone?.();
       }
     },
-    [langMode, activeId, addMsg, history, speakReply, onConversationSaved],
+    [langMode, activeId, addMsg, patchLastMsg, history, speakReply, onConversationSaved],
   );
 
   const liveCycle = useCallback(async () => {

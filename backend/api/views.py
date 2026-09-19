@@ -3,7 +3,7 @@ import base64
 import json
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.views import View
 from rest_framework import status
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
@@ -196,6 +196,43 @@ class ChatView(APIView):
         return Response(services.chat(
             request.query_params.get('text', ''), history, lang,
             user=request.user if request.user.is_authenticated else None))
+
+
+class ChatStreamView(APIView):
+    """SSE variant of /api/chat: streams LLM text as it is generated, then
+    sends one final JSON result (same fields as ChatView). Non-LLM replies
+    arrive as a single result event with no deltas."""
+
+    throttle_scope = 'chat'
+
+    def post(self, request):
+        ser = ChatRequestSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        data = ser.validated_data
+        user = request.user if request.user.is_authenticated else None
+        events = services.chat_stream(data['text'], data.get('history'),
+                                      data.get('lang') or None, user=user)
+
+        def sse():
+            for kind, payload in events:
+                if kind == 'delta':
+                    yield 'data: %s\n\n' % json.dumps({'delta': payload},
+                                                      ensure_ascii=False)
+                    continue
+                result = payload
+                conv_id = _persist_turns(request, data['text'],
+                                         result.get('reply'), result.get('lang'),
+                                         result.get('source'),
+                                         request.data.get('conversation'))
+                if conv_id:
+                    result.setdefault('conversation', conv_id)
+                yield 'data: %s\n\n' % json.dumps(result, ensure_ascii=False)
+                yield 'data: [DONE]\n\n'
+
+        response = StreamingHttpResponse(sse(), content_type='text/event-stream')
+        response['Cache-Control'] = 'no-cache'
+        response['X-Accel-Buffering'] = 'no'
+        return response
 
 
 class TranslateView(APIView):

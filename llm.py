@@ -229,6 +229,71 @@ def chat(system, user, history=None, model=None, max_tokens=_MAX_TOKENS, timeout
     return reply
 
 
+def chat_stream(system, user, history=None, model=None, max_tokens=None,
+                timeout=_TIMEOUT):
+    """Yield reply text deltas from the best reachable backend (no blocking wait).
+
+    Backend priority mirrors :func:`chat`. Yields nothing when no backend
+    responds (caller falls back to the rule engine / creative skills).
+    """
+    backend = _configured_backend()
+    avail_models = None
+    if not backend:
+        if _embedded_available():
+            import zer_model
+            cap = int(os.environ.get('LLM_MAX_TOKENS', '256'))
+            for delta in zer_model.chat_stream(
+                    system, user, history, model=model,
+                    max_tokens=min(max_tokens or cap, cap)):
+                if delta:
+                    yield delta
+            return
+        ollama = _ollama_endpoint()
+        if not ollama:
+            return
+        backend = ollama[0], '', None
+        avail_models = ollama[3]
+    url, key, cfg_model = backend
+
+    messages = _build_messages(system, user, history)
+    payload = {
+        'messages': messages,
+        'max_tokens': max_tokens or int(os.environ.get('LLM_MAX_TOKENS', '1200')),
+        'temperature': float(os.environ.get('LLM_TEMPERATURE', '0.9')),
+        'stream': True,
+    }
+    chosen = _pick_model(model or cfg_model, avail_models)
+    if chosen:
+        payload['model'] = chosen
+
+    headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'text/event-stream',
+        'User-Agent': 'Hisar-Amharic-AI/1.0',
+    }
+    if key:
+        headers['Authorization'] = f'Bearer {key}'
+    req = urllib.request.Request(
+        url, data=json.dumps(payload).encode('utf-8'), headers=headers, method='POST')
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            for raw in resp:
+                line = raw.decode('utf-8', 'replace').strip()
+                if not line.startswith('data:'):
+                    continue
+                data = line[5:].strip()
+                if data == '[DONE]':
+                    break
+                try:
+                    delta = json.loads(data)['choices'][0]['delta'].get('content')
+                except Exception:
+                    continue
+                if delta:
+                    yield delta
+    except Exception:
+        return
+
+
 def clear_cache():
     with _cache_lock:
         _cache.clear()

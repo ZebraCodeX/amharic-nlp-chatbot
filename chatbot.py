@@ -755,9 +755,10 @@ class AmharicAssistant:
     # ------------------------------------------------------------------
     # optional LLM brain (llm.py) — used for creative / open-ended requests
     # ------------------------------------------------------------------
-    def _llm_answer(self, text):
+    def _llm_answer(self, text, on_delta=None):
         try:
             from llm import chat as llm_chat
+            from llm import chat_stream as llm_chat_stream
         except Exception:
             return None
         system = (
@@ -796,6 +797,13 @@ class AmharicAssistant:
             if reply and (src.startswith('intent:') or src in
                           ('fallback', 'llm', 'follow_up', 'injected', 'history')):
                 history.append({'role': 'assistant', 'content': reply})
+        if on_delta:
+            parts = []
+            for delta in llm_chat_stream(system, text, history):
+                if delta:
+                    parts.append(delta)
+                    on_delta(delta)
+            return ''.join(parts).strip() or None
         return llm_chat(system, text, history)
 
     def _creative_offline(self, text):
@@ -820,7 +828,7 @@ class AmharicAssistant:
             out['detail'] = True
         return out
 
-    def respond(self, text, use_llm=True, detail=True):
+    def respond(self, text, use_llm=True, detail=True, on_delta=None):
         text = (text or '').strip()
         if not text:
             return self._result('ምን ትፈልጋለህ? በአማርኛ ጻፍልኝ።', 'empty', 1.0)
@@ -896,7 +904,7 @@ class AmharicAssistant:
                             self._is_open_ended(text) or
                             bool(_DETAIL_RE.search(text))))
             if prefers_llm:
-                llm_reply = self._llm_answer(text)
+                llm_reply = self._llm_answer(text, on_delta=on_delta)
                 if llm_reply:
                     self._push_history(text, llm_reply, 'llm')
                     return self._result(llm_reply, 'llm', 0.9)

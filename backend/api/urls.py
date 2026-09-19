@@ -29,6 +29,8 @@ urlpatterns = [
 
     path('chat/', views.ChatView.as_view(), name='chat'),
     path('chat', views.ChatView.as_view()),
+    path('chat/stream/', views.ChatStreamView.as_view(), name='chat-stream'),
+    path('chat/stream', views.ChatStreamView.as_view()),
 
     path('translate/', views.TranslateView.as_view(), name='translate'),
     path('translate', views.TranslateView.as_view()),

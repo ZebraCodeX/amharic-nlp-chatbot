@@ -109,6 +109,64 @@ export const api = {
     });
   },
 
+  /**
+   * SSE chat: streams the reply as the model generates it, resolving with the
+   * final result once the server sends it (same shape as `chat`).
+   */
+  chatStream(
+    text: string,
+    history?: ChatTurn[],
+    conversation?: number,
+    onDelta?: (delta: string) => void,
+  ): Promise<ChatReply> {
+    return new Promise<ChatReply>((resolve, reject) => {
+      fetch(`${BASE}/chat/stream/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'text/event-stream',
+          ...authHeaders(),
+        },
+        body: JSON.stringify({ text, history, conversation }),
+        credentials: 'same-origin',
+      })
+        .then(async (res) => {
+          if (!res.ok || !res.body) throw new Error(`${res.status} ${res.statusText}`);
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+          for (;;) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() ?? '';
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed.startsWith('data:')) continue;
+              const payload = trimmed.slice(5).trim();
+              if (payload === '[DONE]') continue;
+              let ev: { delta?: string };
+              try {
+                ev = JSON.parse(payload);
+              } catch {
+                continue;
+              }
+              if (typeof ev.delta === 'string') {
+                onDelta?.(ev.delta);
+              } else {
+                reader.cancel();
+                resolve(ev as unknown as ChatReply);
+                return;
+              }
+            }
+          }
+          throw new Error('stream ended without a result');
+        })
+        .catch(reject);
+    });
+  },
+
   translate(text: string, to: 'en' | 'am' = 'en'): Promise<TranslateResult> {
     return request<TranslateResult>(`/translate/${qs({ text, to })}`);
   },

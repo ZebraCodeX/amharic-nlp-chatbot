@@ -104,11 +104,12 @@ class Zer:
             return []
 
     # -- English ----------------------------------------------------------
-    def _english_llm(self, text, history=None, use_llm=True):
+    def _english_llm(self, text, history=None, use_llm=True, on_delta=None):
         if not use_llm:
             return None
         try:
             from llm import chat as llm_chat
+            from llm import chat_stream as llm_chat_stream
         except Exception:
             return None
         system = ZER_SYSTEM + " The user is writing in English."
@@ -125,6 +126,13 @@ class Zer:
             content = str(turn.get('content') or '').strip()
             if role in ('user', 'assistant') and content:
                 hist.append({'role': role, 'content': content})
+        if on_delta:
+            parts = []
+            for delta in llm_chat_stream(system, text, hist):
+                if delta:
+                    parts.append(delta)
+                    on_delta(delta)
+            return ''.join(parts).strip() or None
         return llm_chat(system, text, hist)
 
     def _english_offline(self, text):
@@ -138,7 +146,7 @@ class Zer:
                     "ask me to write code.")
 
     # -- public -----------------------------------------------------------
-    def respond(self, text, lang=None, history=None, use_llm=True):
+    def respond(self, text, lang=None, history=None, use_llm=True, on_delta=None):
         text = (text or '').strip()
         if not text:
             return {'reply': 'ምን ልርዳህ? / How can I help?', 'source': 'empty',
@@ -153,12 +161,13 @@ class Zer:
                     'lang': resolved if resolved != 'unknown' else 'am', 'followups': []}
 
         if resolved == 'am':
-            result = self._am.respond(text, use_llm=use_llm)
+            result = self._am.respond(text, use_llm=use_llm, on_delta=on_delta)
             result['lang'] = 'am'
             return result
 
         # English (or unknown → treat as English when Latin/other)
-        reply = self._english_llm(text, history=history, use_llm=use_llm)
+        reply = self._english_llm(text, history=history, use_llm=use_llm,
+                                  on_delta=on_delta)
         source = 'llm'
         if not reply:
             reply = self._english_offline(text)

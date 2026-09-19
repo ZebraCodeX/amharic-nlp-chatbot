@@ -91,7 +91,8 @@ class HybridRoutingTest(unittest.TestCase):
         """Stub the LLM with a deterministic reply, then restore."""
         import chatbot
         real = getattr(chatbot.AmharicAssistant, '_llm_answer')
-        chatbot.AmharicAssistant._llm_answer = lambda self, text: '[LLM] ' + text
+        chatbot.AmharicAssistant._llm_answer = (
+            lambda self, text, on_delta=None: '[LLM] ' + text)
         self.addCleanup(setattr,
                         chatbot.AmharicAssistant, '_llm_answer', real)
         from chatbot import AmharicAssistant
