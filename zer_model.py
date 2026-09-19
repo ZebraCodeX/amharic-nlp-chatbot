@@ -45,7 +45,7 @@ MODEL_FILE = os.environ.get('ZER_MODEL') or os.path.join(
     REPO_ROOT, 'models', 'zer-qwen-q4_k_m.gguf')
 
 MODEL_NAME = 'zer-embedded'
-MAX_TOKENS = int(os.environ.get('ZER_MAX_TOKENS', '512'))
+MAX_TOKENS = int(os.environ.get('ZER_MAX_TOKENS', '256'))
 
 _llm = None
 _state = 'idle'          # idle | loading | ready | error

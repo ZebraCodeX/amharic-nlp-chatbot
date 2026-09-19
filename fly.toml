@@ -20,6 +20,10 @@ primary_region = "sjc"
   # models are cached on the volume (HF_HOME) and downloaded on first use.
   ZER_WHISPER_MODEL = "base"
   ZER_TTS = "auto"
+  # Embedded Zer (CPU): 2 shared cores, replies capped so first paint is fast.
+  ZER_THREADS = "2"
+  ZER_MAX_TOKENS = "256"
+  LLM_MAX_TOKENS = "256"
   HF_HOME = "/app/userdata/hf"
   XDG_CACHE_HOME = "/app/userdata/cache"
 

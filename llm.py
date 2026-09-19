@@ -177,7 +177,7 @@ def chat(system, user, history=None, model=None, max_tokens=_MAX_TOKENS, timeout
         if _embedded_available():
             import zer_model
             # Keep generation bounded on CPU: long replies compound latency.
-            cap = int(os.environ.get('LLM_MAX_TOKENS', '512'))
+            cap = int(os.environ.get('LLM_MAX_TOKENS', '256'))
             payload_cache_key = hashlib.sha1(json.dumps(
                 [_build_messages(system, user, history), max_tokens],
                 ensure_ascii=False).encode('utf-8')).hexdigest()
