@@ -51,6 +51,7 @@ COPY . /app
 RUN python - <<'PY'
 import os, urllib.request
 dest = '/app/models/zer-qwen-q4_k_m.gguf'
+os.makedirs('/app/models', exist_ok=True)
 if os.path.exists(dest) and os.path.getsize(dest) > 10_000_000:
     print('embedded model: bundled', os.path.getsize(dest) // (1024 * 1024), 'MB')
 elif os.environ.get('ZER_GGUF_URL'):
