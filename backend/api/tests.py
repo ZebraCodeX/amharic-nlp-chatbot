@@ -96,6 +96,20 @@ class ChatApiTest(ApiTestBase):
         resp, data = self.get_json('/api/chat/', text='ሰላም')
         self.assertEqual(data['source'], 'intent:greeting')
 
+    def test_chat_stream_sse(self):
+        # SSE endpoint must accept text/event-stream (no 406) and always end
+        # with a JSON result + [DONE]; rule-brain replies have no deltas.
+        resp = self.client.post(
+            '/api/chat/stream/', data={'text': 'ሰላም', 'history': []},
+            content_type='application/json',
+            headers={'Accept': 'text/event-stream'})
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('text/event-stream', resp['Content-Type'])
+        body = b''.join(resp.streaming_content).decode('utf-8')
+        chunks = [c for c in body.split('data: ') if c.strip()]
+        self.assertTrue(any('[DONE]' in c for c in chunks))
+        self.assertTrue(any('intent:greeting' in c for c in chunks))
+
 
 class TranslateApiTest(ApiTestBase):
     def test_offline_glossary(self):

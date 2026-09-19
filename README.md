@@ -425,6 +425,10 @@ per-letter dictionary index.
 - `POST /api/chat` — JSON body `{text, history?}` → `{reply, source, confidence,
   followups?, elapsed_ms}` (GET `?text=` also works). `history` carries recent
   turns so the LLM keeps the conversation context after a page reload.
+- `POST /api/chat/stream` — same body, **Server-Sent Events**: the reply streams
+  in as the model generates it (`data: {delta}` events, then one final
+  `data: {reply,…}` result and `data: [DONE]`). With the embedded model a warm
+  machine shows the first token in ~0.2s and types the rest live.
 - `GET /api/translate?text=…&to=en|am` — JSON `{translated, score, reasons,
   word_evidence}`; candidates are scored for glossary fidelity, length sanity,
   and back-translation agreement when online engines are available.
