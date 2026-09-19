@@ -6,6 +6,7 @@ from django.conf import settings
 from django.http import HttpResponse, StreamingHttpResponse
 from django.views import View
 from rest_framework import status
+from rest_framework.negotiation import BaseContentNegotiation
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -198,12 +199,27 @@ class ChatView(APIView):
             user=request.user if request.user.is_authenticated else None))
 
 
+class _SseContentNegotiation(BaseContentNegotiation):
+    """Streaming endpoints return text/event-stream; don't negotiate Accept."""
+
+    def select_parser(self, request, parsers):
+        if not parsers:
+            return None
+        return parsers[0]
+
+    def select_renderer(self, request, renderers, format_suffix=None):
+        if not renderers:
+            return None, None
+        return renderers[0], renderers[0].media_type
+
+
 class ChatStreamView(APIView):
     """SSE variant of /api/chat: streams LLM text as it is generated, then
     sends one final JSON result (same fields as ChatView). Non-LLM replies
     arrive as a single result event with no deltas."""
 
     throttle_scope = 'chat'
+    content_negotiation_class = _SseContentNegotiation
 
     def post(self, request):
         ser = ChatRequestSerializer(data=request.data)
