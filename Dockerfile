@@ -48,21 +48,26 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
 # Application code (frontend sources are dropped after the copy).
 COPY . /app
 
+# NOTE: External Hugging Face inference is used (LLM_BASE_URL + LLM_API_KEY).
+# The embedded GGUF model is NOT bundled here to avoid OOM on constrained plans.
+# If a local model is desired, set ZER_GGUF_URL at deploy time and uncomment
+# the RUN block below.
+#
 # Embedded Zer model: bundled file wins; otherwise fetch from ZER_GGUF_URL.
-RUN python - <<'PY'
-import os, urllib.request
-dest = '/app/models/zer-qwen-q4_k_m.gguf'
-os.makedirs('/app/models', exist_ok=True)
-if os.path.exists(dest) and os.path.getsize(dest) > 10_000_000:
-    print('embedded model: bundled', os.path.getsize(dest) // (1024 * 1024), 'MB')
-elif os.environ.get('ZER_GGUF_URL'):
-    print('embedded model: downloading from ZER_GGUF_URL…')
-    urllib.request.urlretrieve(os.environ['ZER_GGUF_URL'], dest)
-    print('embedded model: downloaded', os.path.getsize(dest) // (1024 * 1024), 'MB')
-else:
-    print('embedded model: NOT bundled and no ZER_GGUF_URL — '
-          'the app will use the offline rule brain / remote LLM')
-PY
+# RUN python - <<'PY'
+# import os, urllib.request
+# dest = '/app/models/zer-qwen-q4_k_m.gguf'
+# os.makedirs('/app/models', exist_ok=True)
+# if os.path.exists(dest) and os.path.getsize(dest) > 10_000_000:
+#     print('embedded model: bundled', os.path.getsize(dest) // (1024 * 1024), 'MB')
+# elif os.environ.get('ZER_GGUF_URL'):
+#     print('embedded model: downloading from ZER_GGUF_URL…')
+#     urllib.request.urlretrieve(os.environ['ZER_GGUF_URL'], dest)
+#     print('embedded model: downloaded', os.path.getsize(dest) // (1024 * 1024), 'MB')
+# else:
+#     print('embedded model: NOT bundled and no ZER_GGUF_URL — '
+#           'the app will use the offline rule brain / remote LLM')
+# PY
 
 # React build from stage 1.
 COPY --from=webbuild /app/backend/static/spa /app/backend/static/spa

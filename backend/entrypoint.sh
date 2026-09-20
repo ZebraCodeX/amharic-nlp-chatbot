@@ -33,10 +33,12 @@ else:
           'the app will use the offline rule brain / remote LLM')
 PY
 
-# Preload the embedded Zer model so the first chat is instant on a fresh
-# machine. Quietly skips when llama-cpp-python or the model file is missing.
-echo "▶ warming embedded Zer model…"
-python - <<'PY' || echo "model warm skipped (offline fallback remains)"
+# Preload the embedded Zer model only when no external LLM is configured.
+# When LLM_BASE_URL is set (e.g. Hugging Face inference), skip warm to avoid
+# out-of-memory on constrained plans; the app will use the remote endpoint.
+if [ -z "${LLM_BASE_URL:-}" ]; then
+  echo "▶ warming embedded Zer model…"
+  python - <<'PY' || echo "model warm skipped (offline fallback remains)"
 import sys
 sys.path.insert(0, '/app')
 import zer_model
@@ -44,5 +46,8 @@ ok = zer_model.load()
 print('embedded model warm:', 'ready' if ok else 'unavailable',
       '->', zer_model.status().get('model'))
 PY
+else
+  echo "▶ external LLM configured (LLM_BASE_URL set) — skipping model warm"
+fi
 
 exec "$@"
