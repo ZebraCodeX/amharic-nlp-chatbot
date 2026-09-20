@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# Run database migrations (SQLite lives on the persistent volume), then start.
+# Run database migrations, then start.
 # NOTE: keep the CWD at /app/backend — gunicorn resolves `config.wsgi` from it.
 set -e
 

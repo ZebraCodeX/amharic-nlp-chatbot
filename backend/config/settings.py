@@ -76,11 +76,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
-DATABASES = {
-    'default': {
+def database_config():
+    db_url = os.environ.get('DATABASE_URL')
+    if db_url:
+        import dj_database_url
+        return dj_database_url.parse(db_url, conn_max_age=600)
+    return {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+
+
+DATABASES = {
+    'default': database_config()
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -148,15 +156,6 @@ if not DEBUG:
 USER_DATA_DIR = Path(os.environ.get('HISAR_USERDATA_DIR', BASE_DIR / 'userdata'))
 USER_DATA_DIR.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault('HISAR_USERDATA_DIR', str(USER_DATA_DIR))
-
-# The database lives on the writable volume so accounts/conversations persist
-# across deploys (SQLite is plenty for this workload).
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(USER_DATA_DIR / 'hisar.sqlite3'),
-    }
-}
 
 LOGGING = {
     'version': 1,

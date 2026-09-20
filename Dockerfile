@@ -31,8 +31,9 @@ ARG ZER_GGUF_URL=
 
 # espeak-ng: open-source TTS with Amharic support. ffmpeg: audio decoding.
 # build-essential + cmake let llama-cpp-python compile if no wheel matches.
+# libpq-dev: PostgreSQL client library for psycopg2
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends espeak-ng ffmpeg build-essential cmake \
+    && apt-get install -y --no-install-recommends espeak-ng ffmpeg build-essential cmake libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 COPY backend/requirements.txt backend/requirements-speech.txt /app/backend/

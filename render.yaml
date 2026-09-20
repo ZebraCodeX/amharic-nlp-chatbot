@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: amharic-nlp-chatbot
+    runtime: docker
+    repo: https://github.com/ZebraCodeX/amharic-nlp-chatbot
+    dockerfilePath: Dockerfile
+    plan: starter
+    region: oregon
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: "*.onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://amharic-nlp-chatbot.onrender.com"
+      - key: CORS_ALLOW_ALL
+        value: "1"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: HISAR_USERDATA_DIR
+        value: "/app/userdata"
+      - key: ZER_WHISPER_MODEL
+        value: "base"
+      - key: ZER_TTS
+        value: "espeak"
+      - key: ZER_THREADS
+        value: "2"
+      - key: ZER_MAX_TOKENS
+        value: "256"
+      - key: LLM_MAX_TOKENS
+        value: "256"
+      - key: HF_HOME
+        value: "/app/userdata/hf"
+      - key: XDG_CACHE_HOME
+        value: "/app/userdata/cache"
+      - fromDatabase:
+          name: amharic-nlp-db
+          property: connectionString
+        key: DATABASE_URL
+    buildCommand: ""
+    startCommand: /app/backend/entrypoint.sh gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --threads 8 --timeout 240 --access-logfile -
+
+databases:
+  - name: amharic-nlp-db
+    databaseName: amharic_nlp
+    user: amharic_nlp_user
+    plan: starter
+    region: oregon
