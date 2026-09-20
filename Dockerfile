@@ -79,9 +79,11 @@ RUN rm -rf /app/amharic_nlp/corpora /app/frontend /app/.git /app/.venv \
 
 WORKDIR /app/backend
 RUN python manage.py collectstatic --noinput && chmod +x /app/backend/entrypoint.sh
+EXPOSE 8080
 
-EXPOSE 8000
-CMD ["/app/backend/entrypoint.sh", "gunicorn", "config.wsgi:application", \
-     "--bind", "0.0.0.0:8000", \
-     "--workers", "1", "--threads", "8", \
-     "--timeout", "240", "--access-logfile", "-"]
+CMD /app/backend/entrypoint.sh gunicorn config.wsgi:application \
+     --bind 0.0.0.0:${PORT:-8080} \
+     --workers 1 \
+     --threads 8 \
+     --timeout 240 \
+     --access-logfile -
