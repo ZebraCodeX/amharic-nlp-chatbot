@@ -71,7 +71,7 @@ export function Composer({
             onKeyDown={onKeyDown}
           />
           <button className="send-btn" onClick={onSend} disabled={sending} title="ላክ (Enter)">
-            ላክ
+            ➤
           </button>
         </div>
 

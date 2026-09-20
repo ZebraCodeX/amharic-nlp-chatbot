@@ -49,6 +49,7 @@ export function ChatPage() {
   const [speech, setSpeech] = useState<SpeechStatus | null>(null);
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [lastLang, setLastLang] = useState('');
+  const [tts, setTts] = useState<{ id: number | null; paused: boolean }>({ id: null, paused: false });
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -185,6 +186,7 @@ export function ChatPage() {
     window.speechSynthesis?.cancel();
     const end = pendingEndRef.current;
     pendingEndRef.current = null;
+    setTts({ id: null, paused: false });
     setPhase('idle');
     // Let the live loop keep going after a manual stop.
     end?.();
@@ -209,6 +211,39 @@ export function ChatPage() {
     [speech, prefs, playUrl],
   );
 
+  /** Toggle playback of a single message: start / pause / resume / restart. */
+  const toggleSpeak = useCallback(
+    (msg: MessageData) => {
+      const l = msg.lang === 'en' ? 'en' : 'am';
+      const isThis = tts.id === msg.id;
+      if (isThis && !tts.paused) {
+        if (audioRef.current) {
+          audioRef.current.pause();
+        } else {
+          window.speechSynthesis?.pause();
+        }
+        setTts({ id: msg.id, paused: true });
+        return;
+      }
+      if (isThis && tts.paused) {
+        if (audioRef.current) {
+          audioRef.current.play().catch(() => {});
+        } else {
+          window.speechSynthesis?.resume();
+        }
+        setTts({ id: msg.id, paused: false });
+        return;
+      }
+      stopSpeaking();
+      setTts({ id: msg.id, paused: false });
+      const onEnd = () => {
+        setTts((cur) => (cur.id === msg.id ? { id: null, paused: false } : cur));
+      };
+      speakReply(msg.text, l, onEnd);
+    },
+    [tts, stopSpeaking, speakReply],
+  );
+
   const translate = useCallback(
     (text: string) => api.translate(text, 'en').then((r) => r.translated || '—'),
     [],
@@ -222,6 +257,9 @@ export function ChatPage() {
       if (el && !forced) el.value = '';
       const snapshot = messagesRef.current;
       addMsg({ role: 'user', text });
+      setTts({ id: null, paused: false });
+      audioRef.current?.pause();
+      window.speechSynthesis?.cancel();
       setSending(true);
       setPhase('thinking');
       scrollDown();
@@ -497,6 +535,9 @@ export function ChatPage() {
               translateOn={translateOn}
               translate={translate}
               onFollowup={(q) => sendText(q)}
+              speaking={tts.id === m.id && !tts.paused}
+              paused={tts.id === m.id && tts.paused}
+              onToggleSpeak={toggleSpeak}
             />
           ))}
           {sending && (

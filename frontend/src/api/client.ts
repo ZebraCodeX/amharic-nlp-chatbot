@@ -29,7 +29,7 @@ declare global {
   }
 }
 
-const HOSTED_API = 'https://am-ai.fly.dev';
+const HOSTED_API = 'https://am-ai.onrender.com';
 const strip = (s: string) => s.replace(/\/+$/, '');
 
 /**

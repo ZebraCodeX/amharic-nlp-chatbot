@@ -176,8 +176,8 @@ def chat(system, user, history=None, model=None, max_tokens=_MAX_TOKENS, timeout
     if not backend:
         if _embedded_available():
             import zer_model
-            # Keep generation bounded on CPU: long replies compound latency.
-            cap = int(os.environ.get('LLM_MAX_TOKENS', '256'))
+            # Detailed answers are expected; cap guards CPU latency.
+            cap = int(os.environ.get('LLM_MAX_TOKENS', '768'))
             payload_cache_key = hashlib.sha1(json.dumps(
                 [_build_messages(system, user, history), max_tokens],
                 ensure_ascii=False).encode('utf-8')).hexdigest()
@@ -241,7 +241,7 @@ def chat_stream(system, user, history=None, model=None, max_tokens=None,
     if not backend:
         if _embedded_available():
             import zer_model
-            cap = int(os.environ.get('LLM_MAX_TOKENS', '256'))
+            cap = int(os.environ.get('LLM_MAX_TOKENS', '768'))
             for delta in zer_model.chat_stream(
                     system, user, history, model=model,
                     max_tokens=min(max_tokens or cap, cap)):

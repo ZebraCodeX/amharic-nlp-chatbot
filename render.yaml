@@ -29,9 +29,9 @@ services:
       - key: ZER_THREADS
         value: "2"
       - key: ZER_MAX_TOKENS
-        value: "256"
+        value: "512"
       - key: LLM_MAX_TOKENS
-        value: "256"
+        value: "512"
       - key: HF_HOME
         value: "/app/userdata/hf"
       - key: XDG_CACHE_HOME

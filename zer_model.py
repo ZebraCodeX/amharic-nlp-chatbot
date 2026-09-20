@@ -17,7 +17,7 @@ Tuning knobs (env):
     ZER_THREADS   CPU threads for inference (default: min(8, cpu_count))
     ZER_CTX       context length in tokens  (default: 1024)
     ZER_BATCH     prompt batch tokens       (default: 512 — faster prefill)
-    ZER_MAX_TOKENS default reply cap        (default: 512)
+    ZER_MAX_TOKENS default reply cap        (default: 768)
 
 The engine is lazy: the first import starts a background warm-up so a request
 never pays the full model load; ``load()`` blocks until ready (or returns False
@@ -45,7 +45,7 @@ MODEL_FILE = os.environ.get('ZER_MODEL') or os.path.join(
     REPO_ROOT, 'models', 'zer-qwen-q4_k_m.gguf')
 
 MODEL_NAME = 'zer-embedded'
-MAX_TOKENS = int(os.environ.get('ZER_MAX_TOKENS', '256'))
+MAX_TOKENS = int(os.environ.get('ZER_MAX_TOKENS', '768'))
 
 _llm = None
 _state = 'idle'          # idle | loading | ready | error

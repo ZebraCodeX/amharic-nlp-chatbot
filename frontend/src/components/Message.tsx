@@ -38,9 +38,20 @@ interface Props {
   translateOn: boolean;
   translate: (text: string) => Promise<string>;
   onFollowup?: (q: string) => void;
+  speaking?: boolean;
+  paused?: boolean;
+  onToggleSpeak?: (msg: MessageData) => void;
 }
 
-export function Message({ msg, translateOn, translate, onFollowup }: Props) {
+export function Message({
+  msg,
+  translateOn,
+  translate,
+  onFollowup,
+  speaking = false,
+  paused = false,
+  onToggleSpeak,
+}: Props) {
   const [translated, setTranslated] = useState<string | null>(null);
   const [loadingTr, setLoadingTr] = useState(false);
 
@@ -87,6 +98,17 @@ export function Message({ msg, translateOn, translate, onFollowup }: Props) {
         )}
 
         <div className="meta">
+          {!isUser && onToggleSpeak && msg.text.trim() && (
+            <button
+              className={`say-btn${speaking ? ' speaking' : ''}${paused ? ' paused' : ''}`}
+              onClick={() => onToggleSpeak(msg)}
+              type="button"
+              title={speaking && !paused ? 'አቁም · pause' : 'አንብብ · listen'}
+              aria-label={speaking && !paused ? 'Pause' : 'Play'}
+            >
+              {speaking && !paused ? '⏸' : '▶'}
+            </button>
+          )}
           {label(msg.source) && <span>{label(msg.source)}</span>}
           {typeof msg.elapsed === 'number' && <span>{msg.elapsed} ms</span>}
         </div>
