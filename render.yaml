@@ -6,13 +6,16 @@ services:
     dockerfilePath: Dockerfile
     plan: starter
     region: oregon
+    buildArgs:
+      - key: ZER_GGUF_URL
+        value: "https://huggingface.co/zee713/zer-qwen-lite-gguf/resolve/main/zer-qwen-q4_k_m.gguf"
     envVars:
       - key: DJANGO_DEBUG
         value: "0"
       - key: DJANGO_ALLOWED_HOSTS
         value: "*.onrender.com"
       - key: CSRF_TRUSTED_ORIGINS
-        value: "https://amharic-nlp-chatbot.onrender.com"
+        value: "https://am-ai.onrender.com"
       - key: CORS_ALLOW_ALL
         value: "1"
       - key: DJANGO_SECRET_KEY
