@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: amharic-nlp-chatbot
+    name: am-ai
     runtime: docker
     repo: https://github.com/ZebraCodeX/amharic-nlp-chatbot
     dockerfilePath: Dockerfile
