@@ -5,11 +5,14 @@ primary_region = "sjc"
 
 [build]
   dockerfile = "Dockerfile"
-  # The embedded GGUF stays out of git (940 MB); the Fly builder downloads the
-  # model file once at image build time and bakes it into the image. This is a
-  # model download, NOT an inference call — at runtime the app runs the trained
-  # model in-process and never contacts an external inference endpoint.
-  args = { ZER_GGUF_URL = "https://huggingface.co/zee713/zer-qwen-lite-gguf/resolve/main/zer-qwen-q4_k_m.gguf" }
+  # The embedded GGUFs stay out of git; the Fly builder downloads the model
+  # files once at image build time and bakes them in. These are model
+  # downloads, NOT inference calls — at runtime the app runs the models
+  # in-process and never contacts an external inference endpoint.
+  #   • Amharic: the fine-tuned Zer model.
+  #   • English: a coherent base Qwen2.5-1.5B-Instruct (the Amharic adapter
+  #     degrades open-ended English, so English uses the base).
+  args = { ZER_GGUF_URL = "https://huggingface.co/zee713/zer-qwen-lite-gguf/resolve/main/zer-qwen-q4_k_m.gguf", ZER_GGUF_EN_URL = "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf" }
 
 [env]
   DJANGO_DEBUG = "0"
@@ -26,6 +29,9 @@ primary_region = "sjc"
   ZER_WHISPER_MODEL = "base"
   ZER_TTS = "auto"
   ZER_MMS_AMH_MODEL = "facebook/mms-tts-amh"
+  # Hybrid brain: Amharic → the fine-tuned Zer GGUF; English → base Qwen2.5.
+  ZER_MODEL = "/app/models/zer-qwen-q4_k_m.gguf"
+  ZER_MODEL_EN = "/app/models/qwen2.5-1.5b-instruct-q4_k_m.gguf"
   # Pre-load the neural voice so the first spoken reply is instant.
   ZER_WARM_TTS = "1"
   # Embedded Zer (CPU): 2 shared cores. 512 tokens allows fuller answers; the

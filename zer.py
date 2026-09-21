@@ -143,12 +143,12 @@ class Zer:
                 hist.append({'role': role, 'content': content})
         if on_delta:
             parts = []
-            for delta in llm_chat_stream(system, text, hist):
+            for delta in llm_chat_stream(system, text, hist, lang='en'):
                 if delta:
                     parts.append(delta)
                     on_delta(delta)
             return ''.join(parts).strip() or None
-        return llm_chat(system, text, hist)
+        return llm_chat(system, text, hist, lang='en')
 
     def _english_offline(self, text):
         """Answer English from Zer's own data — no model, no translation."""

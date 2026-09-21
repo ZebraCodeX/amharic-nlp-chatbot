@@ -31,10 +31,10 @@ codebase via Capacitor (mobile) and Electron (desktop), built by GitHub Actions.
   keys, spelling dictionary and type-ahead.
 - **Translation review** — `/review` lets you approve or correct Amharic ⇄
   English pairs, and corrections are learned immediately.
-- **Trained model, bundled** — the QLoRA-tuned Zer Qwen2.5-1.5B GGUF is baked
-  into the Docker image and runs in-process through `llama.cpp`, so the app is
-  self-contained and never calls an external inference endpoint. Only if the
-  model is missing does it fall back to the offline rule brain.
+- **Bundled, hybrid brain** — Amharic answers run the fine-tuned Zer Qwen2.5-1.5B
+  GGUF; English answers run a base Qwen2.5-1.5B-Instruct GGUF. Both are baked
+  into the Docker image and run in-process through `llama.cpp` — self-contained,
+  never an external inference endpoint.
 
 ## Stack
 

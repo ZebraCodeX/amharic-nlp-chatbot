@@ -804,12 +804,12 @@ class AmharicAssistant:
                 history.append({'role': 'assistant', 'content': reply})
         if on_delta:
             parts = []
-            for delta in llm_chat_stream(system, text, history):
+            for delta in llm_chat_stream(system, text, history, lang='am'):
                 if delta:
                     parts.append(delta)
                     on_delta(delta)
             return ''.join(parts).strip() or None
-        return llm_chat(system, text, history)
+        return llm_chat(system, text, history, lang='am')
 
     def _creative_offline(self, text):
         """Offline generative skills: write/create/develop/plan get REAL output

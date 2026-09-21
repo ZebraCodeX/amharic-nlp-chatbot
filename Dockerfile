@@ -21,13 +21,16 @@ ENV PYTHONUNBUFFERED=1 \
     XDG_CACHE_HOME=/app/userdata/cache \
     ZER_WHISPER_MODEL=base \
     ZER_TTS=auto \
-    ZER_MODEL=/app/models/zer-qwen-q4_k_m.gguf
+    ZER_MODEL=/app/models/zer-qwen-q4_k_m.gguf \
+    ZER_MODEL_EN=/app/models/qwen2.5-1.5b-instruct-q4_k_m.gguf
 
 WORKDIR /app
 
-# Optional: hosted GGUF for remote builds (Fly) where the 940 MB file is not
-# in git. When it is bundled locally (models/) the build does not download.
+# Optional: hosted GGUFs for remote builds (Fly) where the model files are not
+# in git. The Amharic model is required; the English base model is fetched when
+# a URL is given (default) and skipped otherwise.
 ARG ZER_GGUF_URL=
+ARG ZER_GGUF_EN_URL=https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf
 
 # espeak-ng: open-source TTS with Amharic support. ffmpeg: audio decoding.
 # build-essential + cmake let llama-cpp-python compile if no wheel matches.
@@ -48,22 +51,33 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
 # Application code (frontend sources are dropped after the copy).
 COPY . /app
 
-# Embedded Zer model: the bundled file wins; otherwise fetch it from
-# ZER_GGUF_URL at build time so the shipped image ALWAYS contains the trained
-# model. The runtime itself never calls an external inference endpoint.
+# Embedded Zer models: the bundled files win; otherwise fetch them from the
+# ZER_GGUF*_URL build args so the shipped image ALWAYS contains the trained
+# Amharic model plus the coherent English base model. The runtime itself never
+# calls an external inference endpoint.
 RUN python - <<'PY'
 import os, sys, urllib.request
-dest = '/app/models/zer-qwen-q4_k_m.gguf'
-os.makedirs('/app/models', exist_ok=True)
-if os.path.exists(dest) and os.path.getsize(dest) > 10_000_000:
-    print('embedded model: bundled', os.path.getsize(dest) // (1024 * 1024), 'MB')
-elif os.environ.get('ZER_GGUF_URL'):
-    print('embedded model: downloading from ZER_GGUF_URL…')
-    urllib.request.urlretrieve(os.environ['ZER_GGUF_URL'], dest)
-    print('embedded model: downloaded', os.path.getsize(dest) // (1024 * 1024), 'MB')
-else:
-    sys.exit('embedded model missing: bundle models/zer-qwen-q4_k_m.gguf or set '
-             'the ZER_GGUF_URL build arg')
+
+
+def fetch(dest, env, required):
+    if os.path.exists(dest) and os.path.getsize(dest) > 10_000_000:
+        print('model: bundled', dest, os.path.getsize(dest) // (1024 * 1024), 'MB')
+        return True
+    url = os.environ.get(env)
+    if not url:
+        if required:
+            sys.exit(f'model missing: bundle {dest} or set {env}')
+        print('model: skipped (no %s)' % env)
+        return False
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    print('model: downloading %s → %s' % (env, dest))
+    urllib.request.urlretrieve(url, dest)
+    print('model: downloaded', dest, os.path.getsize(dest) // (1024 * 1024), 'MB')
+    return True
+
+
+fetch('/app/models/zer-qwen-q4_k_m.gguf', 'ZER_GGUF_URL', required=True)
+fetch('/app/models/qwen2.5-1.5b-instruct-q4_k_m.gguf', 'ZER_GGUF_EN_URL', required=False)
 PY
 
 # React build from stage 1.

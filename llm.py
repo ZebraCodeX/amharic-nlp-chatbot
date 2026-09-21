@@ -56,7 +56,8 @@ def _embedded_available():
         if _embedded_cached is None:
             try:
                 import zer_model
-                _embedded_cached = bool(zer_model.available())
+                probe = getattr(zer_model, 'available_any', None)
+                _embedded_cached = bool(probe()) if probe else bool(zer_model.available())
             except Exception:
                 _embedded_cached = False
         return _embedded_cached
@@ -195,10 +196,14 @@ def _build_messages(system, user, history):
     return messages
 
 
-def chat(system, user, history=None, model=None, max_tokens=_MAX_TOKENS, timeout=_TIMEOUT):
+def chat(system, user, history=None, model=None, max_tokens=_MAX_TOKENS, timeout=_TIMEOUT,
+         lang=None):
     """
     Send a chat request to the best reachable backend. Returns the text reply
     or None if no backend responded (caller falls back to the rule engine).
+
+    ``lang`` selects the embedded engine (``en`` → base Qwen, otherwise the
+    Amharic fine-tune); it is ignored by the remote/Ollama backends.
     """
     kind, backend = _resolve_backend()
     avail_models = None
@@ -207,13 +212,13 @@ def chat(system, user, history=None, model=None, max_tokens=_MAX_TOKENS, timeout
         # Detailed answers are expected; cap guards CPU latency.
         cap = int(os.environ.get('LLM_MAX_TOKENS', '768'))
         payload_cache_key = hashlib.sha1(json.dumps(
-            [_build_messages(system, user, history), max_tokens],
+            [lang, _build_messages(system, user, history), max_tokens],
             ensure_ascii=False).encode('utf-8')).hexdigest()
         with _cache_lock:
             if payload_cache_key in _cache:
                 return _cache[payload_cache_key]
         reply = zer_model.chat(system, user, history, model=model,
-                               max_tokens=min(max_tokens, cap))
+                               max_tokens=min(max_tokens, cap), lang=lang)
         if reply:
             with _cache_lock:
                 if len(_cache) < 200:
@@ -258,7 +263,7 @@ def chat(system, user, history=None, model=None, max_tokens=_MAX_TOKENS, timeout
 
 
 def chat_stream(system, user, history=None, model=None, max_tokens=None,
-                timeout=_TIMEOUT):
+                timeout=_TIMEOUT, lang=None):
     """Yield reply text deltas from the best reachable backend (no blocking wait).
 
     Backend priority mirrors :func:`chat`. Yields nothing when no backend
@@ -271,7 +276,7 @@ def chat_stream(system, user, history=None, model=None, max_tokens=None,
         cap = int(os.environ.get('LLM_MAX_TOKENS', '768'))
         for delta in zer_model.chat_stream(
                 system, user, history, model=model,
-                max_tokens=min(max_tokens or cap, cap)):
+                max_tokens=min(max_tokens or cap, cap), lang=lang):
             if delta:
                 yield delta
         return

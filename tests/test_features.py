@@ -98,18 +98,26 @@ class LLMClientTest(unittest.TestCase):
         os.environ['LLM_BASE_URL'] = f'http://127.0.0.1:{self.port}/v1'
         os.environ.pop('ZER_LLM_BACKEND', None)
         import types
+        seen = {}
         fake = types.ModuleType('zer_model')
         fake.available = lambda: True
+        fake.available_any = lambda: True
         fake.status = lambda: {'model': 'zer-qwen-q4_k_m.gguf'}
-        fake.chat = (lambda system, user, history=None, model=None,
-                     max_tokens=0: 'ዘር ከembedded')
+
+        def _chat(system, user, history=None, model=None, max_tokens=0, lang=None):
+            seen['lang'] = lang
+            return 'ዘር ከembedded'
+
+        fake.chat = _chat
         fake.chat_stream = lambda *a, **k: iter(['ዘር'])
         old_mod = sys.modules.get('zer_model')
         sys.modules['zer_model'] = fake
         try:
             llm.clear_cache()
             llm._embedded_cached = None
-            self.assertEqual(llm.chat('s', 'u'), 'ዘር ከembedded')
+            # English must be routed to the English engine (base Qwen).
+            self.assertEqual(llm.chat('s', 'u', lang='en'), 'ዘር ከembedded')
+            self.assertEqual(seen.get('lang'), 'en')
             self.assertEqual(llm.which()[0], 'embedded')
         finally:
             llm._embedded_cached = None
