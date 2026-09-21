@@ -1,27 +1,29 @@
 /* ==========================================================================
-   ሕሳር design system — "Gemini light"
-   A clean, minimal light theme inspired by Google Gemini: near-white canvas,
-   soft gray cards, blue→violet gradient accents and focused typography. The
-   Ethiopian identity lives on in the brand (ዘር · Zer) and the tricolor
-   underline on the top bar.
+   ሕሳር design system — "Habesha" theme
+   An Ethiopian-inspired palette: warm parchment canvas, coffee-brown ink,
+   tilet (woven trim) green/gold/red accents and a subtle diamond-weave
+   backdrop. Display type is Fraunces for Latin and Noto Serif Ethiopic for
+   Ge'ez, so headings carry the same crafted feel in both scripts.
    ========================================================================== */
 
 :root {
-  --parchment: #f7f8fa;
-  --parchment-2: #eef0f3;
-  --paper: #ffffff;
-  --ink: #1f1f1f;
-  --ink-soft: #5f6368;
-  --muted: #9aa0aa;
-  --green: #1a73e8;
-  --green-2: #8b5cf6;
-  --green-soft: #e8f0fe;
-  --gold: #f9ab00;
-  --gold-2: #fbbc04;
-  --gold-soft: #fef6e0;
-  --terracotta: #d93025;
-  --terracotta-soft: #fce8e6;
-  /* Ethiopian flag accents */
+  /* warm parchment / paper */
+  --parchment: #faf3e5;
+  --parchment-2: #f1e5cd;
+  --paper: #fffdf7;
+  --ink: #2b1e16;
+  --ink-soft: #6b584a;
+  --muted: #9b8674;
+  /* brand: Ethiopian jade green + amber gold (replaces the old blue/violet) */
+  --green: #0a7d3c;
+  --green-2: #c9971f;
+  --green-soft: #e6f2e7;
+  --gold: #b8860b;
+  --gold-2: #fcdd09;
+  --gold-soft: #fbf0cd;
+  --terracotta: #b5451b;
+  --terracotta-soft: #f7e2d5;
+  /* Ethiopian flag */
   --flag-green: #078930;
   --flag-yellow: #fcdd09;
   --flag-red: #da121a;
@@ -29,15 +31,15 @@
   --yellow-soft: #fff6cc;
   --red: #da121a;
   --red-soft: #ffe0e2;
-  --line: #e7e8ec;
-  --line-strong: #d3d5db;
-  --shadow-sm: 0 1px 2px rgba(31, 31, 31, 0.05);
-  --shadow: 0 6px 24px rgba(31, 31, 31, 0.08);
-  --shadow-lg: 0 18px 44px rgba(120, 80, 240, 0.16);
-  --radius: 20px;
-  --radius-sm: 14px;
-  --radius-lg: 30px;
-  --font-display: 'Google Sans', 'Noto Sans Ethiopic', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --line: #e7d8bd;
+  --line-strong: #d9c5a4;
+  --shadow-sm: 0 1px 2px rgba(43, 30, 22, 0.06);
+  --shadow: 0 6px 24px rgba(43, 30, 22, 0.10);
+  --shadow-lg: 0 18px 44px rgba(120, 80, 20, 0.18);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-lg: 28px;
+  --font-display: 'Fraunces', 'Noto Serif Ethiopic', 'Noto Sans Ethiopic', Georgia, serif;
   --font-body: 'Noto Sans Ethiopic', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --maxw: 1080px;
 }
@@ -60,9 +62,12 @@ body {
   color: var(--ink);
   background-color: var(--parchment);
   background-image:
-    radial-gradient(1100px 520px at 85% -8%, rgba(139, 92, 246, 0.08), transparent 60%),
-    radial-gradient(1000px 520px at 8% -8%, rgba(26, 115, 232, 0.08), transparent 60%),
-    radial-gradient(900px 700px at 50% 115%, rgba(26, 115, 232, 0.05), transparent 62%);
+    radial-gradient(1100px 520px at 88% -10%, rgba(201, 151, 31, 0.16), transparent 60%),
+    radial-gradient(1000px 520px at 6% -10%, rgba(10, 125, 60, 0.14), transparent 60%),
+    radial-gradient(900px 700px at 50% 118%, rgba(181, 69, 27, 0.10), transparent 62%),
+    /* faint diamond "tilet" weave */
+    repeating-linear-gradient(45deg, rgba(10, 125, 60, 0.035) 0 9px, transparent 9px 18px),
+    repeating-linear-gradient(-45deg, rgba(184, 134, 11, 0.045) 0 9px, transparent 9px 18px);
   background-attachment: fixed;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -80,15 +85,15 @@ a { color: var(--green); }
   position: sticky; top: 0; z-index: 40;
   display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
   padding: 12px clamp(16px, 4vw, 34px);
-  background: rgba(255, 255, 255, 0.86);
+  background: rgba(250, 243, 229, 0.88);
   backdrop-filter: blur(12px) saturate(160%);
   border-bottom: 1px solid var(--line);
 }
-/* Ethiopian tricolor underline */
+/* Ethiopian tilet (woven trim) underline */
 .topbar::after {
-  content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 3px;
-  background: linear-gradient(90deg,
-    var(--flag-green) 0 33.33%, var(--flag-yellow) 33.33% 66.66%, var(--flag-red) 66.66% 100%);
+  content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 5px;
+  background-image: repeating-linear-gradient(45deg,
+    var(--flag-green) 0 7px, var(--flag-yellow) 7px 14px, var(--flag-red) 14px 21px);
 }
 
 .brand { display: flex; align-items: center; gap: 12px; }
@@ -109,7 +114,7 @@ a { color: var(--green); }
   transition: background .15s, color .15s, border-color .15s;
 }
 .nav-link:hover { background: var(--parchment-2); color: var(--ink); }
-.nav-link.active { background: #1f1f1f; color: #fff; border-color: #1f1f1f; }
+.nav-link.active { background: var(--green); color: #fff; border-color: var(--green); }
 
 .status-pill {
   display: inline-flex; align-items: center; gap: 7px; font-size: 0.76rem;
@@ -133,7 +138,12 @@ a { color: var(--green); }
 .sidebar-wrap {
   flex: 0 0 292px; position: sticky; top: 0; align-self: flex-start;
   height: 100vh; overflow-y: auto; border-right: 1px solid var(--line);
-  background: var(--paper);
+  background-color: var(--paper);
+  /* subtle Habesha diamond weave */
+  background-image:
+    repeating-linear-gradient(0deg, rgba(184, 134, 11, 0.05) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(60deg, rgba(10, 125, 60, 0.04) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(-60deg, rgba(181, 69, 27, 0.035) 0 1px, transparent 1px 24px);
 }
 .sidebar { display: flex; flex-direction: column; gap: 4px; padding: 16px 14px 20px; min-height: 100%; }
 .sidebar .brand { padding: 4px 6px 14px; }
@@ -192,7 +202,7 @@ a { color: var(--green); }
   .app-layout { flex-direction: column; }
   .mobile-bar {
     display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 50;
-    padding: 9px 14px; background: rgba(255,255,255,.9); backdrop-filter: blur(12px);
+    padding: 9px 14px; background: rgba(250,243,229,.92); backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--line);
     padding-top: calc(9px + env(safe-area-inset-top));
     padding-left: calc(14px + env(safe-area-inset-left));
@@ -279,9 +289,9 @@ a { color: var(--green); }
 .rich ul li { position: relative; padding-left: 20px; margin-bottom: 6px; }
 .rich ul li::before { content: '•'; position: absolute; left: 2px; top: 1px; color: var(--green); font-weight: 700; font-size: 1rem; }
 .rich pre {
-  background: #23252b; color: #eef1f6; border-radius: 14px; padding: 14px 16px;
+  background: #2b211b; color: #f4ecdd; border-radius: 14px; padding: 14px 16px;
   overflow-x: auto; font-size: 0.86rem; line-height: 1.55; margin: 8px 0 12px;
-  border: 1px solid #000;
+  border: 1px solid #17110d;
 }
 .rich code { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
 
@@ -319,7 +329,7 @@ a { color: var(--green); }
   background: var(--paper); border: 1.5px solid var(--line-strong); border-radius: 30px;
   padding: 8px 8px 8px 18px; box-shadow: var(--shadow); transition: border-color .15s, box-shadow .15s;
 }
-.composer-box:focus-within { border-color: var(--green); box-shadow: var(--shadow), 0 0 0 4px rgba(26,115,232,.08); }
+.composer-box:focus-within { border-color: var(--green); box-shadow: var(--shadow), 0 0 0 4px rgba(10, 125, 60, 0.12); }
 .composer-input {
   flex: 1; border: none; outline: none; background: transparent; resize: none;
   font-family: var(--font-body); font-size: 1.08rem; line-height: 1.6; color: var(--ink);

@@ -175,14 +175,23 @@ def _messages(system, user, history):
 
 
 def _sample(max_tokens, temperature):
-    sample = {'max_tokens': int(max_tokens or MAX_TOKENS),
-              'top_p': 0.9, 'repeat_penalty': 1.1}
-    try:
-        sample['temperature'] = float(os.environ.get('LLM_TEMPERATURE', temperature or 0.7))
-    except (TypeError, ValueError):
-        sample['temperature'] = temperature or 0.7
-    if sample['temperature'] <= 0:
-        sample['do_sample'] = False
+    """Sampling params tuned for coherent, non-repetitive, on-topic answers."""
+    def _f(name, default):
+        try:
+            return float(os.environ.get(name, default))
+        except (TypeError, ValueError):
+            return float(default)
+
+    sample = {
+        'max_tokens': int(max_tokens or MAX_TOKENS),
+        'top_p': min(1.0, max(0.0, _f('ZER_TOP_P', 0.85))),
+        'top_k': int(_f('ZER_TOP_K', 40)),
+        'repeat_penalty': _f('LLM_REPEAT_PENALTY', 1.08),
+        'presence_penalty': _f('LLM_PRESENCE_PENALTY', 0.2),
+        'frequency_penalty': _f('LLM_FREQUENCY_PENALTY', 0.3),
+    }
+    temp = _f('LLM_TEMPERATURE', temperature if temperature is not None else 0.7)
+    sample['temperature'] = max(0.0, min(1.5, temp))
     return sample
 
 
@@ -195,10 +204,7 @@ def chat(system, user, history=None, model=None, max_tokens=MAX_TOKENS,
     with _gen_lock:
         try:
             result = _llm.create_chat_completion(
-                messages=messages,
-                temperature=float(os.environ.get('LLM_TEMPERATURE', '0.7')),
-                **{k: v for k, v in _sample(max_tokens, 0.7).items()
-                   if k not in ('temperature',)})
+                messages=messages, **_sample(max_tokens, 0.7))
             reply = (result.get('choices') or [{}])[0]\
                 .get('message', {}).get('content')
         except Exception:

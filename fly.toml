@@ -28,10 +28,14 @@ primary_region = "sjc"
   ZER_MMS_AMH_MODEL = "facebook/mms-tts-amh"
   # Pre-load the neural voice so the first spoken reply is instant.
   ZER_WARM_TTS = "1"
-  # Embedded Zer (CPU): 2 shared cores, replies capped so first paint is fast.
+  # Embedded Zer (CPU): 2 shared cores. 512 tokens allows fuller answers; the
+  # 2048-token context keeps room for history + the structured system prompt.
   ZER_THREADS = "2"
-  ZER_MAX_TOKENS = "256"
-  LLM_MAX_TOKENS = "256"
+  ZER_CTX = "2048"
+  ZER_BATCH = "512"
+  ZER_MAX_TOKENS = "512"
+  LLM_MAX_TOKENS = "512"
+  LLM_TEMPERATURE = "0.7"
   HF_HOME = "/app/userdata/hf"
   XDG_CACHE_HOME = "/app/userdata/cache"
 
