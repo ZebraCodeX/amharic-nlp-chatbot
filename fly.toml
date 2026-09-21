@@ -5,8 +5,10 @@ primary_region = "sjc"
 
 [build]
   dockerfile = "Dockerfile"
-  # The embedded GGUF stays out of git (940 MB); the Fly builder downloads it
-  # from this public Hugging Face repo at image build time and bakes it in.
+  # The embedded GGUF stays out of git (940 MB); the Fly builder downloads the
+  # model file once at image build time and bakes it into the image. This is a
+  # model download, NOT an inference call — at runtime the app runs the trained
+  # model in-process and never contacts an external inference endpoint.
   args = { ZER_GGUF_URL = "https://huggingface.co/zee713/zer-qwen-lite-gguf/resolve/main/zer-qwen-q4_k_m.gguf" }
 
 [env]
@@ -16,10 +18,16 @@ primary_region = "sjc"
   HISAR_USERDATA_DIR = "/app/userdata"
   # The bundled Android/iOS/desktop apps call this API from their own origins.
   CORS_ALLOW_ALL = "1"
-  # Zer speech: faster-whisper STT + neural TTS (MMS Amharic / Piper English);
-  # models are cached on the volume (HF_HOME) and downloaded on first use.
+  # The embedded, fine-tuned Zer GGUF is the brain. "auto" prefers it over any
+  # remote endpoint; set to "remote" only to intentionally use LLM_BASE_URL.
+  ZER_LLM_BACKEND = "auto"
+  # Zer speech: faster-whisper STT + neural TTS. The Amharic voice is Meta
+  # MMS-TTS (neural VITS); English prefers Piper. Models cache on the volume.
   ZER_WHISPER_MODEL = "base"
   ZER_TTS = "auto"
+  ZER_MMS_AMH_MODEL = "facebook/mms-tts-amh"
+  # Pre-load the neural voice so the first spoken reply is instant.
+  ZER_WARM_TTS = "1"
   # Embedded Zer (CPU): 2 shared cores, replies capped so first paint is fast.
   ZER_THREADS = "2"
   ZER_MAX_TOKENS = "256"
@@ -28,12 +36,20 @@ primary_region = "sjc"
   XDG_CACHE_HOME = "/app/userdata/cache"
 
 [http_service]
-  internal_port = 8000
+  # Must match the port gunicorn binds (Dockerfile CMD: ${PORT:-8080}).
+  internal_port = 8080
   force_https = true
   auto_stop_machines = false
   auto_start_machines = true
   min_machines_running = 1
   processes = ["app"]
+
+  [[http_service.checks]]
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "120s"
+    method = "GET"
+    path = "/api/health"
 
 # Persist crowd corrections + taught facts across restarts.
 [mounts]

@@ -7,9 +7,9 @@ cd /app/backend
 
 python manage.py migrate --noinput
 
-# If no model was baked in at build time, pull the GGUF from ZER_GGUF_URL at
-# runtime (Render/Heroku-style deployments set it as a plain env var). The
-# build-time download in the Dockerfile covers Fly.io-style build args.
+# Confirm the trained Zer model is present. It is bundled into the image at
+# build time (models/zer-qwen-q4_k_m.gguf); ZER_GGUF_URL is only a safety net
+# for images that were built without it.
 echo "▶ ensuring embedded Zer model…"
 python - <<'PY'
 import os, sys
@@ -29,16 +29,14 @@ elif os.environ.get('ZER_GGUF_URL'):
     except Exception as exc:
         print('embedded model: download failed:', exc)
 else:
-    print('embedded model: not bundled and no ZER_GGUF_URL — '
-          'the app will use the offline rule brain / remote LLM')
+    print('embedded model: MISSING — the app will fall back to the rule brain')
 PY
 
-# Preload the embedded Zer model only when no external LLM is configured.
-# When LLM_BASE_URL is set (e.g. Hugging Face inference), skip warm to avoid
-# out-of-memory on constrained plans; the app will use the remote endpoint.
-if [ -z "${LLM_BASE_URL:-}" ]; then
-  echo "▶ warming embedded Zer model…"
-  python - <<'PY' || echo "model warm skipped (offline fallback remains)"
+# Warm the trained model so the first chat request never pays the load.
+# The embedded model is always preferred over any external endpoint, so we
+# warm it unconditionally.
+echo "▶ warming embedded Zer model…"
+python - <<'PY' || echo "model warm skipped (offline fallback remains)"
 import sys
 sys.path.insert(0, '/app')
 import zer_model
@@ -46,8 +44,5 @@ ok = zer_model.load()
 print('embedded model warm:', 'ready' if ok else 'unavailable',
       '->', zer_model.status().get('model'))
 PY
-else
-  echo "▶ external LLM configured (LLM_BASE_URL set) — skipping model warm"
-fi
 
 exec "$@"

@@ -2,14 +2,15 @@
 """
 llm.py — keyless, configurable LLM client for ሕሳር.
 
-The assistant becomes a real LLM whenever ANY OpenAI-compatible endpoint is
-reachable. Priority when picking a backend:
+The assistant becomes a real LLM whenever ANY backend is reachable. Priority
+when picking a backend:
 
-  1. $LLM_BASE_URL / $LLM_API_KEY / $LLM_MODEL  (explicit config,
-     e.g. point it at any OpenAI, OpenRouter, Groq, Together… endpoint)
-  2. The embedded Zer model (zer_model.py — the fine-tuned Qwen GGUF loaded
-     in-process through llama.cpp). This makes the deployed app self-contained:
-     no external host, no network call, no API key.
+  1. The embedded Zer model (zer_model.py — the fine-tuned Qwen GGUF loaded
+     in-process through llama.cpp). This is the default: the deployed app is
+     self-contained and never calls an external inference host.
+  2. $LLM_BASE_URL / $LLM_API_KEY / $LLM_MODEL  (explicit config, e.g. point it
+     at any OpenAI, OpenRouter, Groq, Together… endpoint). Only used when the
+     embedded model is unavailable, or when ZER_LLM_BACKEND=remote is set.
   3. $OPENAI_API_KEY + optional $OPENAI_BASE_URL (classic OpenAI)
   4. A local Ollama server at http://localhost:11434  (auto-detected)
 
@@ -122,26 +123,54 @@ def _ollama_endpoint():
         return False
 
 
+def _prefer_remote():
+    """Explicit opt-out of the embedded model.
+
+    The bundled, fine-tuned Zer GGUF is used by default so the deployed app is
+    fully self-contained and never phones home to an external inference host.
+    Setting ZER_LLM_BACKEND=remote restores the old "configured endpoint first"
+    ordering for local experimentation.
+    """
+    return os.environ.get('ZER_LLM_BACKEND', 'auto').strip().lower() in (
+        'remote', 'api', 'external', 'http')
+
+
+def _resolve_backend():
+    """Pick the backend to use, as ``(kind, backend)``.
+
+    Default order: embedded (trained local model) → remote (LLM_BASE_URL) →
+    local Ollama. This guarantees the shipped app runs the model that is baked
+    into the image instead of an external Hugging Face / cloud endpoint.
+    """
+    configured = _configured_backend()
+    if _prefer_remote() and configured:
+        return 'remote', configured
+    if _embedded_available():
+        return 'embedded', None
+    if configured:
+        return 'remote', configured
+    ollama = _ollama_endpoint()
+    if ollama:
+        return 'ollama', ollama
+    return None, None
+
+
 def available():
     """"True if an LLM backend (embedded, explicit config or local Ollama) is reachable."""
-    if _configured_backend():
-        return True
-    if _embedded_available():
-        return True
-    return bool(_ollama_endpoint())
+    kind, _ = _resolve_backend()
+    return kind is not None
 
 
 def which():
     """Return (backend, model) for status pages, in priority order."""
-    backend = _configured_backend()
-    if backend:
-        return ('configured', backend[2] or 'gpt-4o-mini')
-    if _embedded_available():
+    kind, backend = _resolve_backend()
+    if kind == 'embedded':
         _, model = _embedded_backend_info()
         return ('embedded', model)
-    ollama = _ollama_endpoint()
-    if ollama:
-        return ('ollama', (ollama[3][0] if ollama[3] else None))
+    if kind == 'remote':
+        return ('configured', backend[2] or 'gpt-4o-mini')
+    if kind == 'ollama':
+        return ('ollama', (backend[3][0] if backend[3] else None))
     return (None, None)
 
 
@@ -171,32 +200,31 @@ def chat(system, user, history=None, model=None, max_tokens=_MAX_TOKENS, timeout
     Send a chat request to the best reachable backend. Returns the text reply
     or None if no backend responded (caller falls back to the rule engine).
     """
-    backend = _configured_backend()
+    kind, backend = _resolve_backend()
     avail_models = None
-    if not backend:
-        if _embedded_available():
-            import zer_model
-            # Detailed answers are expected; cap guards CPU latency.
-            cap = int(os.environ.get('LLM_MAX_TOKENS', '768'))
-            payload_cache_key = hashlib.sha1(json.dumps(
-                [_build_messages(system, user, history), max_tokens],
-                ensure_ascii=False).encode('utf-8')).hexdigest()
+    if kind == 'embedded':
+        import zer_model
+        # Detailed answers are expected; cap guards CPU latency.
+        cap = int(os.environ.get('LLM_MAX_TOKENS', '768'))
+        payload_cache_key = hashlib.sha1(json.dumps(
+            [_build_messages(system, user, history), max_tokens],
+            ensure_ascii=False).encode('utf-8')).hexdigest()
+        with _cache_lock:
+            if payload_cache_key in _cache:
+                return _cache[payload_cache_key]
+        reply = zer_model.chat(system, user, history, model=model,
+                               max_tokens=min(max_tokens, cap))
+        if reply:
             with _cache_lock:
-                if payload_cache_key in _cache:
-                    return _cache[payload_cache_key]
-            reply = zer_model.chat(system, user, history, model=model,
-                                   max_tokens=min(max_tokens, cap))
-            if reply:
-                with _cache_lock:
-                    if len(_cache) < 200:
-                        _cache[payload_cache_key] = reply
-            return reply
-        ollama = _ollama_endpoint()
-        if not ollama:
-            return None
-        backend = ollama[0], '', None
-        avail_models = ollama[3]
-    url, key, cfg_model = backend
+                if len(_cache) < 200:
+                    _cache[payload_cache_key] = reply
+        return reply
+    if kind == 'ollama':
+        url, key, cfg_model, avail_models = backend
+    elif kind == 'remote':
+        url, key, cfg_model = backend
+    else:
+        return None
 
     messages = _build_messages(system, user, history)
 
@@ -236,24 +264,23 @@ def chat_stream(system, user, history=None, model=None, max_tokens=None,
     Backend priority mirrors :func:`chat`. Yields nothing when no backend
     responds (caller falls back to the rule engine / creative skills).
     """
-    backend = _configured_backend()
+    kind, backend = _resolve_backend()
     avail_models = None
-    if not backend:
-        if _embedded_available():
-            import zer_model
-            cap = int(os.environ.get('LLM_MAX_TOKENS', '768'))
-            for delta in zer_model.chat_stream(
-                    system, user, history, model=model,
-                    max_tokens=min(max_tokens or cap, cap)):
-                if delta:
-                    yield delta
-            return
-        ollama = _ollama_endpoint()
-        if not ollama:
-            return
-        backend = ollama[0], '', None
-        avail_models = ollama[3]
-    url, key, cfg_model = backend
+    if kind == 'embedded':
+        import zer_model
+        cap = int(os.environ.get('LLM_MAX_TOKENS', '768'))
+        for delta in zer_model.chat_stream(
+                system, user, history, model=model,
+                max_tokens=min(max_tokens or cap, cap)):
+            if delta:
+                yield delta
+        return
+    if kind == 'ollama':
+        url, key, cfg_model, avail_models = backend
+    elif kind == 'remote':
+        url, key, cfg_model = backend
+    else:
+        return
 
     messages = _build_messages(system, user, history)
     payload = {

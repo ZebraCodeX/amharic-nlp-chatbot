@@ -26,6 +26,7 @@ Env:
 
 import io
 import os
+import re
 import shutil
 import struct
 import subprocess
@@ -39,10 +40,11 @@ _whisper = None
 _mms_models = {}
 _piper_ready = set()
 _whisper_failed = False
-_mms_failed = False
+_mms_fail_count = 0
 _mms_error = None
 _piper_error = None
 _uroman = None
+_MMS_MAX_FAILS = int(os.environ.get('ZER_MMS_MAX_FAILS', '3'))
 
 SUPPORTED_LANGS = ('am', 'en')
 
@@ -199,9 +201,33 @@ def transcribe_bytes(data, filename='audio.webm', language=None):
 # text-to-speech — providers
 # ---------------------------------------------------------------------------
 def _resample_pcm(pcm, factor):
-    """Speed up (factor>1) or slow down (factor<1) 16-bit mono PCM."""
+    """Speed up (factor>1) or slow down (factor<1) 16-bit mono PCM.
+
+    Prefers a band-limited resampler (soxr, then the stdlib ``audioop``) so
+    changing the speaking rate never adds the metallic aliasing artefacts that
+    make a voice sound synthetic; linear interpolation is only a last resort.
+    """
     if not pcm or abs(factor - 1.0) < 1e-3:
         return pcm
+    factor = max(0.5, min(2.5, float(factor)))
+    # A factor > 1 means "speak faster", i.e. fewer output samples.
+    # 1) soxr — high quality, if installed.
+    try:
+        import numpy as np
+        import soxr
+        src = np.frombuffer(pcm[:len(pcm) - (len(pcm) % 2)], dtype='<i2')
+        out = soxr.resample(src.astype('float32'), 1.0, 1.0 / factor)
+        return np.clip(out, -32768, 32767).astype('<i2').tobytes()
+    except Exception:
+        pass
+    # 2) stdlib audioop.ratecv (CPython <= 3.12).
+    try:
+        import audioop
+        outrate = max(1, int(round(1000.0 / factor)))
+        return audioop.ratecv(pcm, 2, 1, 1000, outrate, None)[0]
+    except Exception:
+        pass
+    # 3) linear interpolation (fallback).
     import array
     src = array.array('h')
     src.frombytes(pcm[:len(pcm) - (len(pcm) % 2)])
@@ -228,22 +254,57 @@ def _wav_bytes(pcm, rate):
 
 
 def _post_process(wav_bytes, rate=None, volume=None):
-    """Apply speed/volume to a 16-bit mono WAV without touching the provider."""
+    """Normalise, rate-adjust and de-click a 16-bit mono WAV.
+
+    A consistent, peak-normalised level with short fades keeps the neural voice
+    sounding natural instead of quiet/harsh at the edges.
+    """
     try:
         with wave.open(io.BytesIO(wav_bytes), 'rb') as wf:
             sr = wf.getframerate()
             pcm = wf.readframes(wf.getnframes())
+        if not pcm:
+            return wav_bytes
+        # Peak-normalise for an even, present level.
+        try:
+            import audioop
+            peak = audioop.max(pcm, 2)
+            if peak:
+                target = int(0.93 * 32767)
+                if abs(peak - target) > 200:
+                    pcm = audioop.mul(pcm, 2, min(4.0, target / float(peak)))
+        except Exception:
+            pass
         if volume is not None:
             gain = max(0.0, min(2.0, float(volume) / 100.0))
             if abs(gain - 1.0) > 1e-3:
-                import array
-                a = array.array('h')
-                a.frombytes(pcm[:len(pcm) - (len(pcm) % 2)])
-                for i, v in enumerate(a):
-                    a[i] = max(-32768, min(32767, int(v * gain)))
-                pcm = a.tobytes()
+                try:
+                    import audioop
+                    pcm = audioop.mul(pcm, 2, gain)
+                except Exception:
+                    import array
+                    a = array.array('h')
+                    a.frombytes(pcm[:len(pcm) - (len(pcm) % 2)])
+                    for i, v in enumerate(a):
+                        a[i] = max(-32768, min(32767, int(v * gain)))
+                    pcm = a.tobytes()
         if rate is not None:
             pcm = _resample_pcm(pcm, max(0.5, min(2.5, float(rate) / 150.0)))
+        # Short fade in/out removes the click that otherwise starts every clip.
+        try:
+            import array
+            a = array.array('h')
+            a.frombytes(pcm[:len(pcm) - (len(pcm) % 2)])
+            n = len(a)
+            f = int(sr * 0.012)
+            if f and n > 2 * f:
+                for i in range(f):
+                    g = i / float(f)
+                    a[i] = int(a[i] * g)
+                    a[n - 1 - i] = int(a[n - 1 - i] * g)
+            pcm = a.tobytes()
+        except Exception:
+            pass
         return _wav_bytes(pcm, sr)
     except Exception:
         return wav_bytes
@@ -258,42 +319,111 @@ def _has_torch():
         return False
 
 
+# Split on Amharic (። ፧ ፨) and Latin sentence punctuation. Long fragments are
+# further split so each neural call stays short and prosodically clean.
+_SENT_RE = re.compile(r'[^።፧፨.!?\n]+[።፧፨.!?]*')
+
+
+def _chunks(text, max_chars=180):
+    """Sentences/clauses to synthesise, so pauses land in natural places."""
+    text = (text or '').strip()
+    if not text:
+        return []
+    parts = [m.group(0).strip() for m in _SENT_RE.finditer(text)]
+    parts = [p for p in parts if p]
+    # Split overly long sentences at a comma/space so one call stays short.
+    split = []
+    for s in parts:
+        while len(s) > max_chars:
+            cut = max(s.rfind('፣', 0, max_chars), s.rfind(',', 0, max_chars),
+                      s.rfind(' ', 0, max_chars))
+            if cut < 40:
+                cut = max_chars
+            split.append(s[:cut + 1].strip())
+            s = s[cut + 1:].strip()
+        if s:
+            split.append(s)
+    # Keep sentences separate so a short breath falls between them; only merge
+    # fragments too tiny to carry their own prosody.
+    out = []
+    for s in split:
+        if out and len(out[-1]) < 12:
+            out[-1] = (out[-1] + ' ' + s).strip()
+        else:
+            out.append(s)
+    return out or [text]
+
+
+def _load_mms(lang):
+    """Load (model, tokenizer) for a language; cached and thread-safe."""
+    model_id = _mms_ids(lang)
+    entry = _mms_models.get(model_id)
+    if entry is None:
+        from transformers import VitsModel, AutoTokenizer
+        model = VitsModel.from_pretrained(model_id)
+        tokenizer = AutoTokenizer.from_pretrained(model_id)
+        model.eval()
+        entry = (model, tokenizer)
+        _mms_models[model_id] = entry
+    return entry
+
+
 def _synthesize_mms(text, lang, rate=None, volume=None):
-    global _mms_failed, _mms_error
-    if _mms_failed:
+    global _mms_fail_count, _mms_error
+    if _mms_fail_count >= _MMS_MAX_FAILS:
         return None
     with _lock:
         try:
+            import numpy as np
             import torch
-            from transformers import VitsModel, AutoTokenizer
         except Exception as exc:
-            _mms_failed = True
+            _mms_fail_count = _MMS_MAX_FAILS
             _mms_error = f'import: {exc!r}'[:400]
             return None
         model_id = _mms_ids(lang)
         try:
-            entry = _mms_models.get(model_id)
-            if entry is None:
-                model = VitsModel.from_pretrained(model_id)
-                tokenizer = AutoTokenizer.from_pretrained(model_id)
-                model.eval()
-                entry = (model, tokenizer)
-                _mms_models[model_id] = entry
-            model, tokenizer = entry
-            prepared = _romanize(text, 'amh') if lang == 'am' else text
-            inputs = tokenizer(prepared, return_tensors='pt')
-            if inputs['input_ids'].numel() == 0:
-                _mms_error = 'tokenizer produced no tokens'
-                return None
-            with torch.no_grad():
-                waveform = model(**inputs).waveform[0].cpu().numpy()
-            pcm = (waveform * 32767).clip(-32768, 32767).astype('<i2').tobytes()
-            audio = _wav_bytes(pcm, model.config.sampling_rate)
-            audio = _post_process(audio, rate=rate, volume=volume)
+            model, tokenizer = _load_mms(lang)
+            sr = int(model.config.sampling_rate)
+            # Long replies are synthesised sentence by sentence with a natural
+            # breath between them — far more human than one flat utterance.
+            chunks = _chunks(text)
+            pieces = []
+            for idx, chunk in enumerate(chunks):
+                prepared = _romanize(chunk, 'amh') if lang == 'am' else chunk
+                inputs = tokenizer(prepared, return_tensors='pt')
+                if inputs['input_ids'].numel() == 0:
+                    continue
+                with torch.no_grad():
+                    waveform = model(**inputs).waveform[0].cpu().numpy()
+                pieces.append(np.asarray(waveform, dtype='float32'))
+                if idx < len(chunks) - 1:
+                    tail = chunk.rstrip()[-1:] or ''
+                    gap = 0.30 if tail in '?!' else (0.18 if tail in '.።' else 0.12)
+                    pieces.append(np.zeros(int(sr * gap), dtype='float32'))
+            if not pieces:
+                raise ValueError('tokenizer produced no tokens')
+            waveform = np.concatenate(pieces)
+            pcm = (np.clip(waveform, -1.0, 1.0) * 32767).astype('<i2').tobytes()
+            audio = _post_process(_wav_bytes(pcm, sr), rate=rate, volume=volume)
+            _mms_fail_count = 0
             return audio, 'audio/wav', f'mms:{model_id.split("/")[-1]}'
         except Exception as exc:
+            _mms_fail_count += 1
             _mms_error = f'{type(exc).__name__}: {exc}'[:500]
             return None
+
+
+def warm_tts(lang='am'):
+    """Pre-load the neural voice so the first reply does not pay the load."""
+    if not _provider_available('mms'):
+        return False
+    try:
+        _load_mms(lang)
+        return True
+    except Exception as exc:
+        global _mms_error
+        _mms_error = f'{type(exc).__name__}: {exc}'[:400]
+        return False
 
 
 # Piper English voices (the repo path inside rhasspy/piper-voices).

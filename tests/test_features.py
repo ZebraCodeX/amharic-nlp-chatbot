@@ -72,7 +72,9 @@ class LLMClientTest(unittest.TestCase):
 
     def test_chat_returns_text(self):
         old = os.environ.get('LLM_BASE_URL')
+        old_pref = os.environ.get('ZER_LLM_BACKEND')
         os.environ['LLM_BASE_URL'] = f'http://127.0.0.1:{self.port}/v1'
+        os.environ['ZER_LLM_BACKEND'] = 'remote'
         try:
             llm.clear_cache()
             out = llm.chat('system', 'user')
@@ -84,6 +86,45 @@ class LLMClientTest(unittest.TestCase):
                 os.environ.pop('LLM_BASE_URL', None)
             else:
                 os.environ['LLM_BASE_URL'] = old
+            if old_pref is None:
+                os.environ.pop('ZER_LLM_BACKEND', None)
+            else:
+                os.environ['ZER_LLM_BACKEND'] = old_pref
+
+    def test_embedded_model_preferred_over_remote(self):
+        """The bundled trained model wins even when LLM_BASE_URL is configured."""
+        old = os.environ.get('LLM_BASE_URL')
+        old_pref = os.environ.get('ZER_LLM_BACKEND')
+        os.environ['LLM_BASE_URL'] = f'http://127.0.0.1:{self.port}/v1'
+        os.environ.pop('ZER_LLM_BACKEND', None)
+        import types
+        fake = types.ModuleType('zer_model')
+        fake.available = lambda: True
+        fake.status = lambda: {'model': 'zer-qwen-q4_k_m.gguf'}
+        fake.chat = (lambda system, user, history=None, model=None,
+                     max_tokens=0: 'ዘር ከembedded')
+        fake.chat_stream = lambda *a, **k: iter(['ዘር'])
+        old_mod = sys.modules.get('zer_model')
+        sys.modules['zer_model'] = fake
+        try:
+            llm.clear_cache()
+            llm._embedded_cached = None
+            self.assertEqual(llm.chat('s', 'u'), 'ዘር ከembedded')
+            self.assertEqual(llm.which()[0], 'embedded')
+        finally:
+            llm._embedded_cached = None
+            if old_mod is None:
+                sys.modules.pop('zer_model', None)
+            else:
+                sys.modules['zer_model'] = old_mod
+            if old is None:
+                os.environ.pop('LLM_BASE_URL', None)
+            else:
+                os.environ['LLM_BASE_URL'] = old
+            if old_pref is None:
+                os.environ.pop('ZER_LLM_BACKEND', None)
+            else:
+                os.environ['ZER_LLM_BACKEND'] = old_pref
 
 
 class HybridRoutingTest(unittest.TestCase):

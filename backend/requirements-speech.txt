@@ -13,3 +13,7 @@ transformers>=4.44,<5
 sentencepiece
 uroman>=0.2
 piper-tts>=1.2
+
+# High-quality resampling for the speed control (band-limited, no aliasing),
+# so changing the speaking rate does not make the neural voice sound metallic.
+soxr>=0.3

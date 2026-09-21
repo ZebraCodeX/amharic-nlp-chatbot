@@ -22,17 +22,19 @@ codebase via Capacitor (mobile) and Electron (desktop), built by GitHub Actions.
 - **Retrieval + knowledge** — 54 intents, deep `rich_answers.json` detail and a
   multi-domain corpus language model for next-word and sentence completion.
 - **Live voice** — continuous, push-to-talk and “Hey Zer” wake word. Speech-to-text
-  with faster-whisper, neural text-to-speech with Meta MMS-TTS (Amharic) and
-  Piper (English).
+  with faster-whisper; Amharic replies use Meta MMS-TTS (neural VITS) with
+  sentence pacing and high-quality resampling, English prefers Piper. The
+  robotic eSpeak voice is only a last-resort fallback.
 - **Accounts & history** — conversations, taught facts and settings are stored
   per user (Django auth).
 - **Amharic keyboard** — reusable Gboard-style Fidel keyboard with vowel-order
   keys, spelling dictionary and type-ahead.
 - **Translation review** — `/review` lets you approve or correct Amharic ⇄
   English pairs, and corrections are learned immediately.
-- **Embedded model (optional)** — the QLoRA-tuned Zer Qwen2.5-1.5B GGUF loads
-  in-process through `llama.cpp`; without it the app runs on the offline rule
-  brain.
+- **Trained model, bundled** — the QLoRA-tuned Zer Qwen2.5-1.5B GGUF is baked
+  into the Docker image and runs in-process through `llama.cpp`, so the app is
+  self-contained and never calls an external inference endpoint. Only if the
+  model is missing does it fall back to the offline rule brain.
 
 ## Stack
 
