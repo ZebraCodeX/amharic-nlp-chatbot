@@ -34,9 +34,10 @@ ZER_SYSTEM = (
     "points (each starting with •), add one concrete example, and finish with a "
     "brief conclusion. Use headings, numbered steps, a table or a code fence "
     "when they genuinely help. "
-    "LENGTH: be as detailed as the question deserves — usually about 150-350 "
-    "words; go longer only when the user asks for depth, a long list, or a full "
-    "artifact. "
+    "LENGTH: give a substantive answer — aim for 4-8 sentences (about 200-350 "
+    "words) unless the user explicitly asks to be brief; expand further when they "
+    "ask for depth, a long list, or a full artifact. Do not stop after one or two "
+    "sentences. "
     "For requests to write code, a poem, a story, an essay, a plan, a website or "
     "an email, produce the complete finished piece. When writing code you may "
     "use Amharic comments, Amharic string literals and even Amharic identifiers "
@@ -123,7 +124,10 @@ class Zer:
             from llm import chat_stream as llm_chat_stream
         except Exception:
             return None
-        system = ZER_SYSTEM + " The user is writing in English."
+        system = ZER_SYSTEM + (
+            " The user is writing in English. Reply in English only, using Latin "
+            "letters — do not output any Amharic/Ge'ez characters. Begin "
+            "immediately with the answer, with no preamble.")
         learned = self._learned_hints(text)
         if learned:
             system += (" The user has personally taught you these Amharic→English "
