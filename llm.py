@@ -72,6 +72,27 @@ def _embedded_backend_info():
         return (False, None)
 
 
+def _grounding_on():
+    return os.environ.get('ZER_GROUNDING', '1').strip().lower() not in (
+        '0', 'off', 'false', 'no')
+
+
+def _grounded_system(system, user, lang):
+    """Append facts retrieved from Zer's own local data, when any match.
+
+    This is what lets a small embedded model answer its own domain correctly
+    without any external service: the lookup happens entirely on this machine.
+    """
+    if not _grounding_on() or not user:
+        return system
+    try:
+        import grounding
+        ctx = grounding.context(user, lang=lang)
+    except Exception:
+        return system
+    return f'{system}\n\n{ctx}' if ctx else system
+
+
 def _post_json(url, payload, timeout, api_key=None):
     headers = {
         'Content-Type': 'application/json',
@@ -211,6 +232,7 @@ def chat(system, user, history=None, model=None, max_tokens=_MAX_TOKENS, timeout
         import zer_model
         # Detailed answers are expected; cap guards CPU latency.
         cap = int(os.environ.get('LLM_MAX_TOKENS', '768'))
+        system = _grounded_system(system, user, lang)
         payload_cache_key = hashlib.sha1(json.dumps(
             [lang, _build_messages(system, user, history), max_tokens],
             ensure_ascii=False).encode('utf-8')).hexdigest()
@@ -274,6 +296,7 @@ def chat_stream(system, user, history=None, model=None, max_tokens=None,
     if kind == 'embedded':
         import zer_model
         cap = int(os.environ.get('LLM_MAX_TOKENS', '768'))
+        system = _grounded_system(system, user, lang)
         for delta in zer_model.chat_stream(
                 system, user, history, model=model,
                 max_tokens=min(max_tokens or cap, cap), lang=lang):
