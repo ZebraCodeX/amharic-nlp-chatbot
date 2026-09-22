@@ -34,6 +34,24 @@ account tricks to get more quota.
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ZebraCodeX/amharic-nlp-chatbot/blob/main/training/colab_zer_qlora.ipynb)
 
+### 7 B on a free GPU (Kaggle)
+
+For the **best-quality free run**, use **[`kaggle_zer_qlora_7b.ipynb`](kaggle_zer_qlora_7b.ipynb)**
+on Kaggle (2×T4, ~30 GPU-h/week, `/kaggle/working` persisted per version). 7 B
+does not fit one session, so it checkpoints every 200 steps and shows how to
+**resume from the previous version's output** (attach it as a Kaggle Dataset and
+set `RESUME_FROM`).
+
+- Settings: `Qwen/Qwen2.5-7B-Instruct`, `BATCH=1 GA=16 MAXLEN=1024 LR=1e-4`,
+  LoRA `r=32 α=64`, gradient checkpointing.
+- **Merging a 7 B fp16 needs ~15 GB RAM**, not VRAM. If the Kaggle merge cell
+  OOMs, push the adapter (built into the notebook) and merge + quantize on a
+  high-RAM box — or follow §5 (rented A100). The adapter is all you need to carry.
+- On a 24 GB GPU box, the same run is one command:
+  `bash training/run-7b.sh` (add `RESUME=1` to continue after an eviction).
+
+A 3 B run (`make train-3b`) is a good T4-friendly stepping stone before 7 B.
+
 ## Renting a GPU (cheap, best quality)
 
 QLoRA keeps a 7B–14B model inside 24 GB, so you rarely need a big card. Live

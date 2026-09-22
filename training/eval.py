@@ -21,7 +21,15 @@ except ImportError:
     os.environ.pop('HF_HUB_ENABLE_HF_TRANSFER', None)
 
 import torch
+import transformers
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
+
+def dtype_kwargs(dtype):
+    """`torch_dtype` was renamed to `dtype` in transformers 4.56 — support both."""
+    ver = tuple(int(p) for p in transformers.__version__.split('.')[:2] if p.isdigit())
+    return {'dtype' if ver >= (4, 56) else 'torch_dtype': dtype}
+
 
 ETH = re.compile(r'[\u1200-\u137f]')
 LATIN = re.compile(r'[A-Za-z]')
@@ -55,7 +63,8 @@ def main():
 
     tok = AutoTokenizer.from_pretrained(args.model)
     model = AutoModelForCausalLM.from_pretrained(
-        args.model, torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32)
+        args.model,
+        **dtype_kwargs(torch.float16 if torch.cuda.is_available() else torch.float32))
     model.eval()
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model.to(device)
@@ -85,4 +94,4 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(0)
+    main()

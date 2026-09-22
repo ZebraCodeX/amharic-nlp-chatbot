@@ -50,6 +50,12 @@ export-data: ## export real conversations as training data
 train: ## QLoRA fine-tune + merge (run on a GPU)
 	bash training/run.sh
 
+train-7b: ## 7B QLoRA fine-tune + merge (24 GB GPU or Kaggle; resumable)
+	bash training/run-7b.sh
+
+train-3b: ## 3B QLoRA fine-tune + merge (T4-friendly stepping stone)
+	MODEL=Qwen/Qwen2.5-3B-Instruct BATCH=2 GA=8 MAXLEN=2048 bash training/run.sh
+
 model: ## place the embedded Zer GGUF at models/zer-qwen-q4_k_m.gguf
 	@test -f models/zer-qwen-q4_k_m.gguf && echo "embedded model present ✓" || \
 	  { echo "embedded model missing — fetch it, e.g.:"; \
@@ -89,5 +95,6 @@ release: ## tag a release:  make release V=1.7.0
 	git tag v$(V) && git push origin v$(V)
 
 .PHONY: help test backend-test brain-test smoke frontend-build frontend-app-build \
-	dev-backend dataset conversation english-kb retrain export-data train model \
+	dev-backend dataset conversation english-kb retrain export-data train train-7b \
+	train-3b model \
 	run-zer eval serve connect-llm superuser backup migrate deploy logs release

@@ -35,6 +35,9 @@ import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(ROOT, 'amharic_nlp', 'corpora', 'conversation')
+# Downloaded parquet/tarballs are large; keep them out of a small /tmp. Override
+# with --cache or $ZER_CORPUS_CACHE (e.g. on a data disk).
+CACHE_DIR = os.environ.get('ZER_CORPUS_CACHE') or os.path.join(ROOT, '.hf-cache', 'corpus')
 
 _UA = {'User-Agent': 'Zer-conversation-corpus/1.0'}
 
@@ -122,7 +125,7 @@ def _parquet_rows(path):
 
 def fetch_addisgpt(limit):
     url, fname = SOURCES['addisgpt']
-    path = _download(url, os.path.join('/tmp/opencode', fname))
+    path = _download(url, os.path.join(CACHE_DIR, fname))
     out = []
     for row in _parquet_rows(path):
         if str(row.get('language', '')).lower() != 'amharic':
@@ -136,7 +139,7 @@ def fetch_addisgpt(limit):
 
 def fetch_finetome(limit):
     url, fname = SOURCES['finetome']
-    path = _download(url, os.path.join('/tmp/opencode', fname))
+    path = _download(url, os.path.join(CACHE_DIR, fname))
     out = []
     for row in _parquet_rows(path):
         raw = row.get('conversations_amharic') or ''
@@ -156,7 +159,7 @@ def fetch_finetome(limit):
 
 
 def fetch_tatoeba(limit):
-    path = _download(TATOEBA, os.path.join('/tmp/opencode', 'amh_sentences.tsv.bz2'))
+    path = _download(TATOEBA, os.path.join(CACHE_DIR, 'amh_sentences.tsv.bz2'))
     import bz2
     out = []
     with bz2.open(path, 'rt', encoding='utf-8') as f:
@@ -200,7 +203,7 @@ def write_sft(out_path, limit=0):
     examples = []
 
     path = _download(SOURCES['addisgpt'][0],
-                     os.path.join('/tmp/opencode', SOURCES['addisgpt'][1]))
+                     os.path.join(CACHE_DIR, SOURCES['addisgpt'][1]))
     for row in pq.ParquetFile(path).iter_batches(batch_size=512):
         for r in row.to_pylist():
             ex = _sft_example(r.get('instruction') or '', r.get('output') or '')
@@ -208,7 +211,7 @@ def write_sft(out_path, limit=0):
                 examples.append(ex)
 
     path = _download(SOURCES['finetome'][0],
-                     os.path.join('/tmp/opencode', SOURCES['finetome'][1]))
+                     os.path.join(CACHE_DIR, SOURCES['finetome'][1]))
     for row in pq.ParquetFile(path).iter_batches(batch_size=512):
         for r in row.to_pylist():
             raw = r.get('conversations_amharic') or ''
@@ -240,19 +243,24 @@ def write_sft(out_path, limit=0):
 
 
 def main():
-    global OUT_DIR
+    global OUT_DIR, CACHE_DIR
     ap = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     ap.add_argument('--sources', default='addisgpt,finetome,tatoeba')
     ap.add_argument('--limit', type=int, default=0,
                     help='cap sentences per source (0 = no cap)')
     ap.add_argument('--out', default=OUT_DIR)
+    ap.add_argument('--cache', default=CACHE_DIR,
+                    help='where to keep downloaded parquet/tarballs '
+                         '(default: .hf-cache/corpus; env $ZER_CORPUS_CACHE)')
     ap.add_argument('--sft', default=os.path.join(
         ROOT, 'training', 'data', 'conversations_free.jsonl'),
         help='also write instruction/answer pairs here for QLoRA fine-tuning')
     args = ap.parse_args()
 
     OUT_DIR = args.out
+    CACHE_DIR = args.cache
     os.makedirs(OUT_DIR, exist_ok=True)
+    os.makedirs(CACHE_DIR, exist_ok=True)
     wanted = [s.strip() for s in args.sources.split(',') if s.strip()]
     for name in wanted:
         if name not in FETCHERS:
