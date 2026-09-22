@@ -9,7 +9,8 @@ normalises and filters them, deduplicates exactly, and writes gzipped text
 shards plus a manifest with licence + size + token counts.
 
     python3 training/corpus/build_corpus.py --out ~/amharic-corpus \
-        --sources wikipedia,cc100,fineweb2,mc4,culturax,opus_tatoeba,bible,local \
+        --sources wikipedia,cc100,fineweb2,mc4,culturax,glotcc,hplt,masakhanews,\
+opus_tatoeba,bible,local \
         --max-gb-per-source 8 --tokenizer Qwen/Qwen2.5-1.5B-Instruct
 
 Sources are declared in SOURCES with their licence and URL. Each source is
@@ -72,6 +73,24 @@ SOURCES = {
     'cc100': {
         'kind': 'cc100', 'url': 'https://data.statmt.org/cc-100/am.txt.xz',
         'lang': 0.4, 'license': 'CC-100 / Common Crawl terms',
+    },
+    'glotcc': {
+        'kind': 'hf', 'path': 'cis-lmu/GlotCC-V1', 'config': 'amh-Ethi',
+        'split': 'train', 'text': ['content'], 'lang': 0.4,
+        'license': 'CC0-1.0',
+        'url': 'https://huggingface.co/datasets/cis-lmu/GlotCC-V1',
+    },
+    'hplt': {
+        'kind': 'hf', 'path': 'HPLT/HPLT2.0_cleaned', 'config': 'amh_Ethi',
+        'split': 'train', 'text': ['text'], 'lang': 0.4,
+        'license': 'CC0-1.0',
+        'url': 'https://huggingface.co/datasets/HPLT/HPLT2.0_cleaned',
+    },
+    'masakhanews': {
+        'kind': 'hf', 'path': 'masakhane/masakhanews', 'config': 'amh',
+        'split': 'train', 'text': ['text'], 'lang': 0.3,
+        'license': 'AFL-3.0',
+        'url': 'https://huggingface.co/datasets/masakhane/masakhanews',
     },
     'opus_tatoeba': {
         'kind': 'opus', 'zip': f'{OPUS}/OPUS-Tatoeba/v2023-04-12/moses/am-en.txt.zip',

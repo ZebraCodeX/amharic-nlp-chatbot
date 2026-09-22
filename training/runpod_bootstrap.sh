@@ -7,7 +7,7 @@
 #   HF_TOKEN=hf_xxx HF_REPO=yourname/zer-qwen14b-lora \
 #     MODEL=Qwen/Qwen2.5-14B-Instruct bash runpod_bootstrap.sh
 #
-# It: clones the repo → installs the stack → builds the ~84k conversation set →
+# It: clones the repo → installs the stack → builds the ~270k conversation set →
 # QLoRA-trains → merges → pushes the adapter to YOUR Hugging Face repo →
 # writes a DONE marker → optionally terminates the pod (so it can't run away).
 #

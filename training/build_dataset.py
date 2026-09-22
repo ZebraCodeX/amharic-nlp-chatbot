@@ -143,16 +143,23 @@ def code_examples():
 
 
 def conversation_examples():
-    """Real conversations: exported turns + free Amharic dialogue corpora.
+    """Real conversations + sourced factual topics.
 
     `conversations.jsonl` comes from `manage.py export_training_data`;
     `conversations_free.jsonl` is written by
-    `tools/fetch_conversation_corpus.py --sft` (AddisGPT + FineTome).
+    `tools/fetch_conversation_corpus.py --sft` (AddisGPT + FineTome + …);
+    `topics_sft.jsonl` is written by `tools/fetch_topics.py` (Wikipedia lead
+    sections on Ethiopian history, the Black American experience, logic, free
+    will and political power; CC BY-SA 4.0 — see `topics_manifest.json`).
     """
+    files = {
+        'conversations.jsonl': 'conversation',
+        'conversations_free.jsonl': 'free_conversation',
+        'topics_sft.jsonl': 'topic',
+    }
     out = []
-    for name in ('conversations.jsonl', 'conversations_free.jsonl'):
+    for name, source in files.items():
         path = os.path.join(ROOT, 'training', 'data', name)
-        source = 'conversation' if name == 'conversations.jsonl' else 'free_conversation'
         try:
             with open(path, encoding='utf-8') as f:
                 for line in f:

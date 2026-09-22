@@ -37,6 +37,12 @@ dataset: ## build the Amharic SFT seed dataset
 conversation: ## fetch free Amharic conversational corpora (needs .venv-train)
 	.venv-train/bin/python tools/fetch_conversation_corpus.py
 
+topics: ## fetch sourced factual topics: history/logic/philosophy (Wikipedia)
+	python3 tools/fetch_topics.py
+
+clean-data: ## filter, dedup and normalise the built SFT jsonl
+	python3 training/clean_dataset.py
+
 english-kb: ## compile the English knowledge base (no model at runtime)
 	python3 tools/build_english_kb.py
 
@@ -55,6 +61,9 @@ train-7b: ## 7B QLoRA fine-tune + merge (24 GB GPU or Kaggle; resumable)
 
 train-3b: ## 3B QLoRA fine-tune + merge (T4-friendly stepping stone)
 	MODEL=Qwen/Qwen2.5-3B-Instruct BATCH=2 GA=8 MAXLEN=2048 bash training/run.sh
+
+train-resume: ## continue a run from the latest checkpoint (OUT=… MODEL=…)
+	RESUME=1 bash training/run.sh
 
 model: ## place the embedded Zer GGUF at models/zer-qwen-q4_k_m.gguf
 	@test -f models/zer-qwen-q4_k_m.gguf && echo "embedded model present ✓" || \
@@ -95,6 +104,6 @@ release: ## tag a release:  make release V=1.7.0
 	git tag v$(V) && git push origin v$(V)
 
 .PHONY: help test backend-test brain-test smoke frontend-build frontend-app-build \
-	dev-backend dataset conversation english-kb retrain export-data train train-7b \
-	train-3b model \
+	dev-backend dataset conversation topics clean-data english-kb retrain export-data train train-7b \
+	train-3b train-resume model \
 	run-zer eval serve connect-llm superuser backup migrate deploy logs release

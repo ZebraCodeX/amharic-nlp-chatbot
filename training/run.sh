@@ -11,11 +11,14 @@ cd "$(dirname "$0")/.."
 
 MODEL="${MODEL:-Qwen/Qwen2.5-1.5B-Instruct}"
 OUT="${OUT:-training/out/zer-lora}"
-DATASET="${DATASET:-training/data/amharic_sft.jsonl}"
+DATASET="${DATASET:-training/data/amharic_sft.clean.jsonl}"
 EPOCHS="${EPOCHS:-3}"; BATCH="${BATCH:-4}"; GA="${GA:-4}"
 LR="${LR:-2e-4}"; MAXLEN="${MAXLEN:-2048}"; VENV="${VENV:-.venv-train}"
+# RESUME=1 continues from the latest checkpoint already in $OUT (safe to delete
+# the line if you want a fresh run). EXTRA passes any other trainer flag.
+RESUME_FLAG=""; [ "${RESUME:-0}" = "1" ] && RESUME_FLAG="--resume"
 
-echo "▶ Zer QLoRA: model=$MODEL out=$OUT"
+echo "▶ Zer QLoRA: model=$MODEL out=$OUT resume=${RESUME:-0}"
 
 if [ ! -d "$VENV" ]; then
   python3 -m venv "$VENV"
@@ -40,20 +43,31 @@ except Exception:
     pass
 PY
 
-# Pull the free conversational corpora once, so the SFT set has ~84k real
-# Amharic conversations and not just the 517 seed examples. Non-fatal.
+# Pull the free conversational/instruction corpora once, so the SFT set has
+# ~270k real Amharic examples and not just the small seed set. Non-fatal.
 if [ ! -f training/data/conversations_free.jsonl ] && [ "${SKIP_FETCH:-0}" != "1" ]; then
   echo "▶ Fetching free Amharic conversation corpora (one-time)…"
   python tools/fetch_conversation_corpus.py || \
     echo "  ⚠ fetch failed — continuing with the smaller seed set"
 fi
 
+# Sourced factual topics (Ethiopian history, Black American history, logic,
+# free will, political power). Non-fatal if offline.
+if [ ! -f training/data/topics_sft.jsonl ] && [ "${SKIP_FETCH:-0}" != "1" ]; then
+  echo "▶ Fetching sourced factual topics…"
+  python tools/fetch_topics.py || \
+    echo "  ⚠ topic fetch failed — continuing without it"
+fi
+
 python training/build_dataset.py
+
+# Drop degenerate/long/duplicate rows before training.
+python training/clean_dataset.py
 
 python training/train_qlora.py \
   --model "$MODEL" --dataset "$DATASET" --out "$OUT" \
   --epochs "$EPOCHS" --batch "$BATCH" --grad-accum "$GA" \
-  --lr "$LR" --max-len "$MAXLEN" ${EXTRA:-}
+  --lr "$LR" --max-len "$MAXLEN" $RESUME_FLAG ${EXTRA:-}
 
 python training/merge_adapter.py --base "$MODEL" --adapter "$OUT" --out "${OUT}-merged" \
   ${MERGE_DEVICE:+--device "$MERGE_DEVICE"}
