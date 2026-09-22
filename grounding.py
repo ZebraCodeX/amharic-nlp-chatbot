@@ -102,6 +102,17 @@ def _entries():
         if answer:
             entries.append({'patterns': pats, 'am': None, 'en': answer})
 
+    # Sourced topic knowledge (Ethiopian history, Black history, logic, …),
+    # compiled into data/knowledge_topics.json by tools/build_topic_kb.py.
+    for topic in (_load_json('knowledge_topics.json', {}) or {}).get('topics', []):
+        answer = topic.get('answer')
+        pats = [p for p in (topic.get('patterns') or []) if p]
+        if not answer or not pats:
+            continue
+        am = answer if topic.get('lang') == 'am' else None
+        en = answer if topic.get('lang') != 'am' else None
+        entries.append({'patterns': pats, 'am': am, 'en': en})
+
     _index = entries
     return entries
 
@@ -154,8 +165,12 @@ def retrieve(text, lang='am', limit=3, min_score=0.6):
     return out
 
 
-def context(text, lang='am', limit=3, min_score=0.6):
-    """A short, model-ready context block, or '' when nothing matches."""
+def context(text, lang='am', limit=3, min_score=0.6, max_chars=1600):
+    """A short, model-ready context block, or '' when nothing matches.
+
+    ``max_chars`` bounds the injected text so it cannot crowd out the actual
+    conversation in a small model's context window.
+    """
     facts = retrieve(text, lang=lang, limit=limit, min_score=min_score)
     if not facts:
         return ''
@@ -163,7 +178,19 @@ def context(text, lang='am', limit=3, min_score=0.6):
             'so prefer them and do not contradict them:') if \
         str(lang or '').lower().startswith('en') else \
         ('ከራስህ የእውቀት መረጃ እነዚህ እውነታዎች አሉ — ትክክል ናቸው፤ እነሱን ተጠቀም፣ አትቃረን፦')
-    body = '\n'.join(f'- {f}' for f in facts)
+    chosen, budget = [], max_chars - len(head) - 1
+    for fact in facts:
+        fact = fact.strip()
+        if not fact or budget <= 40:
+            break
+        if len(fact) > budget:
+            cut = fact[:budget].rfind('. ')
+            fact = fact[:cut + 1] if cut > 80 else fact[:budget]
+        chosen.append(fact)
+        budget -= len(fact)
+    if not chosen:
+        return ''
+    body = '\n'.join(f'- {f}' for f in chosen)
     return f'{head}\n{body}'
 
 

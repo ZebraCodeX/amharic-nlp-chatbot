@@ -1,0 +1,1639 @@
+{
+ "_meta": {
+  "license": "CC BY-SA 4.0 (Wikipedia)",
+  "source": "training/data/topics_manifest.json",
+  "count": 157
+ },
+ "topics": [
+  {
+   "id": "the history of Ethiopia",
+   "lang": "en",
+   "question": "What is the history of Ethiopia?",
+   "answer": "Ethiopia is one of the oldest countries in Africa; the emergence of Ethiopian civilization dates back thousands of years. Abyssinia or rather \"Ze Etiyopia\" was inhabited by Abyssinians (Habesha), specifically the Amhara and Tigrayans (speakers of Semitic languages) and the Cushitic, Oromo and Agaw. The Eastern escarpment of the Ethiopian highlands and the lowlands were the home of the various Muslim groups that formed the Ifat and Adal sultanates such as the Argobba, Afars, Harari/Harla and Somalis. In the central and south were found the ancient Sidama, Semitic Gurage and Omotic Wolaita, among others. One of the first kingdoms to rise to power in the territory was the kingdom of Damot in the 10th century BC, which established its capital at Yeha.",
+   "patterns": [
+    "the history of Ethiopia",
+    "What is the history of Ethiopia?",
+    "the history of ethiopia"
+   ]
+  },
+  {
+   "id": "Ethiopian history",
+   "lang": "en",
+   "question": "Give an overview of Ethiopian history.",
+   "answer": "Ethiopia is one of the oldest countries in Africa; the emergence of Ethiopian civilization dates back thousands of years. Abyssinia or rather \"Ze Etiyopia\" was inhabited by Abyssinians (Habesha), specifically the Amhara and Tigrayans (speakers of Semitic languages) and the Cushitic, Oromo and Agaw. The Eastern escarpment of the Ethiopian highlands and the lowlands were the home of the various Muslim groups that formed the Ifat and Adal sultanates such as the Argobba, Afars, Harari/Harla and Somalis. In the central and south were found the ancient Sidama, Semitic Gurage and Omotic Wolaita, among others. One of the first kingdoms to rise to power in the territory was the kingdom of Damot in the 10th century BC, which established its capital at Yeha.",
+   "patterns": [
+    "Ethiopian history",
+    "Give an overview of Ethiopian history.",
+    "ethiopian history"
+   ]
+  },
+  {
+   "id": "the Kingdom of Aksum",
+   "lang": "en",
+   "question": "What was the Kingdom of Aksum?",
+   "answer": "The Kingdom of Aksum, or the Aksumite Empire, was a kingdom in the Horn of Africa and South Arabia from classical antiquity to the Middle Ages, based in what is now Eritrea and Northern Ethiopia, and spanning present-day Djibouti, Sudan, Yemen and Saudi Arabia. Emerging from the earlier Dʿmt civilization, the kingdom was founded in the 1st century. The city of Axum served as the kingdom's capital. The Kingdom of Aksum was considered one of the four great powers of the 3rd century by Mani, the founder of Manichaeism, alongside Persia, Rome, and China. Aksum continued to expand under the reign of Gedara (c. 200–230), who was the first king to be involved in South Arabian affairs. His reign resulted in the control of much of western Yemen, such as the Tihama, Najran, al-Ma'afir, Zafar (until c.",
+   "patterns": [
+    "the kingdom of aksum",
+    "What was the Kingdom of Aksum?",
+    "the Kingdom of Aksum"
+   ]
+  },
+  {
+   "id": "the Kingdom of Aksum",
+   "lang": "en",
+   "question": "Explain the Kingdom of Aksum.",
+   "answer": "The Kingdom of Aksum, or the Aksumite Empire, was a kingdom in the Horn of Africa and South Arabia from classical antiquity to the Middle Ages, based in what is now Eritrea and Northern Ethiopia, and spanning present-day Djibouti, Sudan, Yemen and Saudi Arabia. Emerging from the earlier Dʿmt civilization, the kingdom was founded in the 1st century. The city of Axum served as the kingdom's capital. The Kingdom of Aksum was considered one of the four great powers of the 3rd century by Mani, the founder of Manichaeism, alongside Persia, Rome, and China. Aksum continued to expand under the reign of Gedara (c. 200–230), who was the first king to be involved in South Arabian affairs. His reign resulted in the control of much of western Yemen, such as the Tihama, Najran, al-Ma'afir, Zafar (until c.",
+   "patterns": [
+    "the kingdom of aksum",
+    "Explain the Kingdom of Aksum.",
+    "the Kingdom of Aksum"
+   ]
+  },
+  {
+   "id": "መንግሥተ አክሱም",
+   "lang": "am",
+   "question": "ስለ መንግሥተ አክሱም አብራራልኝ።",
+   "answer": "መንግሥተ አክሱም ከደቡብ አረቢያ፣ ቀይ ባህርን ተሻግሮ እስከ ምስራቅ አፍሪካ ሀገራት የአሁኗ ኢትዮጵያ፣ ምስራቃዊ ሱዳን እና ኤርትራን ያማከለ ግዛት ነው። ግዛቱም በብዙ ምሁራን መሰረት ከ1ኛው ክፍለ ዘመን ጀምሮ የተነሳ ነው ሲሉ ሌሎቹ ከዳዕመት 100 አመት በፊት የነበሩ ህዝቦች ናቸው ይላሉ። አክሱም ከተማ ዋና የግዛቱ መዲና ስትሆን በመካከለኛው ዘመን ጀምሮ ይደርስባቸው የነበረው ተከታታይ ወራራዎች ሳቢያ ጃርማ የተባለች ትንሽዬ ከተማ ተሸጋገሩ። በ3ተኛው ክፍለ ዘመን ፋርሳዊው ነብይ ማኒ የአክሱም ግዛት ከነሮማ፣ ከፋርስና፣ ከቻይና ግዛቶች የሚወዳደረው ሀያል ነበረ ብሎ ፅፏል። አክሱማውያን በዘመኑ ከግሪክና ከሮማ ጋር የጠበቀ ግንኙነት ነበራቸው። በዚህም የተነሳ ግሪካውያን ለአክሱም መንግስታት ትልቅ የባህል ትስስር ነበራቸው። በመጨረሻም የግሪክ ቋንቋ በአክሱም ግዛት ውስጥ እንደ ዋነኛ ቋንቋ ሆኖ አገልግሏል። ይህም ግዕዝ በአራተኛው ክፍለ ዘመን ጀምሮ የግሪክን ቋንቋ ተክቶ እንደዋነኛ ቋንቋ መሆን ጀምሯል። የአክሱም ስርወ መንግስት ለኢትዮጽያ ሀያልነት መነሳት ትልቅ ምንጭ ነው። በንጉስ ኢዛና ዘመን ክርስትና ለመጀመሪያ ጊዜ በአባ ሰላማ አማካኝነት የአክሱም ዋና ሀይማኖት ሊሆን ችሏል። የአክሱም ድንበር ከ4ተኛው ክፍለ ዘመን ጀምሮ መለጠጥ ጀመረ ነገር ግን በደቡብ አረቢያ ባለው ግዛቶቿ በተደጋጋሚ በፋርስና በአረብ ውቅር ሃይሎች አታለች። ይህም የእስልምና ሀያልነት ከተነሳ ጀምሮ ግዛቱም መዳከም ሲጀምር በ9ኛው ክፍለ ዘመን ዮዲት ጉዲት የተባለች ከደቡብ ክልል የመጣች የአህዛብ ንግስት የአክሱማውያን ሀይል እንዲዳከ",
+   "patterns": [
+    "መንግሥተ አክሱም",
+    "ስለ መንግሥተ አክሱም አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "መንግሥተ አክሱም",
+   "lang": "am",
+   "question": "መንግሥተ አክሱም ምንድን ነው?",
+   "answer": "መንግሥተ አክሱም ከደቡብ አረቢያ፣ ቀይ ባህርን ተሻግሮ እስከ ምስራቅ አፍሪካ ሀገራት የአሁኗ ኢትዮጵያ፣ ምስራቃዊ ሱዳን እና ኤርትራን ያማከለ ግዛት ነው። ግዛቱም በብዙ ምሁራን መሰረት ከ1ኛው ክፍለ ዘመን ጀምሮ የተነሳ ነው ሲሉ ሌሎቹ ከዳዕመት 100 አመት በፊት የነበሩ ህዝቦች ናቸው ይላሉ። አክሱም ከተማ ዋና የግዛቱ መዲና ስትሆን በመካከለኛው ዘመን ጀምሮ ይደርስባቸው የነበረው ተከታታይ ወራራዎች ሳቢያ ጃርማ የተባለች ትንሽዬ ከተማ ተሸጋገሩ። በ3ተኛው ክፍለ ዘመን ፋርሳዊው ነብይ ማኒ የአክሱም ግዛት ከነሮማ፣ ከፋርስና፣ ከቻይና ግዛቶች የሚወዳደረው ሀያል ነበረ ብሎ ፅፏል። አክሱማውያን በዘመኑ ከግሪክና ከሮማ ጋር የጠበቀ ግንኙነት ነበራቸው። በዚህም የተነሳ ግሪካውያን ለአክሱም መንግስታት ትልቅ የባህል ትስስር ነበራቸው። በመጨረሻም የግሪክ ቋንቋ በአክሱም ግዛት ውስጥ እንደ ዋነኛ ቋንቋ ሆኖ አገልግሏል። ይህም ግዕዝ በአራተኛው ክፍለ ዘመን ጀምሮ የግሪክን ቋንቋ ተክቶ እንደዋነኛ ቋንቋ መሆን ጀምሯል። የአክሱም ስርወ መንግስት ለኢትዮጽያ ሀያልነት መነሳት ትልቅ ምንጭ ነው። በንጉስ ኢዛና ዘመን ክርስትና ለመጀመሪያ ጊዜ በአባ ሰላማ አማካኝነት የአክሱም ዋና ሀይማኖት ሊሆን ችሏል። የአክሱም ድንበር ከ4ተኛው ክፍለ ዘመን ጀምሮ መለጠጥ ጀመረ ነገር ግን በደቡብ አረቢያ ባለው ግዛቶቿ በተደጋጋሚ በፋርስና በአረብ ውቅር ሃይሎች አታለች። ይህም የእስልምና ሀያልነት ከተነሳ ጀምሮ ግዛቱም መዳከም ሲጀምር በ9ኛው ክፍለ ዘመን ዮዲት ጉዲት የተባለች ከደቡብ ክልል የመጣች የአህዛብ ንግስት የአክሱማውያን ሀይል እንዲዳከ",
+   "patterns": [
+    "መንግሥተ አክሱም ምንድን ነው?",
+    "መንግሥተ አክሱም"
+   ]
+  },
+  {
+   "id": "መንግሥተ አክሱም",
+   "lang": "am",
+   "question": "ስለ መንግሥተ አክሱም ንገረኝ።",
+   "answer": "መንግሥተ አክሱም ከደቡብ አረቢያ፣ ቀይ ባህርን ተሻግሮ እስከ ምስራቅ አፍሪካ ሀገራት የአሁኗ ኢትዮጵያ፣ ምስራቃዊ ሱዳን እና ኤርትራን ያማከለ ግዛት ነው። ግዛቱም በብዙ ምሁራን መሰረት ከ1ኛው ክፍለ ዘመን ጀምሮ የተነሳ ነው ሲሉ ሌሎቹ ከዳዕመት 100 አመት በፊት የነበሩ ህዝቦች ናቸው ይላሉ። አክሱም ከተማ ዋና የግዛቱ መዲና ስትሆን በመካከለኛው ዘመን ጀምሮ ይደርስባቸው የነበረው ተከታታይ ወራራዎች ሳቢያ ጃርማ የተባለች ትንሽዬ ከተማ ተሸጋገሩ። በ3ተኛው ክፍለ ዘመን ፋርሳዊው ነብይ ማኒ የአክሱም ግዛት ከነሮማ፣ ከፋርስና፣ ከቻይና ግዛቶች የሚወዳደረው ሀያል ነበረ ብሎ ፅፏል። አክሱማውያን በዘመኑ ከግሪክና ከሮማ ጋር የጠበቀ ግንኙነት ነበራቸው። በዚህም የተነሳ ግሪካውያን ለአክሱም መንግስታት ትልቅ የባህል ትስስር ነበራቸው። በመጨረሻም የግሪክ ቋንቋ በአክሱም ግዛት ውስጥ እንደ ዋነኛ ቋንቋ ሆኖ አገልግሏል። ይህም ግዕዝ በአራተኛው ክፍለ ዘመን ጀምሮ የግሪክን ቋንቋ ተክቶ እንደዋነኛ ቋንቋ መሆን ጀምሯል። የአክሱም ስርወ መንግስት ለኢትዮጽያ ሀያልነት መነሳት ትልቅ ምንጭ ነው። በንጉስ ኢዛና ዘመን ክርስትና ለመጀመሪያ ጊዜ በአባ ሰላማ አማካኝነት የአክሱም ዋና ሀይማኖት ሊሆን ችሏል። የአክሱም ድንበር ከ4ተኛው ክፍለ ዘመን ጀምሮ መለጠጥ ጀመረ ነገር ግን በደቡብ አረቢያ ባለው ግዛቶቿ በተደጋጋሚ በፋርስና በአረብ ውቅር ሃይሎች አታለች። ይህም የእስልምና ሀያልነት ከተነሳ ጀምሮ ግዛቱም መዳከም ሲጀምር በ9ኛው ክፍለ ዘመን ዮዲት ጉዲት የተባለች ከደቡብ ክልል የመጣች የአህዛብ ንግስት የአክሱማውያን ሀይል እንዲዳከ",
+   "patterns": [
+    "ስለ መንግሥተ አክሱም ንገረኝ።",
+    "መንግሥተ አክሱም"
+   ]
+  },
+  {
+   "id": "the Ethiopian Empire",
+   "lang": "en",
+   "question": "What was the Ethiopian Empire?",
+   "answer": "The Ethiopian Empire, historically known as Abyssinia or simply Ethiopia, was a country that encompassed the present-day territories of Ethiopia and Eritrea. It existed from the establishment of the Solomonic dynasty by Yekuno Amlak around 1270 until the 1974 coup d'état by the Derg, which ended the reign of the final Emperor, Haile Selassie. In the late 19th century, under Emperor Menelik II, the empire expanded significantly to the south, and in 1952, Eritrea was federated under Selassie's rule. Despite being surrounded by hostile forces throughout much of its history, the empire maintained a kingdom centered on its ancient Christian heritage. Founded in 1270 by Yekuno Amlak, who claimed to descend from the last Aksumite king and ultimately King Solomon and the Queen of Sheba, it replaced the Agaw kingdom of the Zagwe.",
+   "patterns": [
+    "the Ethiopian Empire",
+    "What was the Ethiopian Empire?",
+    "the ethiopian empire"
+   ]
+  },
+  {
+   "id": "መንግሥተ ኢትዮጵያ",
+   "lang": "am",
+   "question": "ስለ መንግሥተ ኢትዮጵያ አብራራልኝ።",
+   "answer": "መንግሥተ ኢትዮጵያ በዛሬዎቹ ኢትዮጵያና ኤርትራ የሚገኝ መንግሥት ነበር። በትልቅነቱ ጊዜ ሰሜን ሶማሊያ፣ ጅቡቲ፣ ደቡብ ግብፅ፣ ምሥራቃዊ ሱዳን፣ የመንና ምዕራባዊ ሳውዲ አረቢያን ያጠቃልል ነበር። ኢትዮቢያየኢትዮ ግዛትያ ግዛት የአረብ እና የቱርክ ጦርን ለማስመለስ እና ከብዙ የአውሮፓ አገራት ጋር ወዳጃዊ ግንኙነቶችን ለመጀመር በተከታታይ በቀጣይነት የሚተዳደር ነበር ፡፡ ኢትዮጵያ ከአፍሪካ ጋር ከተቀላቀለችበት 1936 እስከ 1941 ባለው ጊዜ ውስጥ አጭር ጊዜ ሳይጨምር በ 1882 በእንግሊዝ ግብፅ ወረራ የተጀመረውን የቅኝ ግዛት ለማስቀረት ብቸኛ የአፍሪካ ሀገሮች ኢትዮጵያ እና ላይቤሪያ ነበሩ ፡፡ ምስራቃዊ ጣሊያን። የቅኝ ግዛት ግዛቶች ከወደሙ በኋላ በሃያኛው ክፍለዘመን አጋማሽ ላይ ኢትዮጵያ በዓለም ላይ በንጉሠ ነገሥት ከሚተዳደሩ ሦስት የዓለም አገራት አንዷ እስከ 1974 ዓ.ም.",
+   "patterns": [
+    "መንግሥተ ኢትዮጵያ",
+    "ስለ መንግሥተ ኢትዮጵያ አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "መንግሥተ ኢትዮጵያ",
+   "lang": "am",
+   "question": "መንግሥተ ኢትዮጵያ ምንድን ነው?",
+   "answer": "መንግሥተ ኢትዮጵያ በዛሬዎቹ ኢትዮጵያና ኤርትራ የሚገኝ መንግሥት ነበር። በትልቅነቱ ጊዜ ሰሜን ሶማሊያ፣ ጅቡቲ፣ ደቡብ ግብፅ፣ ምሥራቃዊ ሱዳን፣ የመንና ምዕራባዊ ሳውዲ አረቢያን ያጠቃልል ነበር። ኢትዮቢያየኢትዮ ግዛትያ ግዛት የአረብ እና የቱርክ ጦርን ለማስመለስ እና ከብዙ የአውሮፓ አገራት ጋር ወዳጃዊ ግንኙነቶችን ለመጀመር በተከታታይ በቀጣይነት የሚተዳደር ነበር ፡፡ ኢትዮጵያ ከአፍሪካ ጋር ከተቀላቀለችበት 1936 እስከ 1941 ባለው ጊዜ ውስጥ አጭር ጊዜ ሳይጨምር በ 1882 በእንግሊዝ ግብፅ ወረራ የተጀመረውን የቅኝ ግዛት ለማስቀረት ብቸኛ የአፍሪካ ሀገሮች ኢትዮጵያ እና ላይቤሪያ ነበሩ ፡፡ ምስራቃዊ ጣሊያን። የቅኝ ግዛት ግዛቶች ከወደሙ በኋላ በሃያኛው ክፍለዘመን አጋማሽ ላይ ኢትዮጵያ በዓለም ላይ በንጉሠ ነገሥት ከሚተዳደሩ ሦስት የዓለም አገራት አንዷ እስከ 1974 ዓ.ም.",
+   "patterns": [
+    "መንግሥተ ኢትዮጵያ",
+    "መንግሥተ ኢትዮጵያ ምንድን ነው?"
+   ]
+  },
+  {
+   "id": "መንግሥተ ኢትዮጵያ",
+   "lang": "am",
+   "question": "ስለ መንግሥተ ኢትዮጵያ ንገረኝ።",
+   "answer": "መንግሥተ ኢትዮጵያ በዛሬዎቹ ኢትዮጵያና ኤርትራ የሚገኝ መንግሥት ነበር። በትልቅነቱ ጊዜ ሰሜን ሶማሊያ፣ ጅቡቲ፣ ደቡብ ግብፅ፣ ምሥራቃዊ ሱዳን፣ የመንና ምዕራባዊ ሳውዲ አረቢያን ያጠቃልል ነበር። ኢትዮቢያየኢትዮ ግዛትያ ግዛት የአረብ እና የቱርክ ጦርን ለማስመለስ እና ከብዙ የአውሮፓ አገራት ጋር ወዳጃዊ ግንኙነቶችን ለመጀመር በተከታታይ በቀጣይነት የሚተዳደር ነበር ፡፡ ኢትዮጵያ ከአፍሪካ ጋር ከተቀላቀለችበት 1936 እስከ 1941 ባለው ጊዜ ውስጥ አጭር ጊዜ ሳይጨምር በ 1882 በእንግሊዝ ግብፅ ወረራ የተጀመረውን የቅኝ ግዛት ለማስቀረት ብቸኛ የአፍሪካ ሀገሮች ኢትዮጵያ እና ላይቤሪያ ነበሩ ፡፡ ምስራቃዊ ጣሊያን። የቅኝ ግዛት ግዛቶች ከወደሙ በኋላ በሃያኛው ክፍለዘመን አጋማሽ ላይ ኢትዮጵያ በዓለም ላይ በንጉሠ ነገሥት ከሚተዳደሩ ሦስት የዓለም አገራት አንዷ እስከ 1974 ዓ.ም.",
+   "patterns": [
+    "መንግሥተ ኢትዮጵያ",
+    "ስለ መንግሥተ ኢትዮጵያ ንገረኝ።"
+   ]
+  },
+  {
+   "id": "the Zagwe dynasty",
+   "lang": "en",
+   "question": "What was the Zagwe dynasty?",
+   "answer": "The Zagwe dynasty (Ge'ez: መንግሥተ ዛጔ) was a medieval Agaw monarchy that ruled the northern parts of Ethiopia and Eritrea. It ruled large parts of the territory from approximately 1137 to 1270 AD, when the last Zagwe King Za-Ilmaknun was killed in battle by the forces of the Amhara King Yekuno Amlak. The Zagwe are most famous for their king Gebre Meskel Lalibela, who is credited with having ordered the construction of the rock-hewn monolithic churches of Lalibela. The name \"Zagwe\" is thought to derive from the ancient Ge'ez phrase Ze-Agaw, meaning \"of the Agaw\", in reference to the Mara Tekle Haymanot, the founder of the dynasty. This term does not appear in contemporary sources, neither in indigenous documents nor in accounts of foreign observers.",
+   "patterns": [
+    "the Zagwe dynasty",
+    "What was the Zagwe dynasty?",
+    "the zagwe dynasty"
+   ]
+  },
+  {
+   "id": "the Solomonic dynasty",
+   "lang": "en",
+   "question": "What is the Solomonic dynasty?",
+   "answer": "The Solomonic dynasty was the ruling dynasty of the Ethiopian Empire from the thirteenth to twentieth centuries. The dynasty was founded by Yekuno Amlak, who overthrew the Zagwe dynasty in 1270. According to the dynasty's founding, he was descended from the legendary king Menelik I, the son of the biblical King Solomon and the Queen of Sheba of the Davidic line. The Solomonic dynasty remained in power until 1974, when its last emperor Haile Selassie was overthrown by a coup d'état by the Derg.",
+   "patterns": [
+    "the solomonic dynasty",
+    "the Solomonic dynasty",
+    "What is the Solomonic dynasty?"
+   ]
+  },
+  {
+   "id": "the Battle of Adwa",
+   "lang": "en",
+   "question": "What was the Battle of Adwa?",
+   "answer": "The Battle of Adwa was the climactic battle of the First Italo-Ethiopian War. It was fought on 1 March 1896, near the town of Adwa between the Ethiopian Empire under Emperor Menelik II and an Italian colonial force led by General Oreste Baratieri. Following a dispute over the interpretation of the Treaty of Wuchale, Italy attempted to force Ethiopia to abide by the Italian version of the treaty and impose a protectorate over Ethiopia. In response, Emperor Menelik II mobilized a massive army, with estimates ranging from 73,000 to over 100,000 men, mostly equipped with modern rifles imported from France and Russia. Facing them was a much smaller Italian colonial force under General Oreste Baratieri, which was unfamiliar with the terrain and hampered by poor reconnaissance.",
+   "patterns": [
+    "the Battle of Adwa",
+    "What was the Battle of Adwa?",
+    "the battle of adwa"
+   ]
+  },
+  {
+   "id": "the Battle of Adwa important",
+   "lang": "en",
+   "question": "Why is the Battle of Adwa important?",
+   "answer": "The Battle of Adwa was the climactic battle of the First Italo-Ethiopian War. It was fought on 1 March 1896, near the town of Adwa between the Ethiopian Empire under Emperor Menelik II and an Italian colonial force led by General Oreste Baratieri. Following a dispute over the interpretation of the Treaty of Wuchale, Italy attempted to force Ethiopia to abide by the Italian version of the treaty and impose a protectorate over Ethiopia. In response, Emperor Menelik II mobilized a massive army, with estimates ranging from 73,000 to over 100,000 men, mostly equipped with modern rifles imported from France and Russia. Facing them was a much smaller Italian colonial force under General Oreste Baratieri, which was unfamiliar with the terrain and hampered by poor reconnaissance.",
+   "patterns": [
+    "the Battle of Adwa important",
+    "Why is the Battle of Adwa important?",
+    "the battle of adwa important"
+   ]
+  },
+  {
+   "id": "የአድዋ ጦርነት",
+   "lang": "am",
+   "question": "ስለ የአድዋ ጦርነት አብራራልኝ።",
+   "answer": "የአድዋ ጦርነት በየካቲት ፳፫ ቀን ፲፰፻፹፰ ዓ.ም. በኢትዮጵያና ኢጣሊያ መካከል የተካሄደ ውጊያ ሲሆን የአንደኛው የኢትዮጵያና ጣሊያን ጦርነት ክፍል ነው።በጊዜውም የኢትዮጵያ ንጉስ በአፄ ሚኒሊክ እና በ ጣልያኑ የሰራዊቱ አዛዥ በነበሩት ሞሶሎኒ ጊዜም ነበር ።በ ኢትዮጵያ አሸናፊነት የጣልያን የቀኝ ግዛት ማስፋፋት ተኮላሸ። ምኒሊክ ተወልዶ ባያነሣ ጋሻ ' ግብሩ እንቁላል ነበር ይሄን ጊዜ አበሻ፤ *** ገበየሁ ቢሞት ተተካ ባልቻ መድፍ አገላባጭ ብቻለብቻ፤ *** የአድዋ ሥላሴን ጠላት አረከሰው ገበየሁ በሞቴ ግባና ቀድሰው፤ የአድዋ ድል የኢትዮጵያ ብሔራዊ ክብር ማኅተም፤ የጥቁር ህዝቦች የነፃነት ተጋድሎ ቀንዲል ነው፡፡ የመላው ዓለም ተፈጥሮአዊ ግብር እና ሰብአዊ ክብር የታደሠው፤ በእውነትና በፍትህ ህልውናና ምልዓት ላይ የተሰካ ትልቅ ጥርስ የተነቀለው … በአድዋ የታላቅ ህዝቦች ታላቅ ድል ነው፡፡ ከአዲስ አበባ ወደ ሰሜን ኢትዮጵያ ስንሄድ 1066 ኪሎ ሜትር ርቀት ላይ ታላቁ ጦርነት የተደረገበትና ታላቁ ድል የተገኘበት ሥፍራ አድዋ ከተማና የከተማው ግድም ገመገሞች ይገኛሉ፡፡ በኢትዮጵያውያን አቡሻኽር (Julian calendar) የካቲት 23 ቀን 1888 ዓ.ም፤ ወይም በአውሮጳውያን የዘመን አቆጣጠር (Gregorian Calendar) February (የካቲት) መጨረሻ እና March (መጋቢት) መጀመሪያ ላይ 1896.",
+   "patterns": [
+    "ስለ የአድዋ ጦርነት አብራራልኝ።",
+    "የአድዋ ጦርነት"
+   ]
+  },
+  {
+   "id": "የአድዋ ጦርነት",
+   "lang": "am",
+   "question": "የአድዋ ጦርነት ምንድን ነው?",
+   "answer": "የአድዋ ጦርነት በየካቲት ፳፫ ቀን ፲፰፻፹፰ ዓ.ም. በኢትዮጵያና ኢጣሊያ መካከል የተካሄደ ውጊያ ሲሆን የአንደኛው የኢትዮጵያና ጣሊያን ጦርነት ክፍል ነው።በጊዜውም የኢትዮጵያ ንጉስ በአፄ ሚኒሊክ እና በ ጣልያኑ የሰራዊቱ አዛዥ በነበሩት ሞሶሎኒ ጊዜም ነበር ።በ ኢትዮጵያ አሸናፊነት የጣልያን የቀኝ ግዛት ማስፋፋት ተኮላሸ። ምኒሊክ ተወልዶ ባያነሣ ጋሻ ' ግብሩ እንቁላል ነበር ይሄን ጊዜ አበሻ፤ *** ገበየሁ ቢሞት ተተካ ባልቻ መድፍ አገላባጭ ብቻለብቻ፤ *** የአድዋ ሥላሴን ጠላት አረከሰው ገበየሁ በሞቴ ግባና ቀድሰው፤ የአድዋ ድል የኢትዮጵያ ብሔራዊ ክብር ማኅተም፤ የጥቁር ህዝቦች የነፃነት ተጋድሎ ቀንዲል ነው፡፡ የመላው ዓለም ተፈጥሮአዊ ግብር እና ሰብአዊ ክብር የታደሠው፤ በእውነትና በፍትህ ህልውናና ምልዓት ላይ የተሰካ ትልቅ ጥርስ የተነቀለው … በአድዋ የታላቅ ህዝቦች ታላቅ ድል ነው፡፡ ከአዲስ አበባ ወደ ሰሜን ኢትዮጵያ ስንሄድ 1066 ኪሎ ሜትር ርቀት ላይ ታላቁ ጦርነት የተደረገበትና ታላቁ ድል የተገኘበት ሥፍራ አድዋ ከተማና የከተማው ግድም ገመገሞች ይገኛሉ፡፡ በኢትዮጵያውያን አቡሻኽር (Julian calendar) የካቲት 23 ቀን 1888 ዓ.ም፤ ወይም በአውሮጳውያን የዘመን አቆጣጠር (Gregorian Calendar) February (የካቲት) መጨረሻ እና March (መጋቢት) መጀመሪያ ላይ 1896.",
+   "patterns": [
+    "የአድዋ ጦርነት ምንድን ነው?",
+    "የአድዋ ጦርነት"
+   ]
+  },
+  {
+   "id": "የአድዋ ጦርነት",
+   "lang": "am",
+   "question": "ስለ የአድዋ ጦርነት ንገረኝ።",
+   "answer": "የአድዋ ጦርነት በየካቲት ፳፫ ቀን ፲፰፻፹፰ ዓ.ም. በኢትዮጵያና ኢጣሊያ መካከል የተካሄደ ውጊያ ሲሆን የአንደኛው የኢትዮጵያና ጣሊያን ጦርነት ክፍል ነው።በጊዜውም የኢትዮጵያ ንጉስ በአፄ ሚኒሊክ እና በ ጣልያኑ የሰራዊቱ አዛዥ በነበሩት ሞሶሎኒ ጊዜም ነበር ።በ ኢትዮጵያ አሸናፊነት የጣልያን የቀኝ ግዛት ማስፋፋት ተኮላሸ። ምኒሊክ ተወልዶ ባያነሣ ጋሻ ' ግብሩ እንቁላል ነበር ይሄን ጊዜ አበሻ፤ *** ገበየሁ ቢሞት ተተካ ባልቻ መድፍ አገላባጭ ብቻለብቻ፤ *** የአድዋ ሥላሴን ጠላት አረከሰው ገበየሁ በሞቴ ግባና ቀድሰው፤ የአድዋ ድል የኢትዮጵያ ብሔራዊ ክብር ማኅተም፤ የጥቁር ህዝቦች የነፃነት ተጋድሎ ቀንዲል ነው፡፡ የመላው ዓለም ተፈጥሮአዊ ግብር እና ሰብአዊ ክብር የታደሠው፤ በእውነትና በፍትህ ህልውናና ምልዓት ላይ የተሰካ ትልቅ ጥርስ የተነቀለው … በአድዋ የታላቅ ህዝቦች ታላቅ ድል ነው፡፡ ከአዲስ አበባ ወደ ሰሜን ኢትዮጵያ ስንሄድ 1066 ኪሎ ሜትር ርቀት ላይ ታላቁ ጦርነት የተደረገበትና ታላቁ ድል የተገኘበት ሥፍራ አድዋ ከተማና የከተማው ግድም ገመገሞች ይገኛሉ፡፡ በኢትዮጵያውያን አቡሻኽር (Julian calendar) የካቲት 23 ቀን 1888 ዓ.ም፤ ወይም በአውሮጳውያን የዘመን አቆጣጠር (Gregorian Calendar) February (የካቲት) መጨረሻ እና March (መጋቢት) መጀመሪያ ላይ 1896.",
+   "patterns": [
+    "የአድዋ ጦርነት",
+    "ስለ የአድዋ ጦርነት ንገረኝ።"
+   ]
+  },
+  {
+   "id": "the First Italo-Ethiopian War",
+   "lang": "en",
+   "question": "What was the First Italo-Ethiopian War?",
+   "answer": "The First Italo-Ethiopian War, also referred to as the First Italo-Abyssinian War, or simply known as the Abyssinian War in Italy (Italian: Guerra d'Abissinia), was fought between Italy and Ethiopia from 1895 to 1896. It originated from the disputed Treaty of Wuchale, which the Italians claimed turned Ethiopia into an Italian protectorate, while the Ethiopians claimed that the treaty simply ensured peace between the two powers. Full-scale war broke out in 1895, with Italian troops from Italian Eritrea achieving initial successes against Tigrayan warlords at Coatit, Senafe and Debra Ailà, until they were reinforced by a large Ethiopian army led by Emperor Menelik II. The Italian defeat came about after the Battle of Adwa, where the Ethiopian army dealt the outnumbered Italian soldiers and Eritrean askaris a decisive blow and forced their retreat back into Eritrea.",
+   "patterns": [
+    "the first italo-ethiopian war",
+    "What was the First Italo-Ethiopian War?",
+    "the First Italo-Ethiopian War"
+   ]
+  },
+  {
+   "id": "the Second Italo-Ethiopian War",
+   "lang": "en",
+   "question": "What was the Second Italo-Ethiopian War?",
+   "answer": "The Second Italo-Ethiopian War, also referred to as the Second Italo-Abyssinian War, was a war of aggression waged by Italy against Ethiopia, which lasted from October 1935 to May 1936. In Ethiopia it is often referred to simply as the Italian Invasion (Amharic: ጣልያን ወረራ, romanized: Ṭalyan warära), and in Italy as the Ethiopian War (Italian: Guerra d'Etiopia). The war is regarded as the largest colonial campaign in history. On 3 October 1935, two hundred thousand soldiers of the Regio Esercito (Royal Army) commanded by Marshal Emilio De Bono attacked from Italian Eritrea without prior declaration of war. At the same time a smaller force under General Rodolfo Graziani attacked from Italian Somalia. On 6 October, Adwa was conquered, a symbolic place for the Italian army as it was the site of their defeat at the Battle of Adwa during the First Italo-Ethiopian War.",
+   "patterns": [
+    "the second italo-ethiopian war",
+    "the Second Italo-Ethiopian War",
+    "What was the Second Italo-Ethiopian War?"
+   ]
+  },
+  {
+   "id": "Menelik II",
+   "lang": "en",
+   "question": "Who was Menelik II?",
+   "answer": "Menelik II (Ge'ez: ዳግማዊ ምኒልክ dagmawi mənilək; horse name Aba Dagnew (Amharic: አባ ዳኘው abba daññäw); 17 August 1844 – 12 December 1913), baptised as Sahle Maryam (ሣህለ ማርያም sahlä maryam), was king of Shewa from 1866 to 1889 and Emperor of Ethiopia from 1889 to his death in 1913. A member of the Solomonic dynasty, Menelik expanded the Ethiopian Empire to its greatest historical extent and defeated Italian colonial forces at the Battle of Adwa in 1896. A member of the Shewan branch of the Solomonic dynasty, Menelik was born in Ankober, Shewa, as Sahle Maryam, the son of Haile Melekot (Negus of Shewa). Named \"Menelik\" by his grandfather King Sahle Selassie after the legendary Menelik I (son of Solomon and the Queen of Sheba), he was imprisoned at age 11 by Emperor Tewodros II at the fortress of Magdala following his father's death in 1855.",
+   "patterns": [
+    "Menelik II",
+    "Who was Menelik II?",
+    "menelik ii"
+   ]
+  },
+  {
+   "id": "Tewodros II",
+   "lang": "en",
+   "question": "Who was Tewodros II?",
+   "answer": "Tewodros II (Ge'ez: ዳግማዊ ቴዎድሮስ, once referred to by the English cognate Theodore; baptized as Kassa, c. 1818 – 15 April 1868) was Emperor of Ethiopia from 1855 until his death in 1868. His rule is often placed as the beginning of modern Ethiopia and brought an end to the decentralized Zemene Mesafint (Era of the Princes). Although Tewodros II's origins were in the Era of the Princes, his ambitions were not those of the regional nobility. He sought to re-establish a cohesive Ethiopian state and to reform its administration and church. Tewodros II's first task after having reunited the other provinces was to bring Shewa under his control. During the Era of the Princes, Shewa was, even more than most provinces, an independent entity, its ruler even styling himself Negus, the title for King.",
+   "patterns": [
+    "Who was Tewodros II?",
+    "tewodros ii",
+    "Tewodros II"
+   ]
+  },
+  {
+   "id": "Yohannes IV",
+   "lang": "en",
+   "question": "Who was Yohannes IV?",
+   "answer": "Yohannes IV (Tigrinya: ዮሓንስ ፬ይ Rabaiy Yōḥānnes; horse name Abba Bezbiz also known as Kahśsai; born Lij Kahssai Mercha; 11 July 1837 – 10 March 1889) was Emperor of Ethiopia from 1871 to his death in 1889 at the Battle of Gallabat, and king of Tigray from 1869 to 1871. During his reign he successfully defended Ethiopia against a large-scale Egyptian invasion. In his earlier years, he rebelled against Tewodros II; having risen to power in the 1860s, he maintained the policy of Tewodros, that of continued unification and also implemented a policy of touring entire regions and meetings with governors. He assisted the British in their British expedition to Abyssinia which ended in Tewodros' suicide, from which Yohannes was rewarded in ammunition and artillery. He regarded Islam as a hindrance to the stability of the state and worked to strengthen Christian dominance in Ethiopia.",
+   "patterns": [
+    "yohannes iv",
+    "Who was Yohannes IV?",
+    "Yohannes IV"
+   ]
+  },
+  {
+   "id": "ዮሐንስ ፬ኛ",
+   "lang": "am",
+   "question": "ስለ ዮሐንስ ፬ኛ አብራራልኝ።",
+   "answer": "== == ዓፄ ዮሐንስ 4ኛ፣ ከአባታቸው ከተንቤን ባላባት የራስ ስኹል ሚካኤል የልጅ ልጅ ሹም ተንቤን ምርጫ እና ከናታቸው የእንደርታው ገዢ የራስ አርአያ እህት ወይዘሮ ወለተ ሥላሴ ሐምሌ 5 ቀን 1829 ዓ.ም. ማይ በሀ በሚባል ሥፍራ ተወለዱ። ርዕሰ መኳንንት ደጃዝማች በዝብዝ ካሳ ሐምሌ ፮ ቀን 1863 ዓ/ም ዓፄ ተክለ ጊዮርጊስን አድዋ አካባቢ አሳም የሚባል ሥፍራ ላይ ወግተው ድል ካደረጉ በኋላ ጥር 13 ቀን1864 ዓ/ም አክሱም ላይ ሥርዓተ ንግሣቸው ተፈጽሞ ዓፄ ዮሐንስ ፬ኛ ንጉሠ ነገሥት ዘኢትዮጵያ ተብለው ነገሡ። አፄ ዮሐንስ 4ኛ ከእንግሊዝ ንግስት ጋር በመፃፃፍ ነግስናቸውን አጠናክረዋል፡፡ ይህም ተቀናቃኛቸው የነበሩት አፄ ሚኒለክን ለማስገበር ተሳክቶላቸዋል ፡፡ ከአፃ ሚኒሊክ ጋር የነበራቸውን የስልጣን ሽሚያ ለመከላከል ሲባል ደብረ ብርሃን ድረስ በመሄድ ድርድር በማድረግ የነበራቸውን ባላንጣነት አስወግደው ሚኒሊክ ንጉስ እንድባልና አፄ የሐንስ ርዕሰ ብሔር እንድሆን ተስማምተዋል ፡፡ ከዛም ደርቡሾች ጋር መተማ አካባቢ ገጥመው አፄ ዮሐንስ በጥይት ቆስለው መውደቃቸው ይነገራል፡፡ ይህ የሆነው ደርብሾች የኢትዮጵያን ድንበር ጥሰው የኦርቶዶክስ እምነት ተከታይ የሆነው የጎንደርና ኣካባቢው ህዝብ ላይ ከፍተኛ ጭፍጨፋ ስላካሄዱ ነው፡፡ ይህ ደግሞ አፄ ዮሐንስ በዘመናዊ የኢትዮጵያ ታሪክ ለሃገራቸው በድንበር ላይ ሲዋጉ የሞቱ ብቸኛው ንጉሰ ነገስት ያረጋቸዋል። ከዚህ በፊትም ከግብፅፆች ጋር ጉራና ጉንዳ ጉንድ በተባሉ ቦታዎች ገጥመው ማሸነፋቸውና የሀገርን ዳር ድንበር ለማስጠበቅ መጣጣራቸን በታሪክ ይወሳል፡፡",
+   "patterns": [
+    "ዮሐንስ ፬ኛ",
+    "ስለ ዮሐንስ ፬ኛ አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "ዮሐንስ ፬ኛ",
+   "lang": "am",
+   "question": "ዮሐንስ ፬ኛ ምንድን ነው?",
+   "answer": "== == ዓፄ ዮሐንስ 4ኛ፣ ከአባታቸው ከተንቤን ባላባት የራስ ስኹል ሚካኤል የልጅ ልጅ ሹም ተንቤን ምርጫ እና ከናታቸው የእንደርታው ገዢ የራስ አርአያ እህት ወይዘሮ ወለተ ሥላሴ ሐምሌ 5 ቀን 1829 ዓ.ም. ማይ በሀ በሚባል ሥፍራ ተወለዱ። ርዕሰ መኳንንት ደጃዝማች በዝብዝ ካሳ ሐምሌ ፮ ቀን 1863 ዓ/ም ዓፄ ተክለ ጊዮርጊስን አድዋ አካባቢ አሳም የሚባል ሥፍራ ላይ ወግተው ድል ካደረጉ በኋላ ጥር 13 ቀን1864 ዓ/ም አክሱም ላይ ሥርዓተ ንግሣቸው ተፈጽሞ ዓፄ ዮሐንስ ፬ኛ ንጉሠ ነገሥት ዘኢትዮጵያ ተብለው ነገሡ። አፄ ዮሐንስ 4ኛ ከእንግሊዝ ንግስት ጋር በመፃፃፍ ነግስናቸውን አጠናክረዋል፡፡ ይህም ተቀናቃኛቸው የነበሩት አፄ ሚኒለክን ለማስገበር ተሳክቶላቸዋል ፡፡ ከአፃ ሚኒሊክ ጋር የነበራቸውን የስልጣን ሽሚያ ለመከላከል ሲባል ደብረ ብርሃን ድረስ በመሄድ ድርድር በማድረግ የነበራቸውን ባላንጣነት አስወግደው ሚኒሊክ ንጉስ እንድባልና አፄ የሐንስ ርዕሰ ብሔር እንድሆን ተስማምተዋል ፡፡ ከዛም ደርቡሾች ጋር መተማ አካባቢ ገጥመው አፄ ዮሐንስ በጥይት ቆስለው መውደቃቸው ይነገራል፡፡ ይህ የሆነው ደርብሾች የኢትዮጵያን ድንበር ጥሰው የኦርቶዶክስ እምነት ተከታይ የሆነው የጎንደርና ኣካባቢው ህዝብ ላይ ከፍተኛ ጭፍጨፋ ስላካሄዱ ነው፡፡ ይህ ደግሞ አፄ ዮሐንስ በዘመናዊ የኢትዮጵያ ታሪክ ለሃገራቸው በድንበር ላይ ሲዋጉ የሞቱ ብቸኛው ንጉሰ ነገስት ያረጋቸዋል። ከዚህ በፊትም ከግብፅፆች ጋር ጉራና ጉንዳ ጉንድ በተባሉ ቦታዎች ገጥመው ማሸነፋቸውና የሀገርን ዳር ድንበር ለማስጠበቅ መጣጣራቸን በታሪክ ይወሳል፡፡",
+   "patterns": [
+    "ዮሐንስ ፬ኛ ምንድን ነው?",
+    "ዮሐንስ ፬ኛ"
+   ]
+  },
+  {
+   "id": "ዮሐንስ ፬ኛ",
+   "lang": "am",
+   "question": "ስለ ዮሐንስ ፬ኛ ንገረኝ።",
+   "answer": "== == ዓፄ ዮሐንስ 4ኛ፣ ከአባታቸው ከተንቤን ባላባት የራስ ስኹል ሚካኤል የልጅ ልጅ ሹም ተንቤን ምርጫ እና ከናታቸው የእንደርታው ገዢ የራስ አርአያ እህት ወይዘሮ ወለተ ሥላሴ ሐምሌ 5 ቀን 1829 ዓ.ም. ማይ በሀ በሚባል ሥፍራ ተወለዱ። ርዕሰ መኳንንት ደጃዝማች በዝብዝ ካሳ ሐምሌ ፮ ቀን 1863 ዓ/ም ዓፄ ተክለ ጊዮርጊስን አድዋ አካባቢ አሳም የሚባል ሥፍራ ላይ ወግተው ድል ካደረጉ በኋላ ጥር 13 ቀን1864 ዓ/ም አክሱም ላይ ሥርዓተ ንግሣቸው ተፈጽሞ ዓፄ ዮሐንስ ፬ኛ ንጉሠ ነገሥት ዘኢትዮጵያ ተብለው ነገሡ። አፄ ዮሐንስ 4ኛ ከእንግሊዝ ንግስት ጋር በመፃፃፍ ነግስናቸውን አጠናክረዋል፡፡ ይህም ተቀናቃኛቸው የነበሩት አፄ ሚኒለክን ለማስገበር ተሳክቶላቸዋል ፡፡ ከአፃ ሚኒሊክ ጋር የነበራቸውን የስልጣን ሽሚያ ለመከላከል ሲባል ደብረ ብርሃን ድረስ በመሄድ ድርድር በማድረግ የነበራቸውን ባላንጣነት አስወግደው ሚኒሊክ ንጉስ እንድባልና አፄ የሐንስ ርዕሰ ብሔር እንድሆን ተስማምተዋል ፡፡ ከዛም ደርቡሾች ጋር መተማ አካባቢ ገጥመው አፄ ዮሐንስ በጥይት ቆስለው መውደቃቸው ይነገራል፡፡ ይህ የሆነው ደርብሾች የኢትዮጵያን ድንበር ጥሰው የኦርቶዶክስ እምነት ተከታይ የሆነው የጎንደርና ኣካባቢው ህዝብ ላይ ከፍተኛ ጭፍጨፋ ስላካሄዱ ነው፡፡ ይህ ደግሞ አፄ ዮሐንስ በዘመናዊ የኢትዮጵያ ታሪክ ለሃገራቸው በድንበር ላይ ሲዋጉ የሞቱ ብቸኛው ንጉሰ ነገስት ያረጋቸዋል። ከዚህ በፊትም ከግብፅፆች ጋር ጉራና ጉንዳ ጉንድ በተባሉ ቦታዎች ገጥመው ማሸነፋቸውና የሀገርን ዳር ድንበር ለማስጠበቅ መጣጣራቸን በታሪክ ይወሳል፡፡",
+   "patterns": [
+    "ስለ ዮሐንስ ፬ኛ ንገረኝ።",
+    "ዮሐንስ ፬ኛ"
+   ]
+  },
+  {
+   "id": "Haile Selassie",
+   "lang": "en",
+   "question": "Who was Haile Selassie?",
+   "answer": "Haile Selassie I (born Ras Tafari Makonnen or Lij Tafari; 23 July 1892 – 27 August 1975) was Emperor of Ethiopia from 1930 to 1974. He rose to power as the Regent Plenipotentiary of Ethiopia (Enderase) under Empress Zewditu between 1916 and 1930. Widely considered to be a defining figure in modern Ethiopian history, he is accorded divine importance in Rastafari, an Abrahamic religion that emerged in the 1930s. A few years before he began his reign over the Ethiopian Empire, Selassie defeated Ethiopian army commander Ras Gugsa Welle Bitul, nephew of Empress Taytu Betul, at the Battle of Anchem. He belonged to the Solomonic dynasty, founded by Emperor Yekuno Amlak in 1270. Selassie, seeking to modernise Ethiopia, introduced political and social reforms including the 1931 constitution and the abolition of slavery in 1942.",
+   "patterns": [
+    "haile selassie",
+    "Who was Haile Selassie?",
+    "Haile Selassie"
+   ]
+  },
+  {
+   "id": "ቀዳማዊ ኃይለ ሥላሴ",
+   "lang": "am",
+   "question": "ስለ ቀዳማዊ ኃይለ ሥላሴ አብራራልኝ።",
+   "answer": "== == ቀዳማዊ ፡ ዓፄ ፡ ኃይለ ፡ ሥላሴ (ቀ.ኃ.ሥ.) ከጥቅምት ፳፫ ቀን ፲፱፻፳፫ እስከ መስከረም ፪ ቀን ፲፱፻፷፯ ዓ.ም. ፡ የኢትዮጵያ ፡ ንጉሠ ፡ ነገሥት ፡ ነበሩ። ተፈሪ ፡ መኰንን ፡ ሐምሌ ፲፮ ፡ ቀን ፡ ፲፰፻፹፬ ዓ.ም. ፡ ከአባታቸው ፡ ከልዑል ፡ ራስ መኰንን ፡ እና ፡ ከእናታቸው ፡ ከወይዘሮ ፡ የሺ ፡ እመቤት ፡ ጎሮ ፡ በተባለ ፡ የገጠር ፡ ቀበሌ ፡ ሐረርጌ ፡ ውስጥ ፡ ተወለዱ። በ፲፰፻፺፱ ፡ የሲዳሞ ፡ አውራጃ ፡ አገረ ፡ ገዥ ፡ ሆኑ። በ፲፱፻፫ ዓ.ም. ፡ የሐረርጌ ፡ አገረ ፡ ገዥ ፡ ሆኑ። የሐረርጌ ፡ አገረ ፡ ገዥ ፡ ሲሆኑ ፣ በጣም ፡ ብዙ ፡ ሺህ ፡ ተከታዮች ፡ ነበሩዋቸውና ፡ ልጅ ፡ እያሱን ፡ ከእንደራሴነት ፡ በኅይል ፡ እንዳያስወጡ ፤ እያሱም ፡ ተፈሪን ፡ ከሐረር ፡ አገረ ፡ ገዥነት ፡ እንዳይሽሯቸው ፡ የሚል ፡ ስምምነት ፡ ተዋዋሉ። ዳሩ ፡ ግን ፡ እያሱ ፡ ሃይማኖታቸውን ፡ ከክርስትና ፡ ወደ ፡ እስልምና ፡ እንደቀየሩ ፡ የሚል ፡ ማስረጃ ፡ ቀረበና ፡ ብዙ ፡ መኳንንትና ፡ ቀሳውስት ፡ ስለዚህ ፡ ኢያሱን ፡ አልወደዱዋቸውም ፡ ነበር። ከዚህም ፡ በላይ ፡ እያሱ ፡ ተፈሪን ፡ ከሐረር ፡ ከአገረ ፡ ገዥነታቸው ፡ ለመሻር ፡ በሞከሩበት ፡ ወቅት ፡ ስምምነታቸው ፡ እንግዲህ ፡ ተሠርዞ ፡ ተፈሪ ፡ ደግሞ ፡ ለወገናቸው ፡ ከስምምነቱ ፡ ተለቅቀው ፡ በዚያን ፡ ጊዜ ፡ እሳቸው ፡ እያሱን ፡ ከእንደራሴነት ፡ አስወጡ። እንግዲህ ፡ በ፲፱፻፱ ፡ ዓ.ም.",
+   "patterns": [
+    "ቀዳማዊ ኃይለ ሥላሴ",
+    "ስለ ቀዳማዊ ኃይለ ሥላሴ አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "ቀዳማዊ ኃይለ ሥላሴ",
+   "lang": "am",
+   "question": "ቀዳማዊ ኃይለ ሥላሴ ምንድን ነው?",
+   "answer": "== == ቀዳማዊ ፡ ዓፄ ፡ ኃይለ ፡ ሥላሴ (ቀ.ኃ.ሥ.) ከጥቅምት ፳፫ ቀን ፲፱፻፳፫ እስከ መስከረም ፪ ቀን ፲፱፻፷፯ ዓ.ም. ፡ የኢትዮጵያ ፡ ንጉሠ ፡ ነገሥት ፡ ነበሩ። ተፈሪ ፡ መኰንን ፡ ሐምሌ ፲፮ ፡ ቀን ፡ ፲፰፻፹፬ ዓ.ም. ፡ ከአባታቸው ፡ ከልዑል ፡ ራስ መኰንን ፡ እና ፡ ከእናታቸው ፡ ከወይዘሮ ፡ የሺ ፡ እመቤት ፡ ጎሮ ፡ በተባለ ፡ የገጠር ፡ ቀበሌ ፡ ሐረርጌ ፡ ውስጥ ፡ ተወለዱ። በ፲፰፻፺፱ ፡ የሲዳሞ ፡ አውራጃ ፡ አገረ ፡ ገዥ ፡ ሆኑ። በ፲፱፻፫ ዓ.ም. ፡ የሐረርጌ ፡ አገረ ፡ ገዥ ፡ ሆኑ። የሐረርጌ ፡ አገረ ፡ ገዥ ፡ ሲሆኑ ፣ በጣም ፡ ብዙ ፡ ሺህ ፡ ተከታዮች ፡ ነበሩዋቸውና ፡ ልጅ ፡ እያሱን ፡ ከእንደራሴነት ፡ በኅይል ፡ እንዳያስወጡ ፤ እያሱም ፡ ተፈሪን ፡ ከሐረር ፡ አገረ ፡ ገዥነት ፡ እንዳይሽሯቸው ፡ የሚል ፡ ስምምነት ፡ ተዋዋሉ። ዳሩ ፡ ግን ፡ እያሱ ፡ ሃይማኖታቸውን ፡ ከክርስትና ፡ ወደ ፡ እስልምና ፡ እንደቀየሩ ፡ የሚል ፡ ማስረጃ ፡ ቀረበና ፡ ብዙ ፡ መኳንንትና ፡ ቀሳውስት ፡ ስለዚህ ፡ ኢያሱን ፡ አልወደዱዋቸውም ፡ ነበር። ከዚህም ፡ በላይ ፡ እያሱ ፡ ተፈሪን ፡ ከሐረር ፡ ከአገረ ፡ ገዥነታቸው ፡ ለመሻር ፡ በሞከሩበት ፡ ወቅት ፡ ስምምነታቸው ፡ እንግዲህ ፡ ተሠርዞ ፡ ተፈሪ ፡ ደግሞ ፡ ለወገናቸው ፡ ከስምምነቱ ፡ ተለቅቀው ፡ በዚያን ፡ ጊዜ ፡ እሳቸው ፡ እያሱን ፡ ከእንደራሴነት ፡ አስወጡ። እንግዲህ ፡ በ፲፱፻፱ ፡ ዓ.ም.",
+   "patterns": [
+    "ቀዳማዊ ኃይለ ሥላሴ",
+    "ቀዳማዊ ኃይለ ሥላሴ ምንድን ነው?"
+   ]
+  },
+  {
+   "id": "ቀዳማዊ ኃይለ ሥላሴ",
+   "lang": "am",
+   "question": "ስለ ቀዳማዊ ኃይለ ሥላሴ ንገረኝ።",
+   "answer": "== == ቀዳማዊ ፡ ዓፄ ፡ ኃይለ ፡ ሥላሴ (ቀ.ኃ.ሥ.) ከጥቅምት ፳፫ ቀን ፲፱፻፳፫ እስከ መስከረም ፪ ቀን ፲፱፻፷፯ ዓ.ም. ፡ የኢትዮጵያ ፡ ንጉሠ ፡ ነገሥት ፡ ነበሩ። ተፈሪ ፡ መኰንን ፡ ሐምሌ ፲፮ ፡ ቀን ፡ ፲፰፻፹፬ ዓ.ም. ፡ ከአባታቸው ፡ ከልዑል ፡ ራስ መኰንን ፡ እና ፡ ከእናታቸው ፡ ከወይዘሮ ፡ የሺ ፡ እመቤት ፡ ጎሮ ፡ በተባለ ፡ የገጠር ፡ ቀበሌ ፡ ሐረርጌ ፡ ውስጥ ፡ ተወለዱ። በ፲፰፻፺፱ ፡ የሲዳሞ ፡ አውራጃ ፡ አገረ ፡ ገዥ ፡ ሆኑ። በ፲፱፻፫ ዓ.ም. ፡ የሐረርጌ ፡ አገረ ፡ ገዥ ፡ ሆኑ። የሐረርጌ ፡ አገረ ፡ ገዥ ፡ ሲሆኑ ፣ በጣም ፡ ብዙ ፡ ሺህ ፡ ተከታዮች ፡ ነበሩዋቸውና ፡ ልጅ ፡ እያሱን ፡ ከእንደራሴነት ፡ በኅይል ፡ እንዳያስወጡ ፤ እያሱም ፡ ተፈሪን ፡ ከሐረር ፡ አገረ ፡ ገዥነት ፡ እንዳይሽሯቸው ፡ የሚል ፡ ስምምነት ፡ ተዋዋሉ። ዳሩ ፡ ግን ፡ እያሱ ፡ ሃይማኖታቸውን ፡ ከክርስትና ፡ ወደ ፡ እስልምና ፡ እንደቀየሩ ፡ የሚል ፡ ማስረጃ ፡ ቀረበና ፡ ብዙ ፡ መኳንንትና ፡ ቀሳውስት ፡ ስለዚህ ፡ ኢያሱን ፡ አልወደዱዋቸውም ፡ ነበር። ከዚህም ፡ በላይ ፡ እያሱ ፡ ተፈሪን ፡ ከሐረር ፡ ከአገረ ፡ ገዥነታቸው ፡ ለመሻር ፡ በሞከሩበት ፡ ወቅት ፡ ስምምነታቸው ፡ እንግዲህ ፡ ተሠርዞ ፡ ተፈሪ ፡ ደግሞ ፡ ለወገናቸው ፡ ከስምምነቱ ፡ ተለቅቀው ፡ በዚያን ፡ ጊዜ ፡ እሳቸው ፡ እያሱን ፡ ከእንደራሴነት ፡ አስወጡ። እንግዲህ ፡ በ፲፱፻፱ ፡ ዓ.ም.",
+   "patterns": [
+    "ቀዳማዊ ኃይለ ሥላሴ",
+    "ስለ ቀዳማዊ ኃይለ ሥላሴ ንገረኝ።"
+   ]
+  },
+  {
+   "id": "the Derg",
+   "lang": "en",
+   "question": "What was the Derg?",
+   "answer": "The Derg or Dergue (Amharic: ደርግ, lit. 'committee' or 'council'), officially the Provisional Military Administrative Council (PMAC), and also often simply known as Socialist Ethiopia, was the military junta that ruled Ethiopia (which at that time included present-day Eritrea) from 1974 to 1987, when its members formally \"civilianized\" the administration, though they remained in power until 1991. The Derg was established on 21 June 1974 as the Coordinating Committee of the Armed Forces, Police and Territorial Army, by junior and mid-level officers of the Imperial Ethiopian Army and members of the police. The officers decided everything collectively at first, and selected Mengistu Haile Mariam to chair the proceedings.",
+   "patterns": [
+    "What was the Derg?",
+    "the derg",
+    "the Derg"
+   ]
+  },
+  {
+   "id": "ደርግ",
+   "lang": "am",
+   "question": "ስለ ደርግ አብራራልኝ።",
+   "answer": "ደርግ ከሰኔ 21፣ 1966 እስከ 1983ዓ.ም. በኢትዮጵያ ሰፍኖ የነበር የወታደራዊ አገዛዝ ስርዓት አይነት ነበር። ደርግ የሚለው ቃል ከግዕዝ የተወሰደ ሲሆን ትርጓሜውም ቡድን ወይንም ኮሚቴ ማለት ነው። ይህን ቃል ለመጀመሪያ ጊዜ ለስርዓቱ መገለጫነት የተጠቀመው ግለሰብ ሻለቃ ናደው ዘካሪያስ ሲባል ይሄውም ሰኔ 21፣ 1966 ዓ.ም. ነበር። በዚህ ወቅት፣ በአዲስ አበባ ከተማ በሚገኘው የአራተኛ እግረኛ ክፍለ ጦር መምሪያ ከተለያዩ የአገሪቱ ክፍሎች የተውጣጡ መለዮ ለባሾች በየካቲት ወር ስለፈነዳው አብዮት ከሰኔ 19 ጀምሮ ውይይት የሚያካሂዱበት ጊዜ የነበር ሲሆን፤ ሻለቃ ናደው የዚህ ኮሚቴ ማስታወቂያ ጉዳይ ሠራተኛ ነበር። ደርግ በዚህ ሁኔታ በዝቅተኛ መኮንኖች (ከኮሎኔል ማዕረግ በታች) ከተመሰረተ በኋላ በዚያው ቀን ሻለቃ መንግስቱ ኃይለማርያም የደርግ ሊቀመንበር በመሆን ተመርጦ እስከ ስርዓቱ ማብቂያ (1979) ድረስ በዚያ ስልጣን አገልግሏል።",
+   "patterns": [
+    "ስለ ደርግ አብራራልኝ።",
+    "ደርግ"
+   ]
+  },
+  {
+   "id": "ደርግ",
+   "lang": "am",
+   "question": "ደርግ ምንድን ነው?",
+   "answer": "ደርግ ከሰኔ 21፣ 1966 እስከ 1983ዓ.ም. በኢትዮጵያ ሰፍኖ የነበር የወታደራዊ አገዛዝ ስርዓት አይነት ነበር። ደርግ የሚለው ቃል ከግዕዝ የተወሰደ ሲሆን ትርጓሜውም ቡድን ወይንም ኮሚቴ ማለት ነው። ይህን ቃል ለመጀመሪያ ጊዜ ለስርዓቱ መገለጫነት የተጠቀመው ግለሰብ ሻለቃ ናደው ዘካሪያስ ሲባል ይሄውም ሰኔ 21፣ 1966 ዓ.ም. ነበር። በዚህ ወቅት፣ በአዲስ አበባ ከተማ በሚገኘው የአራተኛ እግረኛ ክፍለ ጦር መምሪያ ከተለያዩ የአገሪቱ ክፍሎች የተውጣጡ መለዮ ለባሾች በየካቲት ወር ስለፈነዳው አብዮት ከሰኔ 19 ጀምሮ ውይይት የሚያካሂዱበት ጊዜ የነበር ሲሆን፤ ሻለቃ ናደው የዚህ ኮሚቴ ማስታወቂያ ጉዳይ ሠራተኛ ነበር። ደርግ በዚህ ሁኔታ በዝቅተኛ መኮንኖች (ከኮሎኔል ማዕረግ በታች) ከተመሰረተ በኋላ በዚያው ቀን ሻለቃ መንግስቱ ኃይለማርያም የደርግ ሊቀመንበር በመሆን ተመርጦ እስከ ስርዓቱ ማብቂያ (1979) ድረስ በዚያ ስልጣን አገልግሏል።",
+   "patterns": [
+    "ደርግ ምንድን ነው?",
+    "ደርግ"
+   ]
+  },
+  {
+   "id": "ደርግ",
+   "lang": "am",
+   "question": "ስለ ደርግ ንገረኝ።",
+   "answer": "ደርግ ከሰኔ 21፣ 1966 እስከ 1983ዓ.ም. በኢትዮጵያ ሰፍኖ የነበር የወታደራዊ አገዛዝ ስርዓት አይነት ነበር። ደርግ የሚለው ቃል ከግዕዝ የተወሰደ ሲሆን ትርጓሜውም ቡድን ወይንም ኮሚቴ ማለት ነው። ይህን ቃል ለመጀመሪያ ጊዜ ለስርዓቱ መገለጫነት የተጠቀመው ግለሰብ ሻለቃ ናደው ዘካሪያስ ሲባል ይሄውም ሰኔ 21፣ 1966 ዓ.ም. ነበር። በዚህ ወቅት፣ በአዲስ አበባ ከተማ በሚገኘው የአራተኛ እግረኛ ክፍለ ጦር መምሪያ ከተለያዩ የአገሪቱ ክፍሎች የተውጣጡ መለዮ ለባሾች በየካቲት ወር ስለፈነዳው አብዮት ከሰኔ 19 ጀምሮ ውይይት የሚያካሂዱበት ጊዜ የነበር ሲሆን፤ ሻለቃ ናደው የዚህ ኮሚቴ ማስታወቂያ ጉዳይ ሠራተኛ ነበር። ደርግ በዚህ ሁኔታ በዝቅተኛ መኮንኖች (ከኮሎኔል ማዕረግ በታች) ከተመሰረተ በኋላ በዚያው ቀን ሻለቃ መንግስቱ ኃይለማርያም የደርግ ሊቀመንበር በመሆን ተመርጦ እስከ ስርዓቱ ማብቂያ (1979) ድረስ በዚያ ስልጣን አገልግሏል።",
+   "patterns": [
+    "ደርግ",
+    "ስለ ደርግ ንገረኝ።"
+   ]
+  },
+  {
+   "id": "the Ethiopian Civil War",
+   "lang": "en",
+   "question": "What was the Ethiopian Civil War?",
+   "answer": "The Ethiopian Civil War was a civil war in Ethiopia and present-day Eritrea, fought between the Ethiopian military junta known as the Derg and Ethiopian-Eritrean anti-government rebels from 12 September 1974 to 28 May 1991. The Derg overthrew the Ethiopian Empire and Emperor Haile Selassie in a coup d'état on 12 September 1974, establishing Ethiopia as a Marxist–Leninist state under a military junta and provisional government. Various nationalist opposition groups of ideological affiliations ranging from Communist to anti-Communist, often drawn from a specific ethnic background, carried out armed resistance to the Soviet-backed Derg. Groups like the Eritrean Peoples Liberation Front (EPLF) and the Western Somali Liberation Front (WSLF) had already been fighting against the Ethiopian Empire in the northern Eritrean War of Independence and southern Ogaden insurgency.",
+   "patterns": [
+    "the ethiopian civil war",
+    "the Ethiopian Civil War",
+    "What was the Ethiopian Civil War?"
+   ]
+  },
+  {
+   "id": "the Ethiopian Orthodox Tewahedo Church",
+   "lang": "en",
+   "question": "What is the Ethiopian Orthodox Tewahedo Church?",
+   "answer": "The Ethiopian Orthodox Tewahedo Church (Amharic: የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን, romanized: Ye-Ītyop’a ortodoks tewahido bēte kristīyan), also sometimes known as the Abyssinian Church or the Church of Abyssinia, is the largest of the Oriental Orthodox Churches. The EOTC is the first indigenous Christian church from sub-Saharan Africa and precedes the arrival of the Western European colonizers with their Catholic and Protestant denominations to the region by more than a millennium. It dates back to the Christianization of the Kingdom of Aksum by Coptic Orthodox missionaries in 330; it has between 38 million and 51 million adherents in Ethiopia, and 60 million members worldwide. It is a founding member of the World Council of Churches.",
+   "patterns": [
+    "What is the Ethiopian Orthodox Tewahedo Church?",
+    "the ethiopian orthodox tewahedo church",
+    "the Ethiopian Orthodox Tewahedo Church"
+   ]
+  },
+  {
+   "id": "የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን",
+   "lang": "am",
+   "question": "ስለ የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን አብራራልኝ።",
+   "answer": "የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ኃይማኖት ተከታዮች በተለይም የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን፣ ኢየሱስ ክርስቶስ በ፴ ዓ/ም በፈለገ ዮርዳኖስ በመጥምቁ ዮሐንስ እጅ በዮርዳኖስ ባሕር የተጠመቀበትን ዕለት የሚያስታውሰው፣ በግሪኩ ኤጲፋንያ በመባልም የሚታወቀው ደማቅ በዓል ነው። መገለጥ፣ መታየት ማለት ነው። የኢየሱስ ክርስቶስ ጥምቀት ታሪክ የሚገኘው በማቴዎስ ወንጌል ምዕራፍ ፫ ቁ ፲፫–፲፯ ውስጥ ነው ጌታ። በአገራችን፣ ጥር ፲ ቀን፣ በከተራ፣ በገጠር ወራጅ ውሃ የሚከተርበት፣ ታቦታት ከየአቢያተ ክርስቲያናቱ በዓሉ ወደሚከበርበት ቦታ በምዕመናን ታጅበው በዝማሬና በሆታ ይሄዳሉ። እዚያም በተዘጋጀ አቡነ ባስልዮስ ከእስክንድርያ ፓትርያርክ አቡነ ዮሳብ 2ኛ የጵጵስና ማዕረግ ተቀበሉ። ኢትዮጵያም፤ ከዚያን ጊዜ ጀምሮ እራሷን የቻለች ሆነች። ወደ ፶፭-፷ ሚሊዮን የሚቀርቡ ምእመናን ሲኖሩት ከምሥራቃዊ ኦርቶዶክስ አብያተ ክርስቲያናት ሁሉ ትልቁ ነው።",
+   "patterns": [
+    "የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን",
+    "ስለ የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን",
+   "lang": "am",
+   "question": "የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን ምንድን ነው?",
+   "answer": "የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ኃይማኖት ተከታዮች በተለይም የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን፣ ኢየሱስ ክርስቶስ በ፴ ዓ/ም በፈለገ ዮርዳኖስ በመጥምቁ ዮሐንስ እጅ በዮርዳኖስ ባሕር የተጠመቀበትን ዕለት የሚያስታውሰው፣ በግሪኩ ኤጲፋንያ በመባልም የሚታወቀው ደማቅ በዓል ነው። መገለጥ፣ መታየት ማለት ነው። የኢየሱስ ክርስቶስ ጥምቀት ታሪክ የሚገኘው በማቴዎስ ወንጌል ምዕራፍ ፫ ቁ ፲፫–፲፯ ውስጥ ነው ጌታ። በአገራችን፣ ጥር ፲ ቀን፣ በከተራ፣ በገጠር ወራጅ ውሃ የሚከተርበት፣ ታቦታት ከየአቢያተ ክርስቲያናቱ በዓሉ ወደሚከበርበት ቦታ በምዕመናን ታጅበው በዝማሬና በሆታ ይሄዳሉ። እዚያም በተዘጋጀ አቡነ ባስልዮስ ከእስክንድርያ ፓትርያርክ አቡነ ዮሳብ 2ኛ የጵጵስና ማዕረግ ተቀበሉ። ኢትዮጵያም፤ ከዚያን ጊዜ ጀምሮ እራሷን የቻለች ሆነች። ወደ ፶፭-፷ ሚሊዮን የሚቀርቡ ምእመናን ሲኖሩት ከምሥራቃዊ ኦርቶዶክስ አብያተ ክርስቲያናት ሁሉ ትልቁ ነው።",
+   "patterns": [
+    "የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን ምንድን ነው?",
+    "የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን"
+   ]
+  },
+  {
+   "id": "የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን",
+   "lang": "am",
+   "question": "ስለ የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን ንገረኝ።",
+   "answer": "የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ኃይማኖት ተከታዮች በተለይም የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን፣ ኢየሱስ ክርስቶስ በ፴ ዓ/ም በፈለገ ዮርዳኖስ በመጥምቁ ዮሐንስ እጅ በዮርዳኖስ ባሕር የተጠመቀበትን ዕለት የሚያስታውሰው፣ በግሪኩ ኤጲፋንያ በመባልም የሚታወቀው ደማቅ በዓል ነው። መገለጥ፣ መታየት ማለት ነው። የኢየሱስ ክርስቶስ ጥምቀት ታሪክ የሚገኘው በማቴዎስ ወንጌል ምዕራፍ ፫ ቁ ፲፫–፲፯ ውስጥ ነው ጌታ። በአገራችን፣ ጥር ፲ ቀን፣ በከተራ፣ በገጠር ወራጅ ውሃ የሚከተርበት፣ ታቦታት ከየአቢያተ ክርስቲያናቱ በዓሉ ወደሚከበርበት ቦታ በምዕመናን ታጅበው በዝማሬና በሆታ ይሄዳሉ። እዚያም በተዘጋጀ አቡነ ባስልዮስ ከእስክንድርያ ፓትርያርክ አቡነ ዮሳብ 2ኛ የጵጵስና ማዕረግ ተቀበሉ። ኢትዮጵያም፤ ከዚያን ጊዜ ጀምሮ እራሷን የቻለች ሆነች። ወደ ፶፭-፷ ሚሊዮን የሚቀርቡ ምእመናን ሲኖሩት ከምሥራቃዊ ኦርቶዶክስ አብያተ ክርስቲያናት ሁሉ ትልቁ ነው።",
+   "patterns": [
+    "ስለ የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን ንገረኝ።",
+    "የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን"
+   ]
+  },
+  {
+   "id": "the Beta Israel",
+   "lang": "en",
+   "question": "Who are the Beta Israel?",
+   "answer": "The Beta Israel, or Ethiopian Jews, are a Jewish group originating in the Amhara and Tigray regions of northern Ethiopia, where they historically inhabited more than 500 small villages. The majority are concentrated in what is today North Gondar Zone, Shire Inda Selassie, Welkait, Tselemti, Dembia, Segelt, Qwara Province, and Belesa. Since their official recognition as Jewish under Israel's Law of Return, most of the Beta Israel have made aliyah from Ethiopia to Israel through several Israeli government initiatives starting in 1979. The history behind the ethnogenesis of the Beta Israel is a matter of dispute. They appear to have been lastingly isolated from broader Jewish communities, having historically practiced a divergent, non-Talmudic form of Judaism, known as Haymanot, that is similar in some respects to Karaite Judaism.",
+   "patterns": [
+    "the Beta Israel",
+    "the beta israel",
+    "Who are the Beta Israel?"
+   ]
+  },
+  {
+   "id": "ቤተ እስራኤል",
+   "lang": "am",
+   "question": "ስለ ቤተ እስራኤል አብራራልኝ።",
+   "answer": "ቤተ እስራኤል በኢትዮጵያ ሲኖሩ የነበሩ የዘር ሃረጋቸው በመጽሐፍ ቅዱስ እንደተገለጸው የአብርሃም የያዕቆብ የይስሃቅ የዘር ሃረግ ሲሆን በኢትዮጵያ ለብዙ ዘመናት ሲኖሩ ቆየተው ከ1984 እ.ኤ.አ.",
+   "patterns": [
+    "ቤተ እስራኤል",
+    "ስለ ቤተ እስራኤል አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "ቤተ እስራኤል",
+   "lang": "am",
+   "question": "ቤተ እስራኤል ምንድን ነው?",
+   "answer": "ቤተ እስራኤል በኢትዮጵያ ሲኖሩ የነበሩ የዘር ሃረጋቸው በመጽሐፍ ቅዱስ እንደተገለጸው የአብርሃም የያዕቆብ የይስሃቅ የዘር ሃረግ ሲሆን በኢትዮጵያ ለብዙ ዘመናት ሲኖሩ ቆየተው ከ1984 እ.ኤ.አ.",
+   "patterns": [
+    "ቤተ እስራኤል ምንድን ነው?",
+    "ቤተ እስራኤል"
+   ]
+  },
+  {
+   "id": "ቤተ እስራኤል",
+   "lang": "am",
+   "question": "ስለ ቤተ እስራኤል ንገረኝ።",
+   "answer": "ቤተ እስራኤል በኢትዮጵያ ሲኖሩ የነበሩ የዘር ሃረጋቸው በመጽሐፍ ቅዱስ እንደተገለጸው የአብርሃም የያዕቆብ የይስሃቅ የዘር ሃረግ ሲሆን በኢትዮጵያ ለብዙ ዘመናት ሲኖሩ ቆየተው ከ1984 እ.ኤ.አ.",
+   "patterns": [
+    "ስለ ቤተ እስራኤል ንገረኝ።",
+    "ቤተ እስራኤል"
+   ]
+  },
+  {
+   "id": "the Oromo people",
+   "lang": "en",
+   "question": "Who are the Oromo people?",
+   "answer": "The Oromo people (Oromo: Oromoo, pron. ORR-əm-oh) are a Cushitic ethnic group who live in the Oromia region of Ethiopia and parts of northern Kenya. They speak the Oromo language (also called Afaan Oromoo), which is part of the Cushitic branch of the Afroasiatic language family. They are one of the largest ethnic groups in Ethiopia. According to the last Ethiopian census of 2007, the Oromo numbered 25,488,344 people or 34.5% of the Ethiopian population. Recent estimates have the Oromo comprising 41,500,000 people, or 35.8% of the total Ethiopian population estimated at 116,000,000. The Oromo were originally nomadic, pastoralist people who later would conquer large swaths of land during their expansions. After the settlement, they would establish kingdoms in the Gibe regions and assimilating the natives.",
+   "patterns": [
+    "the oromo people",
+    "Who are the Oromo people?",
+    "the Oromo people"
+   ]
+  },
+  {
+   "id": "ኦሮሞ",
+   "lang": "am",
+   "question": "ስለ ኦሮሞ አብራራልኝ።",
+   "answer": "ኦሮሞ' በኢትዮጵያ፣ በኬንያና፣ በሶማሊያ የሚኖር ማህበረሰብ ነው። ኦሮሞ ማለት በገዳ ሥርኣተ መንገሥት ስር ይተዳደር የነበረ ህዝብ ነው። በገዳ መንግሥት ስር የአገር መሪ በየ፰ቱ (ስምንት) ዓመት የሚቀይር ሲሆን በተለያዩ የኦሮሞ ክልሎች ንጉሣን እንደነበሩም ታሪክ ይነግረናል። በኦሮሚያ ክልሎች ከነበሩት ንጉሦች መካከል የታወቁት አባ ጂፋር ናቸው። የኦሮም ሕዝብ ከግራኝ ወረራ በኋላ ሰሜኑን ኢትዮጵያ ወሯል። በአንድ ሺ ስምንት መቶ ክፍለዘመን ማለቂያ ላይ በንጉሥ ዳግማዊ ምኒልክ አማካኝነት ከአቢሲኒያ ጋር ተቀላቀሎ ኢትዮጵያ ስትመሰረት፣ የቀዳሚ ሃገሩ ሕዝብ ችግር አሳልፏል። እንደ ሌሎች ኩሺቲክ ቋንቋዎች ተናጋሪዎች፣ ከጥንት ጀምሮ ትውልዳቸው ከጥንታዊው ኩሽ መንግሥት ጋር ግንኙነት አለው። ሆኖም በሃይል ስጋት መገንጠልን ያሰቡ ወገኖች ጥቂት ናቸው።",
+   "patterns": [
+    "ስለ ኦሮሞ አብራራልኝ።",
+    "ኦሮሞ"
+   ]
+  },
+  {
+   "id": "ኦሮሞ",
+   "lang": "am",
+   "question": "ኦሮሞ ምንድን ነው?",
+   "answer": "ኦሮሞ' በኢትዮጵያ፣ በኬንያና፣ በሶማሊያ የሚኖር ማህበረሰብ ነው። ኦሮሞ ማለት በገዳ ሥርኣተ መንገሥት ስር ይተዳደር የነበረ ህዝብ ነው። በገዳ መንግሥት ስር የአገር መሪ በየ፰ቱ (ስምንት) ዓመት የሚቀይር ሲሆን በተለያዩ የኦሮሞ ክልሎች ንጉሣን እንደነበሩም ታሪክ ይነግረናል። በኦሮሚያ ክልሎች ከነበሩት ንጉሦች መካከል የታወቁት አባ ጂፋር ናቸው። የኦሮም ሕዝብ ከግራኝ ወረራ በኋላ ሰሜኑን ኢትዮጵያ ወሯል። በአንድ ሺ ስምንት መቶ ክፍለዘመን ማለቂያ ላይ በንጉሥ ዳግማዊ ምኒልክ አማካኝነት ከአቢሲኒያ ጋር ተቀላቀሎ ኢትዮጵያ ስትመሰረት፣ የቀዳሚ ሃገሩ ሕዝብ ችግር አሳልፏል። እንደ ሌሎች ኩሺቲክ ቋንቋዎች ተናጋሪዎች፣ ከጥንት ጀምሮ ትውልዳቸው ከጥንታዊው ኩሽ መንግሥት ጋር ግንኙነት አለው። ሆኖም በሃይል ስጋት መገንጠልን ያሰቡ ወገኖች ጥቂት ናቸው።",
+   "patterns": [
+    "ኦሮሞ ምንድን ነው?",
+    "ኦሮሞ"
+   ]
+  },
+  {
+   "id": "ኦሮሞ",
+   "lang": "am",
+   "question": "ስለ ኦሮሞ ንገረኝ።",
+   "answer": "ኦሮሞ' በኢትዮጵያ፣ በኬንያና፣ በሶማሊያ የሚኖር ማህበረሰብ ነው። ኦሮሞ ማለት በገዳ ሥርኣተ መንገሥት ስር ይተዳደር የነበረ ህዝብ ነው። በገዳ መንግሥት ስር የአገር መሪ በየ፰ቱ (ስምንት) ዓመት የሚቀይር ሲሆን በተለያዩ የኦሮሞ ክልሎች ንጉሣን እንደነበሩም ታሪክ ይነግረናል። በኦሮሚያ ክልሎች ከነበሩት ንጉሦች መካከል የታወቁት አባ ጂፋር ናቸው። የኦሮም ሕዝብ ከግራኝ ወረራ በኋላ ሰሜኑን ኢትዮጵያ ወሯል። በአንድ ሺ ስምንት መቶ ክፍለዘመን ማለቂያ ላይ በንጉሥ ዳግማዊ ምኒልክ አማካኝነት ከአቢሲኒያ ጋር ተቀላቀሎ ኢትዮጵያ ስትመሰረት፣ የቀዳሚ ሃገሩ ሕዝብ ችግር አሳልፏል። እንደ ሌሎች ኩሺቲክ ቋንቋዎች ተናጋሪዎች፣ ከጥንት ጀምሮ ትውልዳቸው ከጥንታዊው ኩሽ መንግሥት ጋር ግንኙነት አለው። ሆኖም በሃይል ስጋት መገንጠልን ያሰቡ ወገኖች ጥቂት ናቸው።",
+   "patterns": [
+    "ኦሮሞ",
+    "ስለ ኦሮሞ ንገረኝ።"
+   ]
+  },
+  {
+   "id": "the Amhara people",
+   "lang": "en",
+   "question": "Who are the Amhara people?",
+   "answer": "Amharas (Amharic: አማራ, romanized: Āmara; Ge'ez: ዐምሐራ, romanized: ʾÄməḥära) are a Semitic-speaking ethnic group indigenous to Ethiopia in the Horn of Africa, traditionally inhabiting parts of the northwest Highlands of Ethiopia, particularly the Amhara Region. According to the 2007 national census, Amharas numbered 19,867,817 individuals, comprising 26.9% of Ethiopia's population, and they are mostly Oriental Orthodox Christian (members of the Ethiopian Orthodox Tewahedo Church). They are also found within the Ethiopian expatriate community, particularly in North America. They speak Amharic, an Afroasiatic language of the Semitic branch which serves as the main and one of the five official languages of Ethiopia. As of 2018, Amharic has over 32 million native speakers and 25 million second language speakers.",
+   "patterns": [
+    "the amhara people",
+    "the Amhara people",
+    "Who are the Amhara people?"
+   ]
+  },
+  {
+   "id": "the Tigrayan people",
+   "lang": "en",
+   "question": "Who are the Tigrayan people?",
+   "answer": "Tigrayan people (Tigrinya: ተጋሩ, romanized: Təgaru) are a Semitic-speaking ethnic group who are indigenous to the Tigray Region of northern Ethiopia. They speak Tigrinya, an Afroasiatic language belonging to the North Ethio-Semitic language branch, and written in the Geʽez script serves as the main and one of the five official languages of Ethiopia. Tigrinya is also the main language of the Tigrinya people that live in Eritrea. According to the 2007 national census, Tigrayans numbered approximately 4,483,000 individuals, making up 6.07% of Ethiopia’s total population at the time. The vast majority of Tigrayans are adherents of Tewahedo Oriental Orthodoxy, specifically the Ethiopian Orthodox Tewahedo Church which has historically been the dominant religious institution in the region.",
+   "patterns": [
+    "the Tigrayan people",
+    "the tigrayan people",
+    "Who are the Tigrayan people?"
+   ]
+  },
+  {
+   "id": "the Grand Ethiopian Renaissance Dam",
+   "lang": "en",
+   "question": "What is the Grand Ethiopian Renaissance Dam?",
+   "answer": "The Grand Ethiopian Renaissance Dam (GERD or TaIHiGe; Amharic: ታላቁ የኢትዮጵያ ሕዳሴ ግድብ, romanized: Tālāqu ye-Ītyōppyā Hidāsē Gidib, Tigrinya: ግድብ ሕዳሰ ኢትዮጵያ, Oromo: Hidha Guddicha Haaromsa Itoophiyaa), formerly known as the Millennium Dam and sometimes referred to as the Hidase Dam (Amharic: ሕዳሴ ግድብ, romanized: Hidāsē Gidib, Oromo: Hidha Hidāsē), is a gravity dam on the Blue Nile River in Ethiopia. The dam is in the Metekel Zone of the Benishangul-Gumuz Region, close to the border with Sudan. Constructed between 2011 and 2025, the dam's primary purpose is electricity production to relieve Ethiopia's acute energy shortage and to export electricity to neighbouring countries. With an installed capacity of 5.15 gigawatts, the dam is the largest hydroelectric power plant in Africa and among the 20 largest in the world.",
+   "patterns": [
+    "the Grand Ethiopian Renaissance Dam",
+    "the grand ethiopian renaissance dam",
+    "What is the Grand Ethiopian Renaissance Dam?"
+   ]
+  },
+  {
+   "id": "Addis Ababa",
+   "lang": "en",
+   "question": "What is Addis Ababa?",
+   "answer": "Addis Ababa ( AD-iss AB-ə-bə; Amharic: አዲስ አበባ [adˈdis ˈaβəβa] , lit. 'new flower'; Oromo: Finfinnee, lit. 'fountain of hot mineral water', ) is the capital and largest city of Ethiopia. With an estimated population of 6,287,000 inhabitants as of 2025, it is the tenth largest city in Africa. At an elevation of 2,355 metres (7,726 ft), it is the fourth-highest capital city in the world and the highest capital in Africa. Addis Ababa is a highly developed and important cultural, artistic, financial and administrative center of Ethiopia. The founding history of Addis Ababa dates back to the late 19th century by Menelik II, Negus of Shewa, in 1886 after finding Mount Entoto unpleasant two years prior. At the time, the city was a resort town; its large mineral spring abundance attracted nobilities of the empire and led them to establish permanent settlement.",
+   "patterns": [
+    "addis ababa",
+    "Addis Ababa",
+    "What is Addis Ababa?"
+   ]
+  },
+  {
+   "id": "አዲስ አበባ",
+   "lang": "am",
+   "question": "ስለ አዲስ አበባ አብራራልኝ።",
+   "answer": "አዲስ አበባ (Addis Abeba) ፤ የኢትዮጵያ ዋና ከተማ ስትሆን በተጨማሪ የአፍሪካ ሕብረት መቀመጫ እንዲሁም የብዙ የተባበሩት መንግሥታት ድርጅት ቅርንጫፎችና ሌሎችም የዓለም የዲፕሎማቲክ (የሰላማዊ ግንኙነት) ልዑካን መሰብሰቢያ ከተማ ናት ። ራስ-ገዝ አስተዳደር ስላላት በኢ.ፌ.ዲ.ሪ ህገመንግስት የፌደራል ከተማነትን ማዕረግ ይዛ ትገኛለች። ከባሕር ጠለል በ2500 ሜትር ከፍታ ላይ የምትገኘው ከተማ በ1999 አ.ም በተደረገው የህዝብ ቆጠራ ወደ 2,739,551 በላይ ሕዝብ የሚኖርባት በመሆኗ የሀገሪቱ ትልቋ ከተማ ናት። ከተማዋ እቴጌ ጣይቱ በመረጡት ቦታ ማለትም በፍልውሐ አካባቢ ላይ በባላቸው በዳግማዊ ምኒልክ በ፲፰፻፸፰ (1878) ዓ.ም. ተቆረቆረች። የሕዝቧ ብዛት በያመቱ 8% (ስምንት በመቶ) እየጨመረ አሁን ወደ አምስት ሚሊዮን እንደሚደርስ ይገመታል። ከእንጦጦ ጋራ ግርጌ ያለችው መዲና የአዲስ አበባ ዩኒቨርሲቲ መገኛ ነች። ይህም በመስራቹ የቀድሞው ንጉሠ-ነገሥት ስም ቀዳማዊ ኃይለ ሥላሴ ዩኒቨርሲቲ ይባል ነበር።",
+   "patterns": [
+    "አዲስ አበባ",
+    "ስለ አዲስ አበባ አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "አዲስ አበባ",
+   "lang": "am",
+   "question": "አዲስ አበባ ምንድን ነው?",
+   "answer": "አዲስ አበባ (Addis Abeba) ፤ የኢትዮጵያ ዋና ከተማ ስትሆን በተጨማሪ የአፍሪካ ሕብረት መቀመጫ እንዲሁም የብዙ የተባበሩት መንግሥታት ድርጅት ቅርንጫፎችና ሌሎችም የዓለም የዲፕሎማቲክ (የሰላማዊ ግንኙነት) ልዑካን መሰብሰቢያ ከተማ ናት ። ራስ-ገዝ አስተዳደር ስላላት በኢ.ፌ.ዲ.ሪ ህገመንግስት የፌደራል ከተማነትን ማዕረግ ይዛ ትገኛለች። ከባሕር ጠለል በ2500 ሜትር ከፍታ ላይ የምትገኘው ከተማ በ1999 አ.ም በተደረገው የህዝብ ቆጠራ ወደ 2,739,551 በላይ ሕዝብ የሚኖርባት በመሆኗ የሀገሪቱ ትልቋ ከተማ ናት። ከተማዋ እቴጌ ጣይቱ በመረጡት ቦታ ማለትም በፍልውሐ አካባቢ ላይ በባላቸው በዳግማዊ ምኒልክ በ፲፰፻፸፰ (1878) ዓ.ም. ተቆረቆረች። የሕዝቧ ብዛት በያመቱ 8% (ስምንት በመቶ) እየጨመረ አሁን ወደ አምስት ሚሊዮን እንደሚደርስ ይገመታል። ከእንጦጦ ጋራ ግርጌ ያለችው መዲና የአዲስ አበባ ዩኒቨርሲቲ መገኛ ነች። ይህም በመስራቹ የቀድሞው ንጉሠ-ነገሥት ስም ቀዳማዊ ኃይለ ሥላሴ ዩኒቨርሲቲ ይባል ነበር።",
+   "patterns": [
+    "አዲስ አበባ",
+    "አዲስ አበባ ምንድን ነው?"
+   ]
+  },
+  {
+   "id": "አዲስ አበባ",
+   "lang": "am",
+   "question": "ስለ አዲስ አበባ ንገረኝ።",
+   "answer": "አዲስ አበባ (Addis Abeba) ፤ የኢትዮጵያ ዋና ከተማ ስትሆን በተጨማሪ የአፍሪካ ሕብረት መቀመጫ እንዲሁም የብዙ የተባበሩት መንግሥታት ድርጅት ቅርንጫፎችና ሌሎችም የዓለም የዲፕሎማቲክ (የሰላማዊ ግንኙነት) ልዑካን መሰብሰቢያ ከተማ ናት ። ራስ-ገዝ አስተዳደር ስላላት በኢ.ፌ.ዲ.ሪ ህገመንግስት የፌደራል ከተማነትን ማዕረግ ይዛ ትገኛለች። ከባሕር ጠለል በ2500 ሜትር ከፍታ ላይ የምትገኘው ከተማ በ1999 አ.ም በተደረገው የህዝብ ቆጠራ ወደ 2,739,551 በላይ ሕዝብ የሚኖርባት በመሆኗ የሀገሪቱ ትልቋ ከተማ ናት። ከተማዋ እቴጌ ጣይቱ በመረጡት ቦታ ማለትም በፍልውሐ አካባቢ ላይ በባላቸው በዳግማዊ ምኒልክ በ፲፰፻፸፰ (1878) ዓ.ም. ተቆረቆረች። የሕዝቧ ብዛት በያመቱ 8% (ስምንት በመቶ) እየጨመረ አሁን ወደ አምስት ሚሊዮን እንደሚደርስ ይገመታል። ከእንጦጦ ጋራ ግርጌ ያለችው መዲና የአዲስ አበባ ዩኒቨርሲቲ መገኛ ነች። ይህም በመስራቹ የቀድሞው ንጉሠ-ነገሥት ስም ቀዳማዊ ኃይለ ሥላሴ ዩኒቨርሲቲ ይባል ነበር።",
+   "patterns": [
+    "ስለ አዲስ አበባ ንገረኝ።",
+    "አዲስ አበባ"
+   ]
+  },
+  {
+   "id": "Pan-Africanism",
+   "lang": "en",
+   "question": "What is Pan-Africanism?",
+   "answer": "Pan-Africanism is a movement that aims to encourage and strengthen bonds of solidarity between all indigenous peoples of Africa along with all peoples of African descent. The belief extends beyond continental Africans with a substantial support base among the African diaspora in the Americas and Europe. Based on the belief that unity is vital to economic, social, and political progress, it aims to unify and uplift people of African ancestry. It was in the twentieth century that Pan-Africanism emerged as a distinct political movement initially formed and led by people from the Diaspora (people of African heritage living outside of the Continent). In 1900, the Trinidadian barrister Henry Williams organized the first Pan-African conference to \"protest stealing of lands in the colonies, racial discrimination and deal with other issues of interest to Blacks\".",
+   "patterns": [
+    "pan-africanism",
+    "What is Pan-Africanism?",
+    "Pan-Africanism"
+   ]
+  },
+  {
+   "id": "Pan-Africanism",
+   "lang": "en",
+   "question": "Explain Pan-Africanism.",
+   "answer": "Pan-Africanism is a movement that aims to encourage and strengthen bonds of solidarity between all indigenous peoples of Africa along with all peoples of African descent. The belief extends beyond continental Africans with a substantial support base among the African diaspora in the Americas and Europe. Based on the belief that unity is vital to economic, social, and political progress, it aims to unify and uplift people of African ancestry. It was in the twentieth century that Pan-Africanism emerged as a distinct political movement initially formed and led by people from the Diaspora (people of African heritage living outside of the Continent). In 1900, the Trinidadian barrister Henry Williams organized the first Pan-African conference to \"protest stealing of lands in the colonies, racial discrimination and deal with other issues of interest to Blacks\".",
+   "patterns": [
+    "pan-africanism",
+    "Explain Pan-Africanism.",
+    "Pan-Africanism"
+   ]
+  },
+  {
+   "id": "the African diaspora",
+   "lang": "en",
+   "question": "What is the African diaspora?",
+   "answer": "The African diaspora is the worldwide collection of communities that descended from people from Africa. The term most commonly refers to emigrants of people of African heritage but could also refer to descendants of enslaved Africans. Scholars typically identify \"four circulatory phases\" of this migration out of Africa. The phrase African diaspora gradually entered common usage at the turn of the 21st century. The term diaspora originates from the Greek word διασπορά (diaspora, \"scattering\") which gained popularity in English in reference to the Jewish diaspora before being more broadly applied to other populations. Less commonly, the term has been used in scholarship to refer to more recent emigration from Africa.",
+   "patterns": [
+    "the african diaspora",
+    "What is the African diaspora?",
+    "the African diaspora"
+   ]
+  },
+  {
+   "id": "Negritude",
+   "lang": "en",
+   "question": "What was Negritude?",
+   "answer": "Négritude (from French \"nègre\" and \"-itude\" to denote a condition that can be translated as \"Blackness\"; pronounced [neɡʁityd]) is a framework of critique and literary theory, mainly developed by francophone intellectuals, writers, politicians, and visual artists in the African diaspora during the 1930s, aimed at raising and cultivating \"black consciousness\" across Africa and its diaspora. The progenitors of Négritude included the Martinican poet Aimé Césaire, Abdoulaye Sadji, Léopold Sédar Senghor (the first President of Senegal), and Léon Damas of French Guiana. Négritude intellectuals disavowed colonialism, racism and Eurocentrism. They promoted African culture within a framework of persistent Franco-African ties. The intellectuals employed Marxist political philosophy, in the black radical tradition.",
+   "patterns": [
+    "negritude",
+    "What was Negritude?",
+    "Negritude"
+   ]
+  },
+  {
+   "id": "Rastafari",
+   "lang": "en",
+   "question": "What is Rastafari?",
+   "answer": "Rastafari is an Abrahamic religion that developed in Jamaica during the 1930s. It is classified as both a new religious movement and a social movement by scholars of religion. There is no central authority in control of the movement and much diversity exists among practitioners, who are known as Rastafari, Rastafarians, or Rastas. Rastafari beliefs are based on an interpretation of the Christian Bible. Central to the religion is a monotheistic belief in a single God, referred to as Jah, who partially resides within each individual. Rastas accord key importance to Haile Selassie, Emperor of Ethiopia between 1930 and 1974. Many see him as the Second Coming of Jesus and Jah incarnate; others deem him a human prophet. Rastafari is Afrocentric and focuses attention on the African diaspora, which it believes is oppressed within \"Babylon,\" meaning Western capitalist society.",
+   "patterns": [
+    "What is Rastafari?",
+    "rastafari",
+    "Rastafari"
+   ]
+  },
+  {
+   "id": "ራስታፋራይ እንቅስቃሴ",
+   "lang": "am",
+   "question": "ስለ ራስታፋራይ እንቅስቃሴ አብራራልኝ።",
+   "answer": "ራስታፋራይ በመጀመርያ በ1930ዎቹ እ.ኤ.አ. በጃማይካ የተነሣ እንቅስቃሴና እምነትና አኗርኗር ነው። ዛሬ በአለም ዙሪያ ምናልባት 1 ሚሊዮን ራስታዎች አሉ። የራስታፋራይ እንቅስቃሴ የጀመረው አፄ ቀዳማዊ ኃይለ ሥላሴ በ1930 እ.ኤ.አ.",
+   "patterns": [
+    "ራስታፋራይ እንቅስቃሴ",
+    "ስለ ራስታፋራይ እንቅስቃሴ አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "ራስታፋራይ እንቅስቃሴ",
+   "lang": "am",
+   "question": "ራስታፋራይ እንቅስቃሴ ምንድን ነው?",
+   "answer": "ራስታፋራይ በመጀመርያ በ1930ዎቹ እ.ኤ.አ. በጃማይካ የተነሣ እንቅስቃሴና እምነትና አኗርኗር ነው። ዛሬ በአለም ዙሪያ ምናልባት 1 ሚሊዮን ራስታዎች አሉ። የራስታፋራይ እንቅስቃሴ የጀመረው አፄ ቀዳማዊ ኃይለ ሥላሴ በ1930 እ.ኤ.አ.",
+   "patterns": [
+    "ራስታፋራይ እንቅስቃሴ ምንድን ነው?",
+    "ራስታፋራይ እንቅስቃሴ"
+   ]
+  },
+  {
+   "id": "ራስታፋራይ እንቅስቃሴ",
+   "lang": "am",
+   "question": "ስለ ራስታፋራይ እንቅስቃሴ ንገረኝ።",
+   "answer": "ራስታፋራይ በመጀመርያ በ1930ዎቹ እ.ኤ.አ. በጃማይካ የተነሣ እንቅስቃሴና እምነትና አኗርኗር ነው። ዛሬ በአለም ዙሪያ ምናልባት 1 ሚሊዮን ራስታዎች አሉ። የራስታፋራይ እንቅስቃሴ የጀመረው አፄ ቀዳማዊ ኃይለ ሥላሴ በ1930 እ.ኤ.አ.",
+   "patterns": [
+    "ራስታፋራይ እንቅስቃሴ",
+    "ስለ ራስታፋራይ እንቅስቃሴ ንገረኝ።"
+   ]
+  },
+  {
+   "id": "Marcus Garvey",
+   "lang": "en",
+   "question": "Who was Marcus Garvey?",
+   "answer": "Marcus Mosiah Garvey Jr. (17 August 1887 – 10 June 1940) was a Jamaican political activist. He was the founder and first President-General of the Universal Negro Improvement Association and African Communities League (UNIA-ACL, commonly known as UNIA), through which he declared himself Provisional President of Africa. Ideologically a black nationalist and Pan-Africanist, Garvey's ideas are known as Garveyism. Garvey was born to a moderately prosperous Afro-Jamaican family in Saint Ann's Bay and was apprenticed into the print trade as a teenager. Working in Kingston, he became involved in trade unionism before living briefly in Costa Rica, Panama, and England. On returning to Jamaica, he founded UNIA in 1914. In 1916, he relocated to the United States and founded a UNIA branch in New York City's Harlem.",
+   "patterns": [
+    "Who was Marcus Garvey?",
+    "marcus garvey",
+    "Marcus Garvey"
+   ]
+  },
+  {
+   "id": "W. E. B. Du Bois",
+   "lang": "en",
+   "question": "Who was W. E. B. Du Bois?",
+   "answer": "William Edward Burghardt Du Bois ( doo-BOYSS; February 23, 1868 – August 27, 1963) was an American sociologist, writer, historian, and Pan-Africanist civil rights activist. Born in Great Barrington, Massachusetts, Du Bois grew up in a relatively tolerant and integrated community. He completed graduate work at Harvard University, where he was the first African American to earn a doctorate. He was a professor at Atlanta University and over the course of his life wrote many books and articles. He spent the last years of his life in Ghana and died in Accra on August 27, 1963. Du Bois rose to national prominence as a leader of the Niagara Movement, a group of black civil rights activists seeking equal rights. Du Bois and his supporters opposed the Atlanta Compromise.",
+   "patterns": [
+    "W. E. B. Du Bois",
+    "w. e. b. du bois",
+    "Who was W. E. B. Du Bois?"
+   ]
+  },
+  {
+   "id": "the Organization of African Unity",
+   "lang": "en",
+   "question": "What was the Organization of African Unity?",
+   "answer": "The Organisation of African Unity (OAU; French: Organisation de l'unité africaine, OUA) was an African intergovernmental organisation established on 25 May 1963 in Addis Ababa, Ethiopia, with 33 signatory governments. Some of the key aims of the OAU were to encourage political and economic integration among member states, and to eradicate colonialism and neo-colonialism from the African continent. The absence of an armed force like the United Nations (UN) peacekeepers left the organization with no means to enforce its decisions. It was also unwilling to become involved in the internal affairs of member nations, prompting some critics to claim the OAU as ineffective in taking decisive action. Recognising this, in September 1999 the OAU issued the Sirte Declaration, calling for a new body to take its place.",
+   "patterns": [
+    "the organization of african unity",
+    "What was the Organization of African Unity?",
+    "the Organization of African Unity"
+   ]
+  },
+  {
+   "id": "የአፍሪቃ አንድነት ድርጅት",
+   "lang": "am",
+   "question": "ስለ የአፍሪቃ አንድነት ድርጅት አብራራልኝ።",
+   "answer": "የአፍሪካ አንድነት ድርጅት (አ.አ.ድ.) (እንግሊዝኛ፡ Organisation of African Unity (OAU))፣ (ፈረንሳይኛ፡ Organization de l'Unité Africaine (OUA))ግንቦት ፲፯ ቀን ፲፱፻፶፭ ዓ/ም አዲስ አበባ ላይ ተመሥርቶ የድርጅቱ መመሪያ ውል (OAU Charter) በ፴፪ቱ መሥራች አገር መሪዎች ጸድቆ ተፈርሟል። የድርጅቱም ጠቅላይ መሥሪያ ቤቱ በአዲስ አበባ እንዲቆይ ቀዳማዊ ኃይለ ሥላሴ ባቀረቡት ግብዣ መሠረት እስካሁን ድረስ እዚያው አዲስ አበባ ላይ ይገኛል። ይህ ድርጅት በ፲፱፻፺፬ ዓ/ም ተደምስሶ የአፍሪካ ኅብረት በሚባለው ድርጅት ተተክቷል።",
+   "patterns": [
+    "ስለ የአፍሪቃ አንድነት ድርጅት አብራራልኝ።",
+    "የአፍሪቃ አንድነት ድርጅት"
+   ]
+  },
+  {
+   "id": "የአፍሪቃ አንድነት ድርጅት",
+   "lang": "am",
+   "question": "የአፍሪቃ አንድነት ድርጅት ምንድን ነው?",
+   "answer": "የአፍሪካ አንድነት ድርጅት (አ.አ.ድ.) (እንግሊዝኛ፡ Organisation of African Unity (OAU))፣ (ፈረንሳይኛ፡ Organization de l'Unité Africaine (OUA))ግንቦት ፲፯ ቀን ፲፱፻፶፭ ዓ/ም አዲስ አበባ ላይ ተመሥርቶ የድርጅቱ መመሪያ ውል (OAU Charter) በ፴፪ቱ መሥራች አገር መሪዎች ጸድቆ ተፈርሟል። የድርጅቱም ጠቅላይ መሥሪያ ቤቱ በአዲስ አበባ እንዲቆይ ቀዳማዊ ኃይለ ሥላሴ ባቀረቡት ግብዣ መሠረት እስካሁን ድረስ እዚያው አዲስ አበባ ላይ ይገኛል። ይህ ድርጅት በ፲፱፻፺፬ ዓ/ም ተደምስሶ የአፍሪካ ኅብረት በሚባለው ድርጅት ተተክቷል።",
+   "patterns": [
+    "የአፍሪቃ አንድነት ድርጅት",
+    "የአፍሪቃ አንድነት ድርጅት ምንድን ነው?"
+   ]
+  },
+  {
+   "id": "የአፍሪቃ አንድነት ድርጅት",
+   "lang": "am",
+   "question": "ስለ የአፍሪቃ አንድነት ድርጅት ንገረኝ።",
+   "answer": "የአፍሪካ አንድነት ድርጅት (አ.አ.ድ.) (እንግሊዝኛ፡ Organisation of African Unity (OAU))፣ (ፈረንሳይኛ፡ Organization de l'Unité Africaine (OUA))ግንቦት ፲፯ ቀን ፲፱፻፶፭ ዓ/ም አዲስ አበባ ላይ ተመሥርቶ የድርጅቱ መመሪያ ውል (OAU Charter) በ፴፪ቱ መሥራች አገር መሪዎች ጸድቆ ተፈርሟል። የድርጅቱም ጠቅላይ መሥሪያ ቤቱ በአዲስ አበባ እንዲቆይ ቀዳማዊ ኃይለ ሥላሴ ባቀረቡት ግብዣ መሠረት እስካሁን ድረስ እዚያው አዲስ አበባ ላይ ይገኛል። ይህ ድርጅት በ፲፱፻፺፬ ዓ/ም ተደምስሶ የአፍሪካ ኅብረት በሚባለው ድርጅት ተተክቷል።",
+   "patterns": [
+    "ስለ የአፍሪቃ አንድነት ድርጅት ንገረኝ።",
+    "የአፍሪቃ አንድነት ድርጅት"
+   ]
+  },
+  {
+   "id": "the African Union",
+   "lang": "en",
+   "question": "What is the African Union?",
+   "answer": "The African Union (AU) is a continental union of 55 member states located on the continent of Africa. The AU was announced in the Sirte Declaration in Sirte, Libya, on 9 September 1999, calling for the establishment of the African Union. The bloc was launched on 9 July 2002 in Durban, South Africa. The intention of the AU was to replace the Organisation of African Unity (OAU), established on 25 May 1963 in Addis Ababa by 32 signatory governments; the OAU was disbanded on 9 July 2002. The most important decisions of the AU are made by the Assembly of the African Union, a semi-annual meeting of the heads of state and government of its member states. The African economy is regionally integrated through this union. The AU's secretariat, the African Union Commission, is based in Addis Ababa.",
+   "patterns": [
+    "the African Union",
+    "the african union",
+    "What is the African Union?"
+   ]
+  },
+  {
+   "id": "የአፍሪካ ኅብረት",
+   "lang": "am",
+   "question": "ስለ የአፍሪካ ኅብረት አብራራልኝ።",
+   "answer": "የአፍሪካ ኅብረት (AU) የአፍሪካ አገራት ስምምነት ድርጅት ሲሆን 55 አባላት አገራት አሉት። ይህም በአሁኑ ሰአት የመላው አፍሪካ አገራት በሙሉ ናቸው። የቀድሞውን የአፍሪቃ አንድነት ድርጅትን በመተካት በ1994 ዓም የተመሠረተ የኢንተርናሽናል መንግሥታት ጸጥታና ምጣኔ ሀብት ስምምነት ውል ወይም ጓደኝነት ነው።",
+   "patterns": [
+    "ስለ የአፍሪካ ኅብረት አብራራልኝ።",
+    "የአፍሪካ ኅብረት"
+   ]
+  },
+  {
+   "id": "የአፍሪካ ኅብረት",
+   "lang": "am",
+   "question": "የአፍሪካ ኅብረት ምንድን ነው?",
+   "answer": "የአፍሪካ ኅብረት (AU) የአፍሪካ አገራት ስምምነት ድርጅት ሲሆን 55 አባላት አገራት አሉት። ይህም በአሁኑ ሰአት የመላው አፍሪካ አገራት በሙሉ ናቸው። የቀድሞውን የአፍሪቃ አንድነት ድርጅትን በመተካት በ1994 ዓም የተመሠረተ የኢንተርናሽናል መንግሥታት ጸጥታና ምጣኔ ሀብት ስምምነት ውል ወይም ጓደኝነት ነው።",
+   "patterns": [
+    "የአፍሪካ ኅብረት ምንድን ነው?",
+    "የአፍሪካ ኅብረት"
+   ]
+  },
+  {
+   "id": "የአፍሪካ ኅብረት",
+   "lang": "am",
+   "question": "ስለ የአፍሪካ ኅብረት ንገረኝ።",
+   "answer": "የአፍሪካ ኅብረት (AU) የአፍሪካ አገራት ስምምነት ድርጅት ሲሆን 55 አባላት አገራት አሉት። ይህም በአሁኑ ሰአት የመላው አፍሪካ አገራት በሙሉ ናቸው። የቀድሞውን የአፍሪቃ አንድነት ድርጅትን በመተካት በ1994 ዓም የተመሠረተ የኢንተርናሽናል መንግሥታት ጸጥታና ምጣኔ ሀብት ስምምነት ውል ወይም ጓደኝነት ነው።",
+   "patterns": [
+    "ስለ የአፍሪካ ኅብረት ንገረኝ።",
+    "የአፍሪካ ኅብረት"
+   ]
+  },
+  {
+   "id": "Kwame Nkrumah",
+   "lang": "en",
+   "question": "Who was Kwame Nkrumah?",
+   "answer": "Kwame Nkrumah (born Francis Nwia Kofi Ngonloma, /(ə)nˈkruːmə/ (ə)n-KROO-mə; 21 September 1909 – 27 April 1972) was a Ghanaian politician, political theorist, and revolutionary. He served as Prime Minister of the Gold Coast from 1952 until 1957, when it gained independence from the United Kingdom. He was then the first prime minister and then the president of Ghana, from 1957 until 1966. An influential advocate of Pan-Africanism, Nkrumah was a founding member of the Organisation of African Unity (OAU) and winner of the Lenin Peace Prize from the Soviet Union in 1962. After twelve early years abroad pursuing higher education, developing his political philosophy, and organising with other diasporic pan-Africanists, Nkrumah returned to the Gold Coast to begin his political career as an advocate of national independence.",
+   "patterns": [
+    "Kwame Nkrumah",
+    "kwame nkrumah",
+    "Who was Kwame Nkrumah?"
+   ]
+  },
+  {
+   "id": "ክዋሜ ንክሩማህ",
+   "lang": "am",
+   "question": "ስለ ክዋሜ ንክሩማህ አብራራልኝ።",
+   "answer": "ክዋሜ ንክሩማህ የተወለዱት በ1909 እ.ኤ.አ. ደቡባዊ ምዕራብ ጋና (ቀደም ሲል ጎልድ ኮስት) ንክሮፉል በምትባል ከተማ ነው። ንክሩማህ በካቶሊክ ሚሽነሪ ትምህርት ቤት ይማሩበት በነበረ ወቅት ብሩህ አዕምሮ እንደነበራቸው የተመሰከረላቸው ሲሆን ገና በአሥራዎቹ እድሜ ውስጥ እያሉ ነው በአቅራቢያቸው በሚገኝ የመጀመሪያ ደረጃ ትምህርት ቤት አስተማሪ የሆኑት። ይሁንና ያለሥልጠና የጀመሩትን ትምህርት በ1926 እ.ኤ.አ. የአክራውን አቺሞታ ኮሌጅ ተቃለቅለው የመምህርነት ምሥክር ወረቀት በማግኘት በተለያዩ የካቶሊክ ትምህርት ቤቶች አስተምረዋል። በ1935 እ.ኤ.አ.",
+   "patterns": [
+    "ክዋሜ ንክሩማህ",
+    "ስለ ክዋሜ ንክሩማህ አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "ክዋሜ ንክሩማህ",
+   "lang": "am",
+   "question": "ክዋሜ ንክሩማህ ምንድን ነው?",
+   "answer": "ክዋሜ ንክሩማህ የተወለዱት በ1909 እ.ኤ.አ. ደቡባዊ ምዕራብ ጋና (ቀደም ሲል ጎልድ ኮስት) ንክሮፉል በምትባል ከተማ ነው። ንክሩማህ በካቶሊክ ሚሽነሪ ትምህርት ቤት ይማሩበት በነበረ ወቅት ብሩህ አዕምሮ እንደነበራቸው የተመሰከረላቸው ሲሆን ገና በአሥራዎቹ እድሜ ውስጥ እያሉ ነው በአቅራቢያቸው በሚገኝ የመጀመሪያ ደረጃ ትምህርት ቤት አስተማሪ የሆኑት። ይሁንና ያለሥልጠና የጀመሩትን ትምህርት በ1926 እ.ኤ.አ. የአክራውን አቺሞታ ኮሌጅ ተቃለቅለው የመምህርነት ምሥክር ወረቀት በማግኘት በተለያዩ የካቶሊክ ትምህርት ቤቶች አስተምረዋል። በ1935 እ.ኤ.አ.",
+   "patterns": [
+    "ክዋሜ ንክሩማህ",
+    "ክዋሜ ንክሩማህ ምንድን ነው?"
+   ]
+  },
+  {
+   "id": "ክዋሜ ንክሩማህ",
+   "lang": "am",
+   "question": "ስለ ክዋሜ ንክሩማህ ንገረኝ።",
+   "answer": "ክዋሜ ንክሩማህ የተወለዱት በ1909 እ.ኤ.አ. ደቡባዊ ምዕራብ ጋና (ቀደም ሲል ጎልድ ኮስት) ንክሮፉል በምትባል ከተማ ነው። ንክሩማህ በካቶሊክ ሚሽነሪ ትምህርት ቤት ይማሩበት በነበረ ወቅት ብሩህ አዕምሮ እንደነበራቸው የተመሰከረላቸው ሲሆን ገና በአሥራዎቹ እድሜ ውስጥ እያሉ ነው በአቅራቢያቸው በሚገኝ የመጀመሪያ ደረጃ ትምህርት ቤት አስተማሪ የሆኑት። ይሁንና ያለሥልጠና የጀመሩትን ትምህርት በ1926 እ.ኤ.አ. የአክራውን አቺሞታ ኮሌጅ ተቃለቅለው የመምህርነት ምሥክር ወረቀት በማግኘት በተለያዩ የካቶሊክ ትምህርት ቤቶች አስተምረዋል። በ1935 እ.ኤ.አ.",
+   "patterns": [
+    "ክዋሜ ንክሩማህ",
+    "ስለ ክዋሜ ንክሩማህ ንገረኝ።"
+   ]
+  },
+  {
+   "id": "Black nationalism",
+   "lang": "en",
+   "question": "What is Black nationalism?",
+   "answer": "Black nationalism is a nationalist movement which seeks representation for Black people as a distinct national identity, especially in racialized, colonial and postcolonial societies. Its earliest proponents saw it as a way to advocate for democratic representation in culturally plural societies or to establish self-governing independent nation-states for Black people. Modern Black nationalism often aims for the social, political, and economic empowerment of Black communities within white majority societies, either as an alternative to assimilation or as a way to ensure greater representation and equality within predominantly Eurocentric cultures. As an ideology, Black nationalism encompasses a diverse range of beliefs which have variously included forms of economic, political and cultural nationalism, or pan-nationalism.",
+   "patterns": [
+    "Black nationalism",
+    "What is Black nationalism?",
+    "black nationalism"
+   ]
+  },
+  {
+   "id": "the Back-to-Africa movement",
+   "lang": "en",
+   "question": "What was the Back-to-Africa movement?",
+   "answer": "The back-to-Africa movement was a political movement in the 19th and 20th centuries advocating for a return of the descendants of African American enslaved people to most regions of the African continent. The small number of formerly enslaved who settled—some under duress—initially faced brutal conditions, due to diseases to which they no longer had biological resistance. As the failure became known in the United States in the 1820s, it spawned and energized the radical abolitionist movement. In the 20th century, the Jamaican political activist and black nationalist Marcus Garvey, members of the Rastafari movement, and other African Americans supported the concept, but few actually left the United States. In the late 18th century, thousands of Black Loyalists joined British military forces during the American Revolutionary War.",
+   "patterns": [
+    "What was the Back-to-Africa movement?",
+    "the back-to-africa movement",
+    "the Back-to-Africa movement"
+   ]
+  },
+  {
+   "id": "slavery in the United States",
+   "lang": "en",
+   "question": "What was slavery in the United States?",
+   "answer": "The legal institution of human chattel slavery, comprising the enslavement primarily of Africans and African Americans, was prevalent in the United States from its founding in 1776 until 1865, predominantly in the South. Slavery was found throughout European colonization in the Americas. From 1526, during the early colonial period, it was practiced in what became Britain's colonies, including the Thirteen Colonies that formed the United States. Under the law, children were born into slavery, and an enslaved person was treated as property that could be bought, sold, or given away. Slavery persisted in about half of the U.S. states until its abolition in 1865. Issues involving slavery seeped into every aspect of national politics, economics, and social customs.",
+   "patterns": [
+    "slavery in the United States",
+    "What was slavery in the United States?",
+    "slavery in the united states"
+   ]
+  },
+  {
+   "id": "enslaved Black people treated in the United States",
+   "lang": "en",
+   "question": "How were enslaved Black people treated in the United States?",
+   "answer": "The legal institution of human chattel slavery, comprising the enslavement primarily of Africans and African Americans, was prevalent in the United States from its founding in 1776 until 1865, predominantly in the South. Slavery was found throughout European colonization in the Americas. From 1526, during the early colonial period, it was practiced in what became Britain's colonies, including the Thirteen Colonies that formed the United States. Under the law, children were born into slavery, and an enslaved person was treated as property that could be bought, sold, or given away. Slavery persisted in about half of the U.S. states until its abolition in 1865. Issues involving slavery seeped into every aspect of national politics, economics, and social customs.",
+   "patterns": [
+    "enslaved black people treated in the united states",
+    "How were enslaved Black people treated in the United States?",
+    "enslaved Black people treated in the United States"
+   ]
+  },
+  {
+   "id": "the Atlantic slave trade",
+   "lang": "en",
+   "question": "What was the Atlantic slave trade?",
+   "answer": "The Atlantic slave trade or transatlantic slave trade involved the transportation by slave traders of enslaved African people to the Americas. This trade was operated by slave ships from both Europe and the New World. Some voyages used the triangular trade route and its Middle Passage, particularly in the early phases. Europeans established a coastal slave trade in the 15th century, and trade to the Americas began in the 16th century, lasting through the 19th century. Most transported in the transatlantic trade were from Central and West Africa. In contrast to other slave trades, those taking slaves from Africa generally bought their cargo from West and Central African slave merchants. This applied to Europeans in the transatlantic trade and Arab slave traders supplying their own markets. While Europeans were involved in some raiding, this was uncommon and discouraged.",
+   "patterns": [
+    "the Atlantic slave trade",
+    "What was the Atlantic slave trade?",
+    "the atlantic slave trade"
+   ]
+  },
+  {
+   "id": "the Reconstruction era",
+   "lang": "en",
+   "question": "What was the Reconstruction era?",
+   "answer": "The Reconstruction era, often simply called Reconstruction, was a period in United States history that followed the American Civil War (1861–1865) and was dominated by the legal, social, and political challenges of the abolition of slavery and federal control over, and reintegration of, the former Confederate States into the United States. Three amendments were added to the United States Constitution to grant citizenship and equal civil rights to the newly freed slaves. To circumvent these, former Confederate states imposed poll taxes and literacy tests and sought to intimidate and control the Black population and discourage or prevent them from voting. Throughout the war, the Union was confronted with the issue of how to administer captured areas and handle slaves escaping to Union lines.",
+   "patterns": [
+    "the Reconstruction era",
+    "What was the Reconstruction era?",
+    "the reconstruction era"
+   ]
+  },
+  {
+   "id": "the Jim Crow laws",
+   "lang": "en",
+   "question": "What were the Jim Crow laws?",
+   "answer": "The Jim Crow laws were state and local laws introduced in the Southern United States from the late 19th century to the mid-20th century that enforced racial segregation. The origin of the term Jim Crow is obscure, but probably refers to a minstrel show song called \"Jump Jim Crow\". Formal and informal racial segregation policies were present in other areas of the United States as well, even as several states outside the South had banned discrimination in public accommodations and voting. Southern laws were enacted by white-dominated state legislatures (Redeemers) to disenfranchise and remove political and economic gains made by African Americans during the Reconstruction era. Such continuing racial segregation was also supported by the successful Lily-white movement. In practice, Jim Crow laws mandated racial segregation in all public facilities in the South, beginning in the 1870s.",
+   "patterns": [
+    "the jim crow laws",
+    "What were the Jim Crow laws?",
+    "the Jim Crow laws"
+   ]
+  },
+  {
+   "id": "Jim Crow laws affect Black Americans",
+   "lang": "en",
+   "question": "How did Jim Crow laws affect Black Americans?",
+   "answer": "The Jim Crow laws were state and local laws introduced in the Southern United States from the late 19th century to the mid-20th century that enforced racial segregation. The origin of the term Jim Crow is obscure, but probably refers to a minstrel show song called \"Jump Jim Crow\". Formal and informal racial segregation policies were present in other areas of the United States as well, even as several states outside the South had banned discrimination in public accommodations and voting. Southern laws were enacted by white-dominated state legislatures (Redeemers) to disenfranchise and remove political and economic gains made by African Americans during the Reconstruction era. Such continuing racial segregation was also supported by the successful Lily-white movement. In practice, Jim Crow laws mandated racial segregation in all public facilities in the South, beginning in the 1870s.",
+   "patterns": [
+    "How did Jim Crow laws affect Black Americans?",
+    "Jim Crow laws affect Black Americans",
+    "jim crow laws affect black americans"
+   ]
+  },
+  {
+   "id": "the civil rights movement",
+   "lang": "en",
+   "question": "What was the civil rights movement?",
+   "answer": "The civil rights movement was a social movement in the United States from 1954 to 1968 which aimed to abolish legalized racial segregation, discrimination, and disenfranchisement in the country, which most commonly affected African Americans. The movement had origins in the Reconstruction era in the late 19th century, and modern roots in the 1940s and in Mahatma Gandhi's nonviolent movement in India. After years of nonviolent protests and civil disobedience campaigns, the civil rights movement achieved many of its legislative goals in the 1960s, during which it secured new protections in federal law for the civil rights of all Americans, including the Civil Rights Act of 1964, the Voting Rights Act of 1965, and the Civil Rights Act of 1968. Following the American Civil War (1861–1865), the three Reconstruction Amendments to the U.S.",
+   "patterns": [
+    "What was the civil rights movement?",
+    "the civil rights movement"
+   ]
+  },
+  {
+   "id": "racism affected Black people in the United States",
+   "lang": "en",
+   "question": "How has racism affected Black people in the United States?",
+   "answer": "Racism has been reflected in discriminatory laws, practices, and actions (including violence) against racial or ethnic groups throughout the history of the United States. Since the early colonial era, White Americans have generally enjoyed legally or socially-sanctioned privileges and rights that have been denied to members of various ethnic or minority groups. European Americans have enjoyed advantages in matters of citizenship, criminal procedure, education, immigration, land acquisition, and voting rights. Before 1865, most African Americans were enslaved; since the abolition of slavery, they have faced severe restrictions on their political, social, and economic freedoms. Native Americans have suffered genocide, forced removals, and massacres, and they continue to face discrimination.",
+   "patterns": [
+    "racism affected black people in the united states",
+    "How has racism affected Black people in the United States?",
+    "racism affected Black people in the United States"
+   ]
+  },
+  {
+   "id": "racism in the United States",
+   "lang": "en",
+   "question": "What is racism in the United States?",
+   "answer": "Racism has been reflected in discriminatory laws, practices, and actions (including violence) against racial or ethnic groups throughout the history of the United States. Since the early colonial era, White Americans have generally enjoyed legally or socially-sanctioned privileges and rights that have been denied to members of various ethnic or minority groups. European Americans have enjoyed advantages in matters of citizenship, criminal procedure, education, immigration, land acquisition, and voting rights. Before 1865, most African Americans were enslaved; since the abolition of slavery, they have faced severe restrictions on their political, social, and economic freedoms. Native Americans have suffered genocide, forced removals, and massacres, and they continue to face discrimination.",
+   "patterns": [
+    "What is racism in the United States?",
+    "racism in the united states",
+    "racism in the United States"
+   ]
+  },
+  {
+   "id": "the Great Migration",
+   "lang": "en",
+   "question": "What was the Great Migration?",
+   "answer": "The Great Migration, sometimes known as the Great Northward Migration or the Black Migration, was the movement of six million Black Americans out of the rural Southern United States to the urban Northeast, Midwest, and West between 1910 and 1970. It was substantially caused by poor economic and social conditions due to prevalent racial segregation and discrimination in the Southern states where Jim Crow laws were upheld. In particular, continued lynchings motivated a portion of the migrants, as Black Americans searched for social reprieve.",
+   "patterns": [
+    "the great migration",
+    "What was the Great Migration?",
+    "the Great Migration"
+   ]
+  },
+  {
+   "id": "redlining",
+   "lang": "en",
+   "question": "What is redlining?",
+   "answer": "Redlining is a discriminatory practice from the United States, in which financial services are withheld from neighborhoods that have significant numbers of racial and ethnic minorities. Redlining has mostly been directed against African Americans, as well as Mexican Americans in the Southwestern United States, Jewish Americans, and Italian Americans. The most common examples involve denial of credit and insurance, denial of healthcare, and the development of food deserts in minority neighborhoods. Reverse redlining occurs when a lender or insurer targets majority-minority neighborhood residents with inflated interest rates by taking advantage of the lack of lending competition relative to non-redlined neighborhoods.",
+   "patterns": [
+    "redlining",
+    "What is redlining?"
+   ]
+  },
+  {
+   "id": "mass incarceration in the United States",
+   "lang": "en",
+   "question": "What is mass incarceration in the United States?",
+   "answer": "Incarceration in the United States is one of the primary means of punishment for crime in the United States. In 2021, over five million people were under supervision by the criminal justice system,. At year-end 2023, 1,254,200 people were under the jurisdiction of state or federal correctional authorities, an increase of 24,100, or 2 percent, from 2022. Separately, local jails held 657,500 people in custody at midyear 2024, similar to 664,200 at midyear 2023; the 2024 figure is preliminary. The United States has the largest known prison population in the world. The country comprises 5% of the world's population while having 20% of the world's incarcerated persons. For comparison, China, with more than four times as many inhabitants, has fewer people in prison. Prison populations grew dramatically beginning in the 1970s, but began a decline around 2009, dropping 25% by year-end 2021.",
+   "patterns": [
+    "mass incarceration in the united states",
+    "What is mass incarceration in the United States?",
+    "mass incarceration in the United States"
+   ]
+  },
+  {
+   "id": "Black Lives Matter",
+   "lang": "en",
+   "question": "What is Black Lives Matter?",
+   "answer": "Black Lives Matter (BLM) is a decentralized political and social movement that aims to highlight racism, discrimination and racial inequality experienced by Black people in the United States, and to promote anti-racism. Its primary concerns are police brutality and racially motivated violence against Black people. The movement began in response to the killings of Trayvon Martin, Michael Brown, Eric Garner, and Rekia Boyd, among others. BLM and its related organizations typically advocate for various policy changes related to Black liberation and criminal justice reform. While there are organizations that label themselves \"Black Lives Matter\", such as the Black Lives Matter Global Network Foundation, the overall movement predates those, and is a decentralized network with no formal hierarchy. As of 2021, there are about 40 chapters in the United States and Canada.",
+   "patterns": [
+    "black lives matter",
+    "What is Black Lives Matter?",
+    "Black Lives Matter"
+   ]
+  },
+  {
+   "id": "Martin Luther King Jr",
+   "lang": "en",
+   "question": "Who was Martin Luther King Jr.?",
+   "answer": "Martin Luther King Jr. (born Michael King Jr.; January 15, 1929 – April 4, 1968) was an American civil rights activist and Baptist minister who was a prominent leader of the civil rights movement from 1955 until his assassination in 1968. He advanced civil rights for people of color in the United States through the use of nonviolent resistance and civil disobedience against Jim Crow laws and other forms of legalized discrimination, which most commonly affected African Americans. A Black church leader, King participated in and led marches for the right to vote, desegregation, labor rights, and other civil rights. He oversaw the 1955 Montgomery bus boycott and was the first president of the Southern Christian Leadership Conference (SCLC), leading the unsuccessful Albany Movement in Albany, Georgia, and helping organize nonviolent 1963 protests in Birmingham, Alabama.",
+   "patterns": [
+    "Martin Luther King Jr",
+    "martin luther king jr",
+    "Who was Martin Luther King Jr.?"
+   ]
+  },
+  {
+   "id": "Malcolm X",
+   "lang": "en",
+   "question": "Who was Malcolm X?",
+   "answer": "Malcolm X (born Malcolm Little, later el-Hajj Malik el-Shabazz; May 19, 1925 – February 21, 1965) was an African American revolutionary, civil rights activist, and Muslim minister who was a prominent figure during the civil rights movement until his assassination in 1965. He discovered the new religious movement the Nation of Islam while in prison and served as a spokesperson from 1952 until he transitioned to Sunni Islam in 1964. He is often regarded as one of the most significant Muslim figures in the history of the United States. A controversial figure accused of preaching violence, Malcolm X is also a celebrated figure within the African American community for his pursuit of racial justice and equality. Malcolm spent his adolescence living in a series of foster homes and with various relatives, after his father's death and his mother's hospitalization.",
+   "patterns": [
+    "Malcolm X",
+    "Who was Malcolm X?",
+    "malcolm x"
+   ]
+  },
+  {
+   "id": "ማልኮም ኤክስ",
+   "lang": "am",
+   "question": "ስለ ማልኮም ኤክስ አብራራልኝ።",
+   "answer": "== == ማልኮም ኤክስ (Malcolm X 1917-1957 ዓም) በአሜሪካ አገር ታዋቂ የብሔራዊ መብቶች እንቅስቃሴ መሪ ነበር። ማልኮም ኤክስ (የትውልድ ስሙ ማልኮም ሊትል፣ በኋላ ኤል-ሀጅ ማሊክ ኤል-ሻባዝ፣ ግንቦት 19፣ 1925 የተወለደ - ፌብሩዋሪ 21፣ 1965 በሞት ተለየ) በሲቪል መብቶች ንቅናቄ ወቅት ታዋቂ ሰው የነበረ አሜሪካዊ የሙስሊም ሚሲዮን እና የሰብአዊ መብት ተሟጋች ነበር። እ.ኤ.አ. እስከ 1964 ድረስ “የኔሽን ኦፍ ኢስላም ቃል አቀባይ”፣ የጥቁር አሜሪካውያን መብት ተሟጋች እና እስልምናን በአሜሪካ የጥቁር ማህበረሰብ ውስጥ ተቀባይነት እንዲኖረው ከፍተኛ አስተዋጸኦ በማድረግ የሚታወቅ ሰው ነበር። በመጀመርያ በአንድ አነስተኛ ክፍልፋይ «ኔሽን ኦፍ ኢስላም» («የእስልምና ብሔር») ውስጥ አባል ሆነና የልደቱን ስም ማልኮም ሊተል የባርያ ፈንጋይ ቤተሠብ ስም ብሎት ወደ «ማልኮም ኤክስ» ቀየረው። ክፍልፋዩ «ኔሽን ኦፍ ኢስላም» ቢባልም፣ ትምህርቱ ግን እንደ እስልምና በፍጹም አይመስልም። መሪያቸው ስለ መሥራቹ አምልኮት ይሰብክ ነበርና ነጮች ሁሉ አጋንንት እንደ ነበሩ ያስተምር ነበር። ከጊዜ በኋላ ማልኮም ኤክስ ሀሣቡን ቀይሮ ከ«ኔሽን ኦፍ ኢስላም» ለቅቆ ወጣ፣ እምነቱም ወደ ሱኒ እስልምና ቀየረ። የሌሎችን ሰብአዊ መብት ለመከልከል ያሠበው ሁሉ ማናቸውም ዘር ቢሆን እሱ ጋኔኑ ነው ብሎ ያስተምር ጀመር። በዚህም ውቅት ወደ መካና ወደ አፍሪካም ጎብኞ ነበር።",
+   "patterns": [
+    "ማልኮም ኤክስ",
+    "ስለ ማልኮም ኤክስ አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "ማልኮም ኤክስ",
+   "lang": "am",
+   "question": "ማልኮም ኤክስ ምንድን ነው?",
+   "answer": "== == ማልኮም ኤክስ (Malcolm X 1917-1957 ዓም) በአሜሪካ አገር ታዋቂ የብሔራዊ መብቶች እንቅስቃሴ መሪ ነበር። ማልኮም ኤክስ (የትውልድ ስሙ ማልኮም ሊትል፣ በኋላ ኤል-ሀጅ ማሊክ ኤል-ሻባዝ፣ ግንቦት 19፣ 1925 የተወለደ - ፌብሩዋሪ 21፣ 1965 በሞት ተለየ) በሲቪል መብቶች ንቅናቄ ወቅት ታዋቂ ሰው የነበረ አሜሪካዊ የሙስሊም ሚሲዮን እና የሰብአዊ መብት ተሟጋች ነበር። እ.ኤ.አ. እስከ 1964 ድረስ “የኔሽን ኦፍ ኢስላም ቃል አቀባይ”፣ የጥቁር አሜሪካውያን መብት ተሟጋች እና እስልምናን በአሜሪካ የጥቁር ማህበረሰብ ውስጥ ተቀባይነት እንዲኖረው ከፍተኛ አስተዋጸኦ በማድረግ የሚታወቅ ሰው ነበር። በመጀመርያ በአንድ አነስተኛ ክፍልፋይ «ኔሽን ኦፍ ኢስላም» («የእስልምና ብሔር») ውስጥ አባል ሆነና የልደቱን ስም ማልኮም ሊተል የባርያ ፈንጋይ ቤተሠብ ስም ብሎት ወደ «ማልኮም ኤክስ» ቀየረው። ክፍልፋዩ «ኔሽን ኦፍ ኢስላም» ቢባልም፣ ትምህርቱ ግን እንደ እስልምና በፍጹም አይመስልም። መሪያቸው ስለ መሥራቹ አምልኮት ይሰብክ ነበርና ነጮች ሁሉ አጋንንት እንደ ነበሩ ያስተምር ነበር። ከጊዜ በኋላ ማልኮም ኤክስ ሀሣቡን ቀይሮ ከ«ኔሽን ኦፍ ኢስላም» ለቅቆ ወጣ፣ እምነቱም ወደ ሱኒ እስልምና ቀየረ። የሌሎችን ሰብአዊ መብት ለመከልከል ያሠበው ሁሉ ማናቸውም ዘር ቢሆን እሱ ጋኔኑ ነው ብሎ ያስተምር ጀመር። በዚህም ውቅት ወደ መካና ወደ አፍሪካም ጎብኞ ነበር።",
+   "patterns": [
+    "ማልኮም ኤክስ",
+    "ማልኮም ኤክስ ምንድን ነው?"
+   ]
+  },
+  {
+   "id": "ማልኮም ኤክስ",
+   "lang": "am",
+   "question": "ስለ ማልኮም ኤክስ ንገረኝ።",
+   "answer": "== == ማልኮም ኤክስ (Malcolm X 1917-1957 ዓም) በአሜሪካ አገር ታዋቂ የብሔራዊ መብቶች እንቅስቃሴ መሪ ነበር። ማልኮም ኤክስ (የትውልድ ስሙ ማልኮም ሊትል፣ በኋላ ኤል-ሀጅ ማሊክ ኤል-ሻባዝ፣ ግንቦት 19፣ 1925 የተወለደ - ፌብሩዋሪ 21፣ 1965 በሞት ተለየ) በሲቪል መብቶች ንቅናቄ ወቅት ታዋቂ ሰው የነበረ አሜሪካዊ የሙስሊም ሚሲዮን እና የሰብአዊ መብት ተሟጋች ነበር። እ.ኤ.አ. እስከ 1964 ድረስ “የኔሽን ኦፍ ኢስላም ቃል አቀባይ”፣ የጥቁር አሜሪካውያን መብት ተሟጋች እና እስልምናን በአሜሪካ የጥቁር ማህበረሰብ ውስጥ ተቀባይነት እንዲኖረው ከፍተኛ አስተዋጸኦ በማድረግ የሚታወቅ ሰው ነበር። በመጀመርያ በአንድ አነስተኛ ክፍልፋይ «ኔሽን ኦፍ ኢስላም» («የእስልምና ብሔር») ውስጥ አባል ሆነና የልደቱን ስም ማልኮም ሊተል የባርያ ፈንጋይ ቤተሠብ ስም ብሎት ወደ «ማልኮም ኤክስ» ቀየረው። ክፍልፋዩ «ኔሽን ኦፍ ኢስላም» ቢባልም፣ ትምህርቱ ግን እንደ እስልምና በፍጹም አይመስልም። መሪያቸው ስለ መሥራቹ አምልኮት ይሰብክ ነበርና ነጮች ሁሉ አጋንንት እንደ ነበሩ ያስተምር ነበር። ከጊዜ በኋላ ማልኮም ኤክስ ሀሣቡን ቀይሮ ከ«ኔሽን ኦፍ ኢስላም» ለቅቆ ወጣ፣ እምነቱም ወደ ሱኒ እስልምና ቀየረ። የሌሎችን ሰብአዊ መብት ለመከልከል ያሠበው ሁሉ ማናቸውም ዘር ቢሆን እሱ ጋኔኑ ነው ብሎ ያስተምር ጀመር። በዚህም ውቅት ወደ መካና ወደ አፍሪካም ጎብኞ ነበር።",
+   "patterns": [
+    "ማልኮም ኤክስ",
+    "ስለ ማልኮም ኤክስ ንገረኝ።"
+   ]
+  },
+  {
+   "id": "Harriet Tubman",
+   "lang": "en",
+   "question": "Who was Harriet Tubman?",
+   "answer": "Harriet Tubman (born Araminta Ross, c. March 1822 – March 10, 1913) was an American abolitionist and social activist. After escaping slavery, Tubman made some 13 missions to rescue approximately 70 enslaved people, including her family and friends, using the network of antislavery activists and safe houses known collectively as the Underground Railroad. During the American Civil War, she served as an armed scout and spy for the Union Army. In her later years, Tubman was an activist in the movement for women's suffrage. Born into slavery in Dorchester County, Maryland, Tubman was beaten and whipped by enslavers as a child. Early in life, she suffered a traumatic head wound when an irate overseer threw a heavy metal weight, intending to hit another slave, but hit her instead. The injury caused dizziness, pain, and spells of hypersomnia, which occurred throughout her life.",
+   "patterns": [
+    "Harriet Tubman",
+    "harriet tubman",
+    "Who was Harriet Tubman?"
+   ]
+  },
+  {
+   "id": "Frederick Douglass",
+   "lang": "en",
+   "question": "Who was Frederick Douglass?",
+   "answer": "Frederick Douglass (born Frederick Augustus Washington Bailey, c. February 14, 1818 – February 20, 1895) was an American social reformer, abolitionist, orator, writer, and statesman. He was \"the most important leader of the movement for African-American civil rights in the 19th century\". After escaping from slavery in Maryland in 1838, Douglass became a national leader of the abolitionist movement in Massachusetts and New York and gained fame for his oratory and incisive antislavery writings. Accordingly, he was described by abolitionists in his time as a living counterexample to claims by supporters of slavery that enslaved people lacked the intellectual capacity to function as independent American citizens. Northerners at the time found it hard to believe that such a great orator had once been enslaved. It was in response to this disbelief that Douglass wrote his first autobiography.",
+   "patterns": [
+    "Frederick Douglass",
+    "Who was Frederick Douglass?",
+    "frederick douglass"
+   ]
+  },
+  {
+   "id": "Rosa Parks",
+   "lang": "en",
+   "question": "Who was Rosa Parks?",
+   "answer": "Rosa Louise McCauley Parks (February 4, 1913 – October 24, 2005) was an American civil rights activist. She is best known for her 1955 refusal to move from her seat on a bus in Montgomery, Alabama, in defiance of Jim Crow racial segregation laws, which sparked the Montgomery bus boycott. She is sometimes known as the \"mother of the civil rights movement\". Born in Tuskegee, Alabama, Parks grew up under Jim Crow segregation. She later moved to Montgomery and joined the city's chapter of the National Association for the Advancement of Colored People (NAACP) in 1943, serving as the organization's secretary. Despite policies designed to disenfranchise Black citizens, Parks successfully registered to vote after three separate attempts between 1943 and 1945.",
+   "patterns": [
+    "rosa parks",
+    "Rosa Parks",
+    "Who was Rosa Parks?"
+   ]
+  },
+  {
+   "id": "ሮዛ ፓርክስ",
+   "lang": "am",
+   "question": "ስለ ሮዛ ፓርክስ አብራራልኝ።",
+   "answer": "ሮዛ ሉዊዝ ማካውሊ ፖርክስ (እ.አ.አ. ከፈኤብሩዋሪ 4፣ 1913 እስከ ኦክቶበር 24፣ 2005) በኋላ የአሜሪካ ኮንግረስ የዘመናዊ የጥቁሮች መብት ንቅናቄ እናት ብሎ የሠየማት (\"The Mother of the Modern-Day Civil Rights Movement\") ብሎ የሠየማት አፍሪካ-አሜሪካዊ የመብት ተከራካሪ ነበረች::",
+   "patterns": [
+    "ሮዛ ፓርክስ",
+    "ስለ ሮዛ ፓርክስ አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "ሮዛ ፓርክስ",
+   "lang": "am",
+   "question": "ሮዛ ፓርክስ ምንድን ነው?",
+   "answer": "ሮዛ ሉዊዝ ማካውሊ ፖርክስ (እ.አ.አ. ከፈኤብሩዋሪ 4፣ 1913 እስከ ኦክቶበር 24፣ 2005) በኋላ የአሜሪካ ኮንግረስ የዘመናዊ የጥቁሮች መብት ንቅናቄ እናት ብሎ የሠየማት (\"The Mother of the Modern-Day Civil Rights Movement\") ብሎ የሠየማት አፍሪካ-አሜሪካዊ የመብት ተከራካሪ ነበረች::",
+   "patterns": [
+    "ሮዛ ፓርክስ ምንድን ነው?",
+    "ሮዛ ፓርክስ"
+   ]
+  },
+  {
+   "id": "ሮዛ ፓርክስ",
+   "lang": "am",
+   "question": "ስለ ሮዛ ፓርክስ ንገረኝ።",
+   "answer": "ሮዛ ሉዊዝ ማካውሊ ፖርክስ (እ.አ.አ. ከፈኤብሩዋሪ 4፣ 1913 እስከ ኦክቶበር 24፣ 2005) በኋላ የአሜሪካ ኮንግረስ የዘመናዊ የጥቁሮች መብት ንቅናቄ እናት ብሎ የሠየማት (\"The Mother of the Modern-Day Civil Rights Movement\") ብሎ የሠየማት አፍሪካ-አሜሪካዊ የመብት ተከራካሪ ነበረች::",
+   "patterns": [
+    "ስለ ሮዛ ፓርክስ ንገረኝ።",
+    "ሮዛ ፓርክስ"
+   ]
+  },
+  {
+   "id": "the Thirteenth Amendment do",
+   "lang": "en",
+   "question": "What did the Thirteenth Amendment do?",
+   "answer": "The Thirteenth Amendment (Amendment XIII) to the United States Constitution made slavery and involuntary servitude illegal, except as punishment for a crime. The amendment was passed by the Senate on April 8, 1864, by the House of Representatives on January 31, 1865, and ratified by the required 27 of the then 36 states on December 6, 1865, and proclaimed on December 18, 1865. It was the first of the three Reconstruction Amendments adopted following the American Civil War. President Abraham Lincoln's Emancipation Proclamation, effective on January 1, 1863, declared that the enslaved in Confederate-controlled areas (and thus almost all slaves) were free. When they escaped to Union lines or federal forces (including now-former slaves) advanced south, emancipation occurred without any compensation to the former owners.",
+   "patterns": [
+    "the Thirteenth Amendment do",
+    "the thirteenth amendment do",
+    "What did the Thirteenth Amendment do?"
+   ]
+  },
+  {
+   "id": "the Fourteenth Amendment do",
+   "lang": "en",
+   "question": "What did the Fourteenth Amendment do?",
+   "answer": "The Fourteenth Amendment (Amendment XIV) to the United States Constitution was adopted on July 9, 1868, as one of the Reconstruction Amendments. Considered one of the most consequential amendments, it addresses citizenship rights and equal protection under the law at all levels of government. The Fourteenth Amendment was a response to issues affecting freed slaves following the American Civil War, and its enactment was bitterly contested. States of the defeated Confederacy were required to ratify it to regain representation in Congress. The amendment, particularly its first section, is one of the most litigated parts of the Constitution, forming the basis for landmark Supreme Court decisions, such as Brown v. Board of Education (1954; prohibiting racial segregation in public schools), Loving v. Virginia (1967; ending interracial marriage bans), Roe v.",
+   "patterns": [
+    "What did the Fourteenth Amendment do?",
+    "the fourteenth amendment do",
+    "the Fourteenth Amendment do"
+   ]
+  },
+  {
+   "id": "Brown v. Board of Education",
+   "lang": "en",
+   "question": "What was Brown v. Board of Education?",
+   "answer": "Brown v. Board of Education of Topeka, 347 U.S. 483 (1954), is a landmark decision of the United States Supreme Court that ruled that U.S. state laws establishing racial segregation in public schools violate the Equal Protection Clause of the Fourteenth Amendment, even if the segregated facilities are equal in quality. The decision partially overruled the Court's 1896 decision Plessy v. Ferguson, which had ruled that racial segregation laws were constitutional as long as the facilities for each race were equal, a doctrine that had come to be known as \"separate but equal\". The Court's unanimous decision in Brown and its related cases paved the way for integration and was a major victory of the civil rights movement, and it became a model for many future impact litigation cases. The case involved the public school system in Topeka, Kansas.",
+   "patterns": [
+    "What was Brown v. Board of Education?",
+    "Brown v. Board of Education",
+    "brown v. board of education"
+   ]
+  },
+  {
+   "id": "the Voting Rights Act of 1965",
+   "lang": "en",
+   "question": "What was the Voting Rights Act of 1965?",
+   "answer": "The Voting Rights Act of 1965 is a landmark U.S. federal statute that prohibits racial discrimination in voting. It was signed into law by President Lyndon B. Johnson during the height of the civil rights movement on August 6, 1965. Congress later amended the act five times to expand its protections. Designed to enforce voting rights protected by the Fourteenth and Fifteenth Amendments to the United States Constitution, the act sought to secure the right to vote for racial minorities throughout the country, especially in the South. According to the U.S. Department of Justice, the act is considered to be the most effective piece of federal civil rights legislation ever enacted.",
+   "patterns": [
+    "the voting rights act of 1965",
+    "the Voting Rights Act of 1965",
+    "What was the Voting Rights Act of 1965?"
+   ]
+  },
+  {
+   "id": "the Black Panther Party",
+   "lang": "en",
+   "question": "What was the Black Panther Party?",
+   "answer": "The Black Panther Party (BPP), formerly the Black Panther Party for Self-Defense, was an American Marxist–Leninist and black power political and militant organization from 1966 to 1982, founded by Huey P. Newton and Bobby Seale. Between 1968 and 1971, it was a nationwide organization with chapters in many major cities, and members were active in many prisons and the party had international chapters in the United Kingdom and Algeria. The party first drew attention for openly carrying firearms in Oakland, California while monitoring police activity; resultantly, members were involved in multiple fatal firefights with police. Its earliest goal was to challenge the excessive force and misconduct of the Oakland Police Department that affected the African American community during the civil rights movement.",
+   "patterns": [
+    "the Black Panther Party",
+    "What was the Black Panther Party?",
+    "the black panther party"
+   ]
+  },
+  {
+   "id": "logic",
+   "lang": "en",
+   "question": "What is logic?",
+   "answer": "Logic is the study of correct reasoning. It includes both formal and informal logic. Formal logic is the study of deductively valid inferences or logical truths. It examines how conclusions follow from premises based on the structure of arguments alone, independent of their topic and content. Informal logic is associated with informal fallacies, critical thinking, and argumentation theory. Informal logic examines arguments expressed in natural language whereas formal logic uses formal language. When used as a countable noun, the term \"a logic\" refers to a specific logical formal system that articulates a proof system. Logic plays a central role in many fields, such as philosophy, mathematics, computer science, and linguistics. Logic studies arguments, which consist of a set of premises that leads to a conclusion.",
+   "patterns": [
+    "logic",
+    "What is logic?"
+   ]
+  },
+  {
+   "id": "logic",
+   "lang": "en",
+   "question": "Explain logic.",
+   "answer": "Logic is the study of correct reasoning. It includes both formal and informal logic. Formal logic is the study of deductively valid inferences or logical truths. It examines how conclusions follow from premises based on the structure of arguments alone, independent of their topic and content. Informal logic is associated with informal fallacies, critical thinking, and argumentation theory. Informal logic examines arguments expressed in natural language whereas formal logic uses formal language. When used as a countable noun, the term \"a logic\" refers to a specific logical formal system that articulates a proof system. Logic plays a central role in many fields, such as philosophy, mathematics, computer science, and linguistics. Logic studies arguments, which consist of a set of premises that leads to a conclusion.",
+   "patterns": [
+    "Explain logic.",
+    "logic"
+   ]
+  },
+  {
+   "id": "ስነ አምክንዮ",
+   "lang": "am",
+   "question": "ስለ ስነ አምክንዮ አብራራልኝ።",
+   "answer": "ሥነ - አምክንዩ የምክንያት አሰጣጥ (1) ጥናት ማለት ነው። ምንም እንኳ አምክንዮ ለሁሉም የዕውቀት ዘርፍ አስፈላጊ ቢሆንም፣ ትኩረት ተሰጦት የሚጠናው ግን በ ፍልስፍና ፡ በ ሒሳብ እና በ ኮምፒውተር ሳይንስ የዕውቀት ዘርፎች ዘንድ ነው። አምክንዮ አጠቃላይ የክርክርን ቅርፅ፣ የትኛው የክርክር ቅርፅ ትክክል ነው፣ የትኛው ስህተት ነው የሚሉትን ጥያቄወች ይፈትሻል። በፍልስፍና የጥናት ዘርፍ፣ ስነ አምክንዮ ኢፒስቲሞሎጂ በሚባለው የጥናት ክፍል ይመደባል። ይኸውም ክፍል \"እውቀታችንን እንዴት ልናውቅ ቻልን?\" ለሚለው ጥያቄ መልስ ለመስጠት የሚጥር ነው። በሒሳብ ደግሞ \"የተረጋገጠ መስተሳስር ጥናት\" በምባል ይታወቃል። ምንም እንኳ አምክንዮ ከሰው ልጅ ጋር አብሮ የኖረ ቢሆንም፣ የግሪኩ ፈላስፋ አሪስጣጣሊስ ሥነ-አምክንዮን እራሱን እንደቻለ የትምህርት ክፍል እንደከፈተ ይነገርለታል። ከሱ በኋላ የተነሳው የ12ኛው ክ/ዘመን የሞሮኮው ፈላስፋ አቮሮዝ አምክንዮ ማለት \"እውነትንና ውሸትን ለይተን ለማወቅ የሚያስችል መሳሪያ\" ነው በማለት ተርጉሞታል(2)። ሌሎችም የተለያየ ትርጉም ለአምክንዮ ሰጥተቃል። ለምሳሌ ሪቻርድ ዋትሊ \"\"አምክንዮ ማለት የምክንያት አሰጣጥ ጥበብና ሳይንስ\" ነው በማለት ተርጉሞታል። እንዲሁም የጀርመኑ ፍሬጄ \"አምክንዮ ማለት ከሁሉ በላይ አጠቃላይ የሆኑቱን ህጎች ማጥኛ ሳይንስ ነው\" ብሎታል። ባሁኑ ጊዜ ሥነ-አምክንዮ በሁለት ይከፈላል፡ ትንቢት አምክንዮ (Inductive reasoning) እና መንስኤ አምክንዮ (deductive reasoning) ይባላሉ ። የመጀመሪያው የአምክንዮ አይነት ከተቆራረጡ ምሳሌወ",
+   "patterns": [
+    "ስለ ስነ አምክንዮ አብራራልኝ።",
+    "ስነ አምክንዮ"
+   ]
+  },
+  {
+   "id": "ስነ አምክንዮ",
+   "lang": "am",
+   "question": "ስነ አምክንዮ ምንድን ነው?",
+   "answer": "ሥነ - አምክንዩ የምክንያት አሰጣጥ (1) ጥናት ማለት ነው። ምንም እንኳ አምክንዮ ለሁሉም የዕውቀት ዘርፍ አስፈላጊ ቢሆንም፣ ትኩረት ተሰጦት የሚጠናው ግን በ ፍልስፍና ፡ በ ሒሳብ እና በ ኮምፒውተር ሳይንስ የዕውቀት ዘርፎች ዘንድ ነው። አምክንዮ አጠቃላይ የክርክርን ቅርፅ፣ የትኛው የክርክር ቅርፅ ትክክል ነው፣ የትኛው ስህተት ነው የሚሉትን ጥያቄወች ይፈትሻል። በፍልስፍና የጥናት ዘርፍ፣ ስነ አምክንዮ ኢፒስቲሞሎጂ በሚባለው የጥናት ክፍል ይመደባል። ይኸውም ክፍል \"እውቀታችንን እንዴት ልናውቅ ቻልን?\" ለሚለው ጥያቄ መልስ ለመስጠት የሚጥር ነው። በሒሳብ ደግሞ \"የተረጋገጠ መስተሳስር ጥናት\" በምባል ይታወቃል። ምንም እንኳ አምክንዮ ከሰው ልጅ ጋር አብሮ የኖረ ቢሆንም፣ የግሪኩ ፈላስፋ አሪስጣጣሊስ ሥነ-አምክንዮን እራሱን እንደቻለ የትምህርት ክፍል እንደከፈተ ይነገርለታል። ከሱ በኋላ የተነሳው የ12ኛው ክ/ዘመን የሞሮኮው ፈላስፋ አቮሮዝ አምክንዮ ማለት \"እውነትንና ውሸትን ለይተን ለማወቅ የሚያስችል መሳሪያ\" ነው በማለት ተርጉሞታል(2)። ሌሎችም የተለያየ ትርጉም ለአምክንዮ ሰጥተቃል። ለምሳሌ ሪቻርድ ዋትሊ \"\"አምክንዮ ማለት የምክንያት አሰጣጥ ጥበብና ሳይንስ\" ነው በማለት ተርጉሞታል። እንዲሁም የጀርመኑ ፍሬጄ \"አምክንዮ ማለት ከሁሉ በላይ አጠቃላይ የሆኑቱን ህጎች ማጥኛ ሳይንስ ነው\" ብሎታል። ባሁኑ ጊዜ ሥነ-አምክንዮ በሁለት ይከፈላል፡ ትንቢት አምክንዮ (Inductive reasoning) እና መንስኤ አምክንዮ (deductive reasoning) ይባላሉ ። የመጀመሪያው የአምክንዮ አይነት ከተቆራረጡ ምሳሌወ",
+   "patterns": [
+    "ስነ አምክንዮ ምንድን ነው?",
+    "ስነ አምክንዮ"
+   ]
+  },
+  {
+   "id": "ስነ አምክንዮ",
+   "lang": "am",
+   "question": "ስለ ስነ አምክንዮ ንገረኝ።",
+   "answer": "ሥነ - አምክንዩ የምክንያት አሰጣጥ (1) ጥናት ማለት ነው። ምንም እንኳ አምክንዮ ለሁሉም የዕውቀት ዘርፍ አስፈላጊ ቢሆንም፣ ትኩረት ተሰጦት የሚጠናው ግን በ ፍልስፍና ፡ በ ሒሳብ እና በ ኮምፒውተር ሳይንስ የዕውቀት ዘርፎች ዘንድ ነው። አምክንዮ አጠቃላይ የክርክርን ቅርፅ፣ የትኛው የክርክር ቅርፅ ትክክል ነው፣ የትኛው ስህተት ነው የሚሉትን ጥያቄወች ይፈትሻል። በፍልስፍና የጥናት ዘርፍ፣ ስነ አምክንዮ ኢፒስቲሞሎጂ በሚባለው የጥናት ክፍል ይመደባል። ይኸውም ክፍል \"እውቀታችንን እንዴት ልናውቅ ቻልን?\" ለሚለው ጥያቄ መልስ ለመስጠት የሚጥር ነው። በሒሳብ ደግሞ \"የተረጋገጠ መስተሳስር ጥናት\" በምባል ይታወቃል። ምንም እንኳ አምክንዮ ከሰው ልጅ ጋር አብሮ የኖረ ቢሆንም፣ የግሪኩ ፈላስፋ አሪስጣጣሊስ ሥነ-አምክንዮን እራሱን እንደቻለ የትምህርት ክፍል እንደከፈተ ይነገርለታል። ከሱ በኋላ የተነሳው የ12ኛው ክ/ዘመን የሞሮኮው ፈላስፋ አቮሮዝ አምክንዮ ማለት \"እውነትንና ውሸትን ለይተን ለማወቅ የሚያስችል መሳሪያ\" ነው በማለት ተርጉሞታል(2)። ሌሎችም የተለያየ ትርጉም ለአምክንዮ ሰጥተቃል። ለምሳሌ ሪቻርድ ዋትሊ \"\"አምክንዮ ማለት የምክንያት አሰጣጥ ጥበብና ሳይንስ\" ነው በማለት ተርጉሞታል። እንዲሁም የጀርመኑ ፍሬጄ \"አምክንዮ ማለት ከሁሉ በላይ አጠቃላይ የሆኑቱን ህጎች ማጥኛ ሳይንስ ነው\" ብሎታል። ባሁኑ ጊዜ ሥነ-አምክንዮ በሁለት ይከፈላል፡ ትንቢት አምክንዮ (Inductive reasoning) እና መንስኤ አምክንዮ (deductive reasoning) ይባላሉ ። የመጀመሪያው የአምክንዮ አይነት ከተቆራረጡ ምሳሌወ",
+   "patterns": [
+    "ስነ አምክንዮ",
+    "ስለ ስነ አምክንዮ ንገረኝ።"
+   ]
+  },
+  {
+   "id": "propositional calculus",
+   "lang": "en",
+   "question": "What is propositional calculus?",
+   "answer": "Propositional logic is a branch of classical logic. It is also called statement logic, sentential calculus, propositional calculus, sentential logic, or sometimes zeroth-order logic. Sometimes, it is called first-order propositional logic to contrast it with System F, but it is distinct from first-order logic. It deals with propositions (which can be true or false) and relations between propositions, including the construction of arguments based on them. Compound propositions are formed by connecting propositions by logical connectives representing the truth functions of conjunction, disjunction, implication, biconditional, and negation. Some sources include other connectives, as in the table below. Unlike first-order logic, propositional logic does not deal with non-logical objects, predicates about them, or quantifiers.",
+   "patterns": [
+    "What is propositional calculus?",
+    "propositional calculus"
+   ]
+  },
+  {
+   "id": "first-order logic",
+   "lang": "en",
+   "question": "What is first-order logic?",
+   "answer": "In mathematics, philosophy, linguistics, and computer science, first-order logic (FOL), also called predicate logic, predicate calculus, or quantificational logic, is a type of formal system. First-order logic uses quantified variables over non-logical objects, and allows the use of sentences that contain variables. Rather than propositions such as \"all humans are mortal\", in first-order logic one can have expressions in the form \"for all x, if x is a human, then x is mortal\", where \"for all x\" is a quantifier, x is a variable, and \"... is a human\" and \"... is mortal\" are predicates. This distinguishes it from propositional logic, which does not use quantifiers or relations; in this sense, first-order logic is an extension of propositional logic.",
+   "patterns": [
+    "first-order logic",
+    "What is first-order logic?"
+   ]
+  },
+  {
+   "id": "a formal fallacy",
+   "lang": "en",
+   "question": "What is a formal fallacy?",
+   "answer": "In logic and philosophy, a formal fallacy is a pattern of reasoning with a flaw in its logical structure (the logical relationship between the premises and the conclusion). A formal fallacy is contrasted with an informal fallacy. A formal fallacy must have an invalid logical form and thus be unsound. An informal fallacy, however, may have a valid logical form and yet be unsound because one or more premises are false. An argument can be both a formal fallacy and an informal fallacy. In everyday conversation, the term logical fallacy usually refers to a formal fallacy. While \"the logical argument is a non sequitur\" is synonymous with \"the logical argument is invalid\", the term non sequitur typically refers to those types of invalid arguments which do not constitute formal fallacies covered by particular terms (e.g., affirming the consequent).",
+   "patterns": [
+    "What is a formal fallacy?",
+    "a formal fallacy"
+   ]
+  },
+  {
+   "id": "a syllogism",
+   "lang": "en",
+   "question": "What is a syllogism?",
+   "answer": "A syllogism (Ancient Greek: συλλογισμός, syllogismos, 'conclusion, inference') is a kind of logical argument that applies deductive reasoning to arrive at a conclusion based on two propositions that are asserted or assumed to be true. In its earliest form (defined by Aristotle in his 350 BC book Prior Analytics), a deductive syllogism arises when two true premises (propositions or statements) validly imply a conclusion, or the main point that the argument aims to get across. For example, knowing that all men are mortal (major premise), and that Socrates is a man (minor premise), we may validly conclude that Socrates is mortal. Syllogistic arguments are usually represented in a three-line form: In antiquity, two rival syllogistic theories existed: Aristotelian syllogism and Stoic syllogism.",
+   "patterns": [
+    "What is a syllogism?",
+    "a syllogism"
+   ]
+  },
+  {
+   "id": "deductive reasoning",
+   "lang": "en",
+   "question": "What is deductive reasoning?",
+   "answer": "Deductive reasoning is the process of drawing valid inferences. An inference is valid if its conclusion follows logically from its premises, meaning that it is impossible for the premises to be true and the conclusion to be false. For example, the inference from the premises \"all men are mortal\" and \"Socrates is a man\" to the conclusion \"Socrates is mortal\" is deductively valid. An argument is sound if it is valid and all its premises are true. One approach defines deduction in terms of the intentions of the author: they have to intend for the premises to offer deductive support to the conclusion. With the help of this modification, it is possible to distinguish valid from invalid deductive reasoning: it is invalid if the author's belief about the deductive support is false, but even invalid deductive reasoning is a form of deductive reasoning.",
+   "patterns": [
+    "What is deductive reasoning?",
+    "deductive reasoning"
+   ]
+  },
+  {
+   "id": "inductive reasoning",
+   "lang": "en",
+   "question": "What is inductive reasoning?",
+   "answer": "Inductive reasoning refers to a variety of methods of reasoning in which the conclusion of an argument is supported not with deductive certainty, but at best with some degree of probability. Unlike deductive reasoning (such as mathematical induction), where the conclusion is certain, given the premises are correct, inductive reasoning produces conclusions that are at best probable, given the premises provided.",
+   "patterns": [
+    "inductive reasoning",
+    "What is inductive reasoning?"
+   ]
+  },
+  {
+   "id": "abductive reasoning",
+   "lang": "en",
+   "question": "What is abductive reasoning?",
+   "answer": "Abductive reasoning (also called abduction, abductive inference, or retroduction) is a form of logical inference that seeks the simplest and most likely conclusion from a set of observations. It was formulated and advanced by the American philosopher and logician Charles Sanders Peirce beginning in the latter half of the 19th century. Abductive reasoning, unlike deductive reasoning, yields a plausible conclusion but does not definitively verify it. Abductive conclusions do not eliminate uncertainty or doubt, which is expressed in terms such as \"best available\" or \"most likely\". While inductive reasoning draws general conclusions that apply to many situations, abductive conclusions are confined to the particular observations in question.",
+   "patterns": [
+    "What is abductive reasoning?",
+    "abductive reasoning"
+   ]
+  },
+  {
+   "id": "critical thinking",
+   "lang": "en",
+   "question": "What is critical thinking?",
+   "answer": "Critical thinking is the process of analyzing available facts, evidence, observations, and arguments to reach sound conclusions or informed choices. It involves recognizing underlying assumptions, providing justifications for ideas and actions, evaluating these justifications through comparisons with varying perspectives, and assessing their rationality and potential consequences. The goal of critical thinking is to form a judgment through the application of rational, skeptical, and unbiased analyses and evaluations. The use of the phrase critical thinking can be traced to John Dewey, who used the phrase reflective thinking, and the excellence of critical thinking in which a person can engage varies according to the individual's knowledge base on which both depend. According to philosopher Richard W. Paul, critical thinking and analysis are competencies that can be learned or trained.",
+   "patterns": [
+    "critical thinking",
+    "What is critical thinking?"
+   ]
+  },
+  {
+   "id": "Gödel's incompleteness theorems",
+   "lang": "en",
+   "question": "What are Gödel's incompleteness theorems?",
+   "answer": "Gödel's incompleteness theorems are two theorems of mathematical logic that are concerned with the limits of provability in formal axiomatic theories. These results, published by Kurt Gödel in 1931, are important both in mathematical logic and in philosophy of mathematics. The theorems are interpreted as showing that Hilbert's program to find a complete and consistent set of axioms for all mathematics is impossible. The first incompleteness theorem states that no consistent system of axioms whose theorems can be listed by an effective procedure (i.e. an algorithm) is capable of proving all truths about the arithmetic of natural numbers. For any such consistent formal system, there will always be statements about natural numbers that are true, but that are unprovable within the system.",
+   "patterns": [
+    "What are Gödel's incompleteness theorems?",
+    "Gödel's incompleteness theorems",
+    "gödel's incompleteness theorems"
+   ]
+  },
+  {
+   "id": "Occam's razor",
+   "lang": "en",
+   "question": "What is Occam's razor?",
+   "answer": "In philosophy, Occam's razor (also spelled Ockham's razor or Ocham's razor; Latin: novacula Occami) is the problem-solving principle that recommends searching for explanations constructed with the smallest possible set of elements. It is also known as the principle of parsimony or the law of parsimony (Latin: lex parsimoniae). Attributed to William of Ockham, a 14th-century English philosopher and theologian, it is frequently cited as Entia non sunt multiplicanda praeter necessitatem, which translates as \"Entities must not be multiplied beyond necessity\", although Occam never used those words. Popularly, the principle is sometimes paraphrased as \"of two competing theories, the simpler explanation of an entity is to be preferred\".",
+   "patterns": [
+    "Occam's razor",
+    "What is Occam's razor?",
+    "occam's razor"
+   ]
+  },
+  {
+   "id": "causality",
+   "lang": "en",
+   "question": "What is causality?",
+   "answer": "Causality is an influence by which one event, process, state, or subject (i.e., a cause) contributes to the production of another event, process, state, or object (i.e., an effect) where the cause is at least partly responsible for the effect, and the effect is at least partly dependent on the cause. The cause of something may also be described as the reason behind the event or process. In general, a process can have multiple causes, which are also said to be causal factors for it, and all lie in its past. An effect can in turn be a cause of, or causal factor for, many other effects, which all lie in its future. Thus, the distinction between cause and effect either follows from or else provides the distinction between past and future. While the former viewpoint is more prevalent in physics, some writers have held that causality is metaphysically prior to notions of time and space.",
+   "patterns": [
+    "What is causality?",
+    "causality"
+   ]
+  },
+  {
+   "id": "free will",
+   "lang": "en",
+   "question": "What is free will?",
+   "answer": "Free will is generally understood as the capacity or ability of people to either choose between different possible courses of action, exercise control over their actions in a way that is necessary for moral responsibility, or be the ultimate source or originator of their actions. There are different theories as to its nature, and these aspects are often emphasized differently depending on philosophical tradition, with debates focusing on whether and how such freedom can coexist with physical determinism, divine foreknowledge, and other constraints. Free will is closely linked to the concepts of moral responsibility and moral desert, praise, culpability, and other judgements that can logically apply only to actions that are freely chosen. It is also connected with the concepts of advice, persuasion, deliberation, and prohibition.",
+   "patterns": [
+    "What is free will?",
+    "free will"
+   ]
+  },
+  {
+   "id": "the problem of free will",
+   "lang": "en",
+   "question": "Explain the problem of free will.",
+   "answer": "Free will is generally understood as the capacity or ability of people to either choose between different possible courses of action, exercise control over their actions in a way that is necessary for moral responsibility, or be the ultimate source or originator of their actions. There are different theories as to its nature, and these aspects are often emphasized differently depending on philosophical tradition, with debates focusing on whether and how such freedom can coexist with physical determinism, divine foreknowledge, and other constraints. Free will is closely linked to the concepts of moral responsibility and moral desert, praise, culpability, and other judgements that can logically apply only to actions that are freely chosen. It is also connected with the concepts of advice, persuasion, deliberation, and prohibition.",
+   "patterns": [
+    "Explain the problem of free will.",
+    "the problem of free will"
+   ]
+  },
+  {
+   "id": "determinism",
+   "lang": "en",
+   "question": "What is determinism?",
+   "answer": "Determinism is the metaphysical view that all events within the universe can occur only in one possible way. Deterministic theories throughout the history of philosophy have developed from diverse and sometimes overlapping motives and considerations. Like eternalism, determinism focuses on particular events rather than the future as a concept. Determinism is often contrasted with free will, although some philosophers argue that the two are compatible. The antonym of determinism is indeterminism, the view that events are not deterministically caused. Historically, debates about determinism have involved many philosophical positions and given rise to multiple varieties or interpretations of determinism. One topic of debate concerns the scope of determined systems.",
+   "patterns": [
+    "determinism",
+    "What is determinism?"
+   ]
+  },
+  {
+   "id": "compatibilism",
+   "lang": "en",
+   "question": "What is compatibilism?",
+   "answer": "Compatibilism is the belief that free will and determinism are mutually compatible and that it is possible to believe in both without being logically inconsistent. The opposing belief, that the thesis of determinism is logically incompatible with the classical thesis of free will, is known as \"incompatibilism\". Compatibilists often believe that freedom can be present or absent in situations for reasons that have nothing to do with metaphysics. In other words, that causal determinism does not exclude the truth of possible future outcomes. Because free will is often seen as a necessary prerequisite for moral responsibility, compatibilism is commonly used to support compatibility between moral responsibility and determinism. Similarly, political liberty is a non-metaphysical concept.",
+   "patterns": [
+    "What is compatibilism?",
+    "compatibilism"
+   ]
+  },
+  {
+   "id": "libertarianism in metaphysics",
+   "lang": "en",
+   "question": "What is libertarianism in metaphysics?",
+   "answer": "Metaphysical libertarianism is the philosophical view that free will exists, that it is incompatible with determinism, and therefore that determinism is false. In the branch of philosophy known as metaphysics, libertarianism is one of the main positions related to the problems of free will and determinism. In particular, libertarianism is an incompatibilist position which argues that free will is logically incompatible with a deterministic universe. Libertarianism states that since agents have free will, determinism must be false. One of the first clear formulations of libertarianism is found in John Duns Scotus. In a theological context, metaphysical libertarianism was notably defended by Jesuit authors like Luis de Molina and Francisco Suárez against the rather compatibilist Thomism of Domingo Báñez.",
+   "patterns": [
+    "What is libertarianism in metaphysics?",
+    "libertarianism in metaphysics"
+   ]
+  },
+  {
+   "id": "moral responsibility",
+   "lang": "en",
+   "question": "What is moral responsibility?",
+   "answer": "In philosophy, moral responsibility is the status of morally deserving praise, blame, reward, or punishment for an act or omission in accordance with one's moral obligations. Deciding what (if anything) counts as \"morally obligatory\" is a principal concern of ethics. Philosophers refer to people who have moral responsibility for an action as \"moral agents\". Agents have the capability to reflect upon their situation, to form intentions about how they will act, and then to carry out that action. The notion of free will has become an important issue in the debate on whether individuals are ever morally responsible for their actions and, if so, in what sense. Incompatibilists regard determinism as being at odds with free will, whereas compatibilists think the two can coexist. Moral responsibility does not necessarily equate to legal responsibility.",
+   "patterns": [
+    "What is moral responsibility?",
+    "moral responsibility"
+   ]
+  },
+  {
+   "id": "agency in philosophy",
+   "lang": "en",
+   "question": "What is agency in philosophy?",
+   "answer": "Agency is the capacity of an actor to act in a given environment. In some contexts, the exercise of agency is linked to questions of moral responsibility, and may pertain to questions of moral agency. Agency may either be classified as unconscious, involuntary behavior, or purposeful, goal directed activity (intentional action). An agent typically has some sort of immediate awareness of their physical activity and the goals that the activity is aimed at realizing. In 'goal directed action' an agent implements a kind of direct control or guidance over their own behavior.",
+   "patterns": [
+    "What is agency in philosophy?",
+    "agency in philosophy"
+   ]
+  },
+  {
+   "id": "consciousness",
+   "lang": "en",
+   "question": "What is consciousness?",
+   "answer": "Consciousness is being aware of something internal to one's self, or of states or objects in one's external environment. It has been the topic of extensive explanations, analyses, and debate among philosophers, scientists, and theologians for millennia. There is no consensus on what exactly needs to be studied, or whether consciousness can be considered a scientific concept. In some explanations it is synonymous with mind, while in others it is considered an aspect of it. In the past, consciousness meant one's \"inner life\": the world of introspection, private thought, imagination, and volition. Today, it often includes various forms of cognition, experience, feeling, or perception. It may be awareness, awareness of awareness, metacognition, or self-awareness, either continuously changing or not.",
+   "patterns": [
+    "What is consciousness?",
+    "consciousness"
+   ]
+  },
+  {
+   "id": "ንቃተ ህሊና",
+   "lang": "am",
+   "question": "ስለ ንቃተ ህሊና አብራራልኝ።",
+   "answer": "ንቃተ ህሊና ማለት \"የሚገነዘብ\"፣ \"ስሜትን የሚረዳ\" ፣ \"እኔነትን በውል የሚለይ\"፣ ወይም ደግሞ ሙሉ አዕምሮን የሚቆጣጠር የሚሉ ብዙ ትርጓሜወች አሉት። ስለሆነም ንቃተ ህሊና ብዙ የአዕምሮ ተግባራትን በጃንጥላው ስር የሚያስተናግድ ክፍል ነው። ንቃተ ህሊና በእኔ መንገድ ግን ትንሽ ለየት ባለ መንገድ ለመግልጽ እወዳለሁ ንቃተ ህሊና/consciousness በመባል የሚታወቅ ሲሆን እኛ አሁን ያየነውን ወይም የሚታየው አለም ነጸብራቅ ነው።ማንም ሰው ልጅ የድብቁ አዕምሮ ክፍል ግኝት ቢሆንም ግን የአለም ሰው የራሱን ሕይወት የሚመራው ከመቶ 99% በንቃተ ህሊና ነው። ማንም ወድዶ አይደለም የዚህ ነገር ተጠቅ የሆነው በብዙ መንገድ ጫና አለበት። ለምሣሌ ብንመለከተው የአስተዳደግ ጫና አለበት።ይህ በብዙ መንገድ ማየት ትችላላችሁ።",
+   "patterns": [
+    "ንቃተ ህሊና",
+    "ስለ ንቃተ ህሊና አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "ንቃተ ህሊና",
+   "lang": "am",
+   "question": "ንቃተ ህሊና ምንድን ነው?",
+   "answer": "ንቃተ ህሊና ማለት \"የሚገነዘብ\"፣ \"ስሜትን የሚረዳ\" ፣ \"እኔነትን በውል የሚለይ\"፣ ወይም ደግሞ ሙሉ አዕምሮን የሚቆጣጠር የሚሉ ብዙ ትርጓሜወች አሉት። ስለሆነም ንቃተ ህሊና ብዙ የአዕምሮ ተግባራትን በጃንጥላው ስር የሚያስተናግድ ክፍል ነው። ንቃተ ህሊና በእኔ መንገድ ግን ትንሽ ለየት ባለ መንገድ ለመግልጽ እወዳለሁ ንቃተ ህሊና/consciousness በመባል የሚታወቅ ሲሆን እኛ አሁን ያየነውን ወይም የሚታየው አለም ነጸብራቅ ነው።ማንም ሰው ልጅ የድብቁ አዕምሮ ክፍል ግኝት ቢሆንም ግን የአለም ሰው የራሱን ሕይወት የሚመራው ከመቶ 99% በንቃተ ህሊና ነው። ማንም ወድዶ አይደለም የዚህ ነገር ተጠቅ የሆነው በብዙ መንገድ ጫና አለበት። ለምሣሌ ብንመለከተው የአስተዳደግ ጫና አለበት።ይህ በብዙ መንገድ ማየት ትችላላችሁ።",
+   "patterns": [
+    "ንቃተ ህሊና ምንድን ነው?",
+    "ንቃተ ህሊና"
+   ]
+  },
+  {
+   "id": "ንቃተ ህሊና",
+   "lang": "am",
+   "question": "ስለ ንቃተ ህሊና ንገረኝ።",
+   "answer": "ንቃተ ህሊና ማለት \"የሚገነዘብ\"፣ \"ስሜትን የሚረዳ\" ፣ \"እኔነትን በውል የሚለይ\"፣ ወይም ደግሞ ሙሉ አዕምሮን የሚቆጣጠር የሚሉ ብዙ ትርጓሜወች አሉት። ስለሆነም ንቃተ ህሊና ብዙ የአዕምሮ ተግባራትን በጃንጥላው ስር የሚያስተናግድ ክፍል ነው። ንቃተ ህሊና በእኔ መንገድ ግን ትንሽ ለየት ባለ መንገድ ለመግልጽ እወዳለሁ ንቃተ ህሊና/consciousness በመባል የሚታወቅ ሲሆን እኛ አሁን ያየነውን ወይም የሚታየው አለም ነጸብራቅ ነው።ማንም ሰው ልጅ የድብቁ አዕምሮ ክፍል ግኝት ቢሆንም ግን የአለም ሰው የራሱን ሕይወት የሚመራው ከመቶ 99% በንቃተ ህሊና ነው። ማንም ወድዶ አይደለም የዚህ ነገር ተጠቅ የሆነው በብዙ መንገድ ጫና አለበት። ለምሣሌ ብንመለከተው የአስተዳደግ ጫና አለበት።ይህ በብዙ መንገድ ማየት ትችላላችሁ።",
+   "patterns": [
+    "ንቃተ ህሊና",
+    "ስለ ንቃተ ህሊና ንገረኝ።"
+   ]
+  },
+  {
+   "id": "existentialism",
+   "lang": "en",
+   "question": "What is existentialism?",
+   "answer": "Existentialism is a family of philosophical views and inquiry that explore the human individual's struggle to lead an authentic life despite the apparent absurdity or incomprehensibility of existence. In examining meaning, purpose, and value, existentialist thought often includes concepts such as existential crises, angst, courage, and freedom. Existentialism is associated with several 19th- and 20th-century European philosophers who shared an emphasis on the human subject, despite often profound differences in thought. Among the 19th-century figures now associated with existentialism are philosophers Søren Kierkegaard and Friedrich Nietzsche, as well as novelist Fyodor Dostoevsky, all of whom critiqued rationalism and concerned themselves with the problem of meaning.",
+   "patterns": [
+    "What is existentialism?",
+    "existentialism"
+   ]
+  },
+  {
+   "id": "ኅልውነት",
+   "lang": "am",
+   "question": "ስለ ኅልውነት አብራራልኝ።",
+   "answer": "አብዛኞች ሃይማኖቶችና ፍልስፍናወች የሰው ልጅ ኅይወት ትርጉም (አላማ) አለው ብለው ያምናሉ። ስለሆነም ይህን አላማ ወይም ለማስፈጸም ወይም ደግሞ ለማግኘት ሲጥሩ ይታያሉ። ከዚህ በተጻራሪ በኅልውነት ፍልስፍና የሰው ልጅ ህይወት ከመፈጠሩ (ኅልው ከመሆኑ) በፊት የተጻፈ ትርጉምም ሆነ አላማ የለውም። ስለሆነም የፍልስፍና አትኩሮት መሆን ያለበት «እያንዳንዱ ግለሰብ ለህይወቱ እንዴት ትርጉምና አላማ መስጠት አለበት?» የሚል ነው። የኅልውነት ፍልስፍና አባት ነው የሚባለው ሶረን ኬርከጋርድ እንዳስቀመጠው «እያንዳንዱ ግለሰብ ለህይወቱ ትርጉም የመስጠት እንዲሁም ይህን ህይወቱን በሃቀኝነትና በሙሉ ስሜት የመምራት ኃላፊነት አለበት።» ይህ ሲሆን ታዲያ ተስፋ መቁረጥ፣ የኅልውና ድንጋጤ፣ ባይተዋርነት፣ ድብርትና መሰረተ ቢስነት የተባሉ የኅልውና ቀውሶች የሰውን ልጅ ይጋረጣሉ፣ እኒህን እንቅፋቶችን የማሸነፍ ዘዴ መቀየስ የኅልውነት ፍልስፍና አይነተኛ አትኩሮት ነው። የሰው ልጅ ህይወት ትርጉም የለሽና አላማውም የማይታወቅ ሲሆን ትርጉም አለው እምንለው እያንዳንዱ ግለሰብ ለህይወቱ በራሱ እጅ ትርጉም (አላማ) እስከሰጠው ድረስ ብቻ ነው። በሌላ አባባል ኅልውና ከምንነት ቀዳሚ እንጂ ተከታይ አይደለም። ይሄ የኅልውነት ፍልስፍና ዋና ቁልፍ ሃሳብ ነው፣ ትርጉሙም እንዲህ ነው፡ አንድ ግለሰብ ከመፈጠሩ (ኅልው ከመሆኑ) በፊት \"ምንነቱ\" አልተጻፈም ስለዚህ የግለሰቡ \"ምንነት\" ኅልው ከሆነ በኋላ በሚያደርጋቸው የኑሮ ምርጫወች ይፈጥራል፦ እያንዳንዱ ግለሰብ በንቃተ ህሊናው የራሱን ዋጋና የራሱን የህይወት ትርጉም ይጽፋል። በዚህ ተቃራኒ አን",
+   "patterns": [
+    "ኅልውነት",
+    "ስለ ኅልውነት አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "ኅልውነት",
+   "lang": "am",
+   "question": "ኅልውነት ምንድን ነው?",
+   "answer": "አብዛኞች ሃይማኖቶችና ፍልስፍናወች የሰው ልጅ ኅይወት ትርጉም (አላማ) አለው ብለው ያምናሉ። ስለሆነም ይህን አላማ ወይም ለማስፈጸም ወይም ደግሞ ለማግኘት ሲጥሩ ይታያሉ። ከዚህ በተጻራሪ በኅልውነት ፍልስፍና የሰው ልጅ ህይወት ከመፈጠሩ (ኅልው ከመሆኑ) በፊት የተጻፈ ትርጉምም ሆነ አላማ የለውም። ስለሆነም የፍልስፍና አትኩሮት መሆን ያለበት «እያንዳንዱ ግለሰብ ለህይወቱ እንዴት ትርጉምና አላማ መስጠት አለበት?» የሚል ነው። የኅልውነት ፍልስፍና አባት ነው የሚባለው ሶረን ኬርከጋርድ እንዳስቀመጠው «እያንዳንዱ ግለሰብ ለህይወቱ ትርጉም የመስጠት እንዲሁም ይህን ህይወቱን በሃቀኝነትና በሙሉ ስሜት የመምራት ኃላፊነት አለበት።» ይህ ሲሆን ታዲያ ተስፋ መቁረጥ፣ የኅልውና ድንጋጤ፣ ባይተዋርነት፣ ድብርትና መሰረተ ቢስነት የተባሉ የኅልውና ቀውሶች የሰውን ልጅ ይጋረጣሉ፣ እኒህን እንቅፋቶችን የማሸነፍ ዘዴ መቀየስ የኅልውነት ፍልስፍና አይነተኛ አትኩሮት ነው። የሰው ልጅ ህይወት ትርጉም የለሽና አላማውም የማይታወቅ ሲሆን ትርጉም አለው እምንለው እያንዳንዱ ግለሰብ ለህይወቱ በራሱ እጅ ትርጉም (አላማ) እስከሰጠው ድረስ ብቻ ነው። በሌላ አባባል ኅልውና ከምንነት ቀዳሚ እንጂ ተከታይ አይደለም። ይሄ የኅልውነት ፍልስፍና ዋና ቁልፍ ሃሳብ ነው፣ ትርጉሙም እንዲህ ነው፡ አንድ ግለሰብ ከመፈጠሩ (ኅልው ከመሆኑ) በፊት \"ምንነቱ\" አልተጻፈም ስለዚህ የግለሰቡ \"ምንነት\" ኅልው ከሆነ በኋላ በሚያደርጋቸው የኑሮ ምርጫወች ይፈጥራል፦ እያንዳንዱ ግለሰብ በንቃተ ህሊናው የራሱን ዋጋና የራሱን የህይወት ትርጉም ይጽፋል። በዚህ ተቃራኒ አን",
+   "patterns": [
+    "ኅልውነት ምንድን ነው?",
+    "ኅልውነት"
+   ]
+  },
+  {
+   "id": "ኅልውነት",
+   "lang": "am",
+   "question": "ስለ ኅልውነት ንገረኝ።",
+   "answer": "አብዛኞች ሃይማኖቶችና ፍልስፍናወች የሰው ልጅ ኅይወት ትርጉም (አላማ) አለው ብለው ያምናሉ። ስለሆነም ይህን አላማ ወይም ለማስፈጸም ወይም ደግሞ ለማግኘት ሲጥሩ ይታያሉ። ከዚህ በተጻራሪ በኅልውነት ፍልስፍና የሰው ልጅ ህይወት ከመፈጠሩ (ኅልው ከመሆኑ) በፊት የተጻፈ ትርጉምም ሆነ አላማ የለውም። ስለሆነም የፍልስፍና አትኩሮት መሆን ያለበት «እያንዳንዱ ግለሰብ ለህይወቱ እንዴት ትርጉምና አላማ መስጠት አለበት?» የሚል ነው። የኅልውነት ፍልስፍና አባት ነው የሚባለው ሶረን ኬርከጋርድ እንዳስቀመጠው «እያንዳንዱ ግለሰብ ለህይወቱ ትርጉም የመስጠት እንዲሁም ይህን ህይወቱን በሃቀኝነትና በሙሉ ስሜት የመምራት ኃላፊነት አለበት።» ይህ ሲሆን ታዲያ ተስፋ መቁረጥ፣ የኅልውና ድንጋጤ፣ ባይተዋርነት፣ ድብርትና መሰረተ ቢስነት የተባሉ የኅልውና ቀውሶች የሰውን ልጅ ይጋረጣሉ፣ እኒህን እንቅፋቶችን የማሸነፍ ዘዴ መቀየስ የኅልውነት ፍልስፍና አይነተኛ አትኩሮት ነው። የሰው ልጅ ህይወት ትርጉም የለሽና አላማውም የማይታወቅ ሲሆን ትርጉም አለው እምንለው እያንዳንዱ ግለሰብ ለህይወቱ በራሱ እጅ ትርጉም (አላማ) እስከሰጠው ድረስ ብቻ ነው። በሌላ አባባል ኅልውና ከምንነት ቀዳሚ እንጂ ተከታይ አይደለም። ይሄ የኅልውነት ፍልስፍና ዋና ቁልፍ ሃሳብ ነው፣ ትርጉሙም እንዲህ ነው፡ አንድ ግለሰብ ከመፈጠሩ (ኅልው ከመሆኑ) በፊት \"ምንነቱ\" አልተጻፈም ስለዚህ የግለሰቡ \"ምንነት\" ኅልው ከሆነ በኋላ በሚያደርጋቸው የኑሮ ምርጫወች ይፈጥራል፦ እያንዳንዱ ግለሰብ በንቃተ ህሊናው የራሱን ዋጋና የራሱን የህይወት ትርጉም ይጽፋል። በዚህ ተቃራኒ አን",
+   "patterns": [
+    "ኅልውነት",
+    "ስለ ኅልውነት ንገረኝ።"
+   ]
+  },
+  {
+   "id": "Stoicism",
+   "lang": "en",
+   "question": "What is Stoicism?",
+   "answer": "Stoicism is a philosophical movement and practical guide to living, emphasizing daily self-discipline and moral improvement, which originated in the Hellenistic period of ancient Greece and continued well into the Roman Imperial period. The ancient Stoics believed that the universe operated according to reason, or logos, providing a unified account of the world, constructed from ideals of rational discourse, monistic physics, and naturalistic ethics. These ideals constitute virtue, which is necessary for the Stoic goal of 'living a well-reasoned life'. Stoic philosophy is traditionally divided into three interconnected disciplines: logic, physics, and ethics. Stoic logic focuses on highly intentional reasoning through propositions, arguments, and the differentiation between truth and falsehood.",
+   "patterns": [
+    "Stoicism",
+    "What is Stoicism?",
+    "stoicism"
+   ]
+  },
+  {
+   "id": "power in politics and society",
+   "lang": "en",
+   "question": "What is power in politics and society?",
+   "answer": "In political science, power is the ability to direct the actions and conduct of others. Political power is usually exercised through government offices with authority, over political societies which are often termed states. Power does not exclusively refer to the threat or use of force (coercion) by one actor against another, but may also be exerted through diffuse means (such as institutions). The term authority is often used for power that is perceived as legitimate or socially approved by the social structure. Scholars have distinguished between soft power and hard power.",
+   "patterns": [
+    "What is power in politics and society?",
+    "power in politics and society"
+   ]
+  },
+  {
+   "id": "political power",
+   "lang": "en",
+   "question": "What is political power?",
+   "answer": "In political science, power is the ability to direct the actions and conduct of others. Political power is usually exercised through government offices with authority, over political societies which are often termed states. Power does not exclusively refer to the threat or use of force (coercion) by one actor against another, but may also be exerted through diffuse means (such as institutions). The term authority is often used for power that is perceived as legitimate or socially approved by the social structure. Scholars have distinguished between soft power and hard power.",
+   "patterns": [
+    "What is political power?",
+    "political power"
+   ]
+  },
+  {
+   "id": "sovereignty",
+   "lang": "en",
+   "question": "What is sovereignty?",
+   "answer": "Sovereignty is generally defined as supreme, independent control and lawmaking authority over a territory. It is expressed through the power to rule and make law. Sovereignty entails hierarchy within a state as well as external autonomy, which refers to the ability of a state to act independently in international affairs. In any state, sovereignty is assigned to the person, body or institution that has the ultimate authority over its citizens and the power to modify existing laws. In political theory, sovereignty is a substantive term designating supreme legitimate authority over some polity. Under the UN Charter, the Organization is based on the sovereign equality of its members, while Article 2(7) restricts UN intervention in matters essentially within a state's domestic jurisdiction but does not prejudice enforcement measures under Chapter VII.",
+   "patterns": [
+    "sovereignty",
+    "What is sovereignty?"
+   ]
+  },
+  {
+   "id": "the social contract",
+   "lang": "en",
+   "question": "What is the social contract?",
+   "answer": "In moral and political philosophy, the social contract is a theory of state that conceives of a legitimate state as arising from the agreement of citizens who consent to surrender some of their freedoms and submit to the authority (of the ruler, or to the decision of a majority) in exchange for protection of their remaining rights or maintenance of the social order. Conceptualized in the Age of Enlightenment, social contractarianism is a core concept of modern theories of constitutionalism. The term takes its name from The Social Contract (French: Du contrat social ou Principes du droit politique), a 1762 book by Jean-Jacques Rousseau that discussed this concept. The starting point for most social contract theories is an examination of the human condition absent any political order, a social position termed the \"state of nature\" by Thomas Hobbes.",
+   "patterns": [
+    "What is the social contract?",
+    "the social contract"
+   ]
+  },
+  {
+   "id": "democracy",
+   "lang": "en",
+   "question": "What is democracy?",
+   "answer": "Democracy is a form of government in which political power is vested in the people or the population of a certain state. Under a minimalist definition of democracy, rulers are elected through competitive elections while more expansive or maximalist definitions link democracy to guarantees of civil liberties and human rights in addition to competitive elections. In a direct democracy, the people have the direct authority to deliberate and decide legislation. In a representative democracy, the people choose governing officials through elections to do so. The definition of \"the people\" and the ways authority is shared among them or delegated by them have changed over time and at varying rates in different countries.",
+   "patterns": [
+    "democracy",
+    "What is democracy?"
+   ]
+  },
+  {
+   "id": "ዴሞክራሲ",
+   "lang": "am",
+   "question": "ስለ ዴሞክራሲ አብራራልኝ።",
+   "answer": "ዴሞክራሲ የፖለቲካ ሥርዓት ሲሆን ትርጓሜውም ሕዝባዊ መንግስት ማለት ነው። በሌላ አባባል ዲሞክራሲ ማለት ህዝብ የሚያስተዳድረውን አካል ያለምንም ተፅዕኖ ከመካከሉ መርጦ ሥልጣን የሚሰጥበት ሥርዓት ነው። የዲሞክራሲ ተቃራኒው አምባገነንነት ነው፡ ከእነዚህም መካከል በጣም ዝነኛ የሆኑት ምሳሌዎች በ20ኛው ክፍለ ዘመን የመጀመሪያ አጋማሽ በጀርመን የነበረው የናዚ አገዛዝ እና በዘመናዊቷ ሩሲያ በ21ኛው ክፍለ ዘመን የመጀመሪያ አጋማሽ የፑቲን አገዛዝ ናቸው። የሊበርታሪያኒዝም ርዕዮተ ዓለም በዘመናችን እጅግ በጣም ዲሞክራሲያዊ አንዱ ተደርጎ ይወሰዳል ።",
+   "patterns": [
+    "ዴሞክራሲ",
+    "ስለ ዴሞክራሲ አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "ዴሞክራሲ",
+   "lang": "am",
+   "question": "ዴሞክራሲ ምንድን ነው?",
+   "answer": "ዴሞክራሲ የፖለቲካ ሥርዓት ሲሆን ትርጓሜውም ሕዝባዊ መንግስት ማለት ነው። በሌላ አባባል ዲሞክራሲ ማለት ህዝብ የሚያስተዳድረውን አካል ያለምንም ተፅዕኖ ከመካከሉ መርጦ ሥልጣን የሚሰጥበት ሥርዓት ነው። የዲሞክራሲ ተቃራኒው አምባገነንነት ነው፡ ከእነዚህም መካከል በጣም ዝነኛ የሆኑት ምሳሌዎች በ20ኛው ክፍለ ዘመን የመጀመሪያ አጋማሽ በጀርመን የነበረው የናዚ አገዛዝ እና በዘመናዊቷ ሩሲያ በ21ኛው ክፍለ ዘመን የመጀመሪያ አጋማሽ የፑቲን አገዛዝ ናቸው። የሊበርታሪያኒዝም ርዕዮተ ዓለም በዘመናችን እጅግ በጣም ዲሞክራሲያዊ አንዱ ተደርጎ ይወሰዳል ።",
+   "patterns": [
+    "ዴሞክራሲ",
+    "ዴሞክራሲ ምንድን ነው?"
+   ]
+  },
+  {
+   "id": "ዴሞክራሲ",
+   "lang": "am",
+   "question": "ስለ ዴሞክራሲ ንገረኝ።",
+   "answer": "ዴሞክራሲ የፖለቲካ ሥርዓት ሲሆን ትርጓሜውም ሕዝባዊ መንግስት ማለት ነው። በሌላ አባባል ዲሞክራሲ ማለት ህዝብ የሚያስተዳድረውን አካል ያለምንም ተፅዕኖ ከመካከሉ መርጦ ሥልጣን የሚሰጥበት ሥርዓት ነው። የዲሞክራሲ ተቃራኒው አምባገነንነት ነው፡ ከእነዚህም መካከል በጣም ዝነኛ የሆኑት ምሳሌዎች በ20ኛው ክፍለ ዘመን የመጀመሪያ አጋማሽ በጀርመን የነበረው የናዚ አገዛዝ እና በዘመናዊቷ ሩሲያ በ21ኛው ክፍለ ዘመን የመጀመሪያ አጋማሽ የፑቲን አገዛዝ ናቸው። የሊበርታሪያኒዝም ርዕዮተ ዓለም በዘመናችን እጅግ በጣም ዲሞክራሲያዊ አንዱ ተደርጎ ይወሰዳል ።",
+   "patterns": [
+    "ዴሞክራሲ",
+    "ስለ ዴሞክራሲ ንገረኝ።"
+   ]
+  },
+  {
+   "id": "authoritarianism",
+   "lang": "en",
+   "question": "What is authoritarianism?",
+   "answer": "Authoritarianism is a political system characterized by the rejection of political plurality, the use of strong central power to preserve the political status quo, and reductions in democracy, separation of powers, civil liberties, and the rule of law. Authoritarian regimes may be either autocratic or oligarchic and may be based upon the rule of a party, the military, or the concentration of power in a single person. States that have a blurred boundary between democracy and authoritarianism have sometimes been characterized as \"hybrid democracies\", \"hybrid regimes\" or \"competitive authoritarian\" states. The political scientist Juan Linz, in an influential 1964 work, An Authoritarian Regime: Spain, defined authoritarianism as possessing four qualities: Limited political pluralism, which is achieved with constraints on the legislature, political parties and interest groups.",
+   "patterns": [
+    "authoritarianism",
+    "What is authoritarianism?"
+   ]
+  },
+  {
+   "id": "ሥልጣናዊነት",
+   "lang": "am",
+   "question": "ስለ ሥልጣናዊነት አብራራልኝ።",
+   "answer": "ሥልጣናዊነት ማለት በጭፍን ለባለ ሥልጣናት የሚገዙበት ፖለቲካዊ ሥርዓት ነው። ይህም ግለሰባዊ የኅሊና ነጻነትን የሚክድ ዓይነት የፖለቲካ ሥርዓት ነው። ከሕዝባዊ (ዴሞክራሲያዊ ሥርዓት) በተቃራኒ፣ የሥልጣናዊ ሥርዓት ፣ ኃይልን ኁሉ ለአንድ ግለሰብ ወይን ለተወሰኑ ልሂቃን ያለምንም ዋስትና በማስረከብ ይታዎቃል። አምባ ገነን፣ ፈላጭ ቆራጭ እና ፍፁም ጠቅላይ አገዛዞች የዚህ ሥር ዓት ዓይነቶች ናቸው።",
+   "patterns": [
+    "ሥልጣናዊነት",
+    "ስለ ሥልጣናዊነት አብራራልኝ።"
+   ]
+  },
+  {
+   "id": "ሥልጣናዊነት",
+   "lang": "am",
+   "question": "ሥልጣናዊነት ምንድን ነው?",
+   "answer": "ሥልጣናዊነት ማለት በጭፍን ለባለ ሥልጣናት የሚገዙበት ፖለቲካዊ ሥርዓት ነው። ይህም ግለሰባዊ የኅሊና ነጻነትን የሚክድ ዓይነት የፖለቲካ ሥርዓት ነው። ከሕዝባዊ (ዴሞክራሲያዊ ሥርዓት) በተቃራኒ፣ የሥልጣናዊ ሥርዓት ፣ ኃይልን ኁሉ ለአንድ ግለሰብ ወይን ለተወሰኑ ልሂቃን ያለምንም ዋስትና በማስረከብ ይታዎቃል። አምባ ገነን፣ ፈላጭ ቆራጭ እና ፍፁም ጠቅላይ አገዛዞች የዚህ ሥር ዓት ዓይነቶች ናቸው።",
+   "patterns": [
+    "ሥልጣናዊነት",
+    "ሥልጣናዊነት ምንድን ነው?"
+   ]
+  },
+  {
+   "id": "ሥልጣናዊነት",
+   "lang": "am",
+   "question": "ስለ ሥልጣናዊነት ንገረኝ።",
+   "answer": "ሥልጣናዊነት ማለት በጭፍን ለባለ ሥልጣናት የሚገዙበት ፖለቲካዊ ሥርዓት ነው። ይህም ግለሰባዊ የኅሊና ነጻነትን የሚክድ ዓይነት የፖለቲካ ሥርዓት ነው። ከሕዝባዊ (ዴሞክራሲያዊ ሥርዓት) በተቃራኒ፣ የሥልጣናዊ ሥርዓት ፣ ኃይልን ኁሉ ለአንድ ግለሰብ ወይን ለተወሰኑ ልሂቃን ያለምንም ዋስትና በማስረከብ ይታዎቃል። አምባ ገነን፣ ፈላጭ ቆራጭ እና ፍፁም ጠቅላይ አገዛዞች የዚህ ሥር ዓት ዓይነቶች ናቸው።",
+   "patterns": [
+    "ሥልጣናዊነት",
+    "ስለ ሥልጣናዊነት ንገረኝ።"
+   ]
+  },
+  {
+   "id": "the separation of powers",
+   "lang": "en",
+   "question": "What is the separation of powers?",
+   "answer": "The separation of powers principle functionally differentiates several types of state power (usually legislation, adjudication, and execution) and requires these operations of government to be conceptually and institutionally distinct and clearly articulated, thereby maintaining the integrity of each branch. Separation of powers is closely linked to notions of checks and balances.",
+   "patterns": [
+    "What is the separation of powers?",
+    "the separation of powers"
+   ]
+  },
+  {
+   "id": "soft power",
+   "lang": "en",
+   "question": "What is soft power?",
+   "answer": "In politics, particularly in international politics, soft power is the ability to influence or persuade others through the use of persuasive means, as opposed to the use of force or coercion, which is an aspect of hard power. This process entails the strategic shaping of others' preferences through the use of appealing, non-coercive, and attractive means, using culture, political values, and foreign policies to enact change. In 2012, Joseph Nye of Harvard University explained that with soft power, \"the best propaganda is not propaganda\", further asserting that during the Information Age, \"credibility is the scarcest resource\". Nye popularised the term in his 1990 book, Bound to Lead: The Changing Nature of American Power.",
+   "patterns": [
+    "soft power",
+    "What is soft power?"
+   ]
+  },
+  {
+   "id": "hard power",
+   "lang": "en",
+   "question": "What is hard power?",
+   "answer": "In politics, hard power is the use of military and economic means to influence the behavior or interests of other political bodies. This form of political power is often aggressive (coercion), and is most immediately effective when imposed by one political body upon another of less military and/or economic power. Hard power contrasts with soft power, which comes from diplomacy, culture and history. According to Joseph Nye, hard power involves \"the ability to use the carrots and sticks of economic and military might to make others follow your will\". Here, \"carrots\" stand for inducements such as the reduction of trade barriers, the offer of an alliance or the promise of military protection. On the other hand, \"sticks\" represent threats - including the use of coercive diplomacy, the threat of military intervention, or the implementation of economic sanctions.",
+   "patterns": [
+    "What is hard power?",
+    "hard power"
+   ]
+  },
+  {
+   "id": "hegemony",
+   "lang": "en",
+   "question": "What is hegemony?",
+   "answer": "In geopolitics, hegemony ( , UK also , US also ) is the political, economic and military predominance of one state over other states, either regional or global. In Ancient Greece (ca. 8th BC – AD 6th c.), hegemony denotes the politico-military dominance of the hegemon city-state over other city-states. In the 19th century, hegemony denoted the \"social or cultural predominance or ascendancy; predominance by one group within a society or milieu\" and \"a group or regime which exerts undue influence within a society.\" In international relations theories, hegemony is distinguished from empire as ruling only external but not internal affairs of other states.",
+   "patterns": [
+    "What is hegemony?",
+    "hegemony"
+   ]
+  },
+  {
+   "id": "colonialism",
+   "lang": "en",
+   "question": "What is colonialism?",
+   "answer": "Colonialism is the practice of extending and maintaining political, social, economic, and cultural domination over a territory and its people by another people in pursuit of interests defined in an often distant metropole, who also claim superiority. While frequently an imperialist project, colonialism functions through differentiating between the targeted land and people, and that of the colonizers (a critical component of colonization). Rather than annexation, this typically culminates in organizing the colonized into colonies separate to the colonizers' metropole. Colonialism sometimes deepens by developing settler colonialism, whereby settlers from one or multiple colonizing metropoles occupy a territory with the intention of partially or completely supplanting the existing Indigenous peoples, possibly amounting to genocide.",
+   "patterns": [
+    "colonialism",
+    "What is colonialism?"
+   ]
+  },
+  {
+   "id": "decolonization",
+   "lang": "en",
+   "question": "What is decolonization?",
+   "answer": "Decolonization is the ending of colonialism, the latter being the process whereby imperial nations establish and dominate foreign territories, often overseas. The meanings and applications of the term are disputed. Some scholars of decolonization focus especially on independence movements in the colonies and the collapse of global colonial empires. As a movement to establish independence for colonized territories from their respective metropoles, decolonization began in 1775 with the American Revolution in North America against the British Empire. The Napoleonic Wars in the 19th century saw the French colonial empire, the Spanish Empire, and Portugal face decolonization with the Haitian Revolution, the Spanish American wars of independence, and the independence of Brazil from Portugal.",
+   "patterns": [
+    "decolonization",
+    "What is decolonization?"
+   ]
+  }
+ ]
+}

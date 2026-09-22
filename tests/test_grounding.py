@@ -36,6 +36,18 @@ class GroundingTest(unittest.TestCase):
         facts = grounding.retrieve('speed of light', 'en', limit=5)
         self.assertEqual(len(facts), len(set(facts)))
 
+    def test_history_topic_in_english(self):
+        ctx = grounding.context('tell me about the Battle of Adwa', 'en')
+        self.assertIn('Adwa', ctx)
+
+    def test_history_topic_in_amharic(self):
+        ctx = grounding.context('ስለ የአድዋ ጦርነት አብራራልኝ።', 'am')
+        self.assertIn('አድዋ', ctx)
+
+    def test_context_is_bounded(self):
+        ctx = grounding.context('Battle of Adwa', 'en', limit=5, max_chars=200)
+        self.assertLessEqual(len(ctx), 220)
+
 
 class LlmGroundingToggleTest(unittest.TestCase):
     def test_grounded_system_appends_and_respects_toggle(self):
