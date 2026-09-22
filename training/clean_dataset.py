@@ -58,6 +58,35 @@ def has_letters(text):
     return any(ch.isalpha() for ch in text)
 
 
+def _key(text):
+    return WS.sub(' ', (text or '').lower()).strip()
+
+
+def _load_holdout(path):
+    """Question keys to remove from training — from a keys JSON or eval jsonl."""
+    if not path:
+        return set()
+    if not os.path.exists(path):
+        sys.exit(f'holdout not found: {path}')
+    keys = set()
+    if path.endswith('.jsonl'):
+        with open(path, encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                for m in (json.loads(line).get('messages') or []):
+                    if m.get('role') == 'user':
+                        keys.add(_key(m.get('content')))
+                        break
+    else:
+        with open(path, encoding='utf-8') as f:
+            data = json.load(f)
+        for item in (data if isinstance(data, list) else []):
+            keys.add(_key(item))
+    return keys
+
+
 def clean_example(obj, max_chars, min_answer, min_question):
     msgs = obj.get('messages')
     if not isinstance(msgs, list) or len(msgs) < 3:
@@ -105,12 +134,16 @@ def main():
                     help='drop an example if either turn exceeds this')
     ap.add_argument('--min-answer', type=int, default=4)
     ap.add_argument('--min-question', type=int, default=2)
+    ap.add_argument('--holdout', default='',
+                    help='eval jsonl or keys json (from training/build_eval.py) '
+                         'whose questions are removed from training')
     ap.add_argument('--drop-system', action='store_true',
                     help='strip the system turn from every example')
     args = ap.parse_args()
 
     if not os.path.exists(args.src):
         sys.exit(f'input not found: {args.src}')
+    holdout = _load_holdout(args.holdout)
 
     dropped = collections.Counter()
     seen = set()
@@ -135,6 +168,13 @@ def main():
             if ex is None:
                 dropped[why] += 1
                 continue
+
+            if holdout:
+                user = next((m['content'] for m in ex['messages']
+                             if m['role'] == 'user'), '')
+                if _key(user) in holdout:
+                    dropped['holdout'] += 1
+                    continue
 
             if args.drop_system:
                 ex['messages'] = [m for m in ex['messages']

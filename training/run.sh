@@ -61,8 +61,14 @@ fi
 
 python training/build_dataset.py
 
-# Drop degenerate/long/duplicate rows before training.
-python training/clean_dataset.py
+# Compile the runtime topic KB, hold out a clean topic eval split, then filter
+# degenerate/long/duplicate rows AND the held-out eval questions from training.
+python tools/build_topic_kb.py || echo "  ⚠ topic KB build failed — skipping"
+python training/build_eval.py || echo "  ⚠ eval split failed — skipping"
+HOLDOUT_KEYS=training/data/topics_eval_keys.json
+HOLDOUT_ARG=""
+[ -f "$HOLDOUT_KEYS" ] && HOLDOUT_ARG="--holdout $HOLDOUT_KEYS"
+python training/clean_dataset.py $HOLDOUT_ARG
 
 python training/train_qlora.py \
   --model "$MODEL" --dataset "$DATASET" --out "$OUT" \

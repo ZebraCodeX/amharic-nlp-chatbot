@@ -43,6 +43,9 @@ topics: ## fetch sourced factual topics: history/logic/philosophy (Wikipedia)
 topic-kb: ## compile fetched topics into runtime knowledge (data/knowledge_topics.json)
 	python3 tools/build_topic_kb.py
 
+eval-set: ## hold out a topic eval split (+ keys) from the compiled KB
+	python3 training/build_eval.py
+
 clean-data: ## filter, dedup and normalise the built SFT jsonl
 	python3 training/clean_dataset.py
 
@@ -107,6 +110,6 @@ release: ## tag a release:  make release V=1.7.0
 	git tag v$(V) && git push origin v$(V)
 
 .PHONY: help test backend-test brain-test smoke frontend-build frontend-app-build \
-	dev-backend dataset conversation topics topic-kb clean-data english-kb retrain export-data train train-7b \
+	dev-backend dataset conversation topics topic-kb eval-set clean-data english-kb retrain export-data train train-7b \
 	train-3b train-resume model \
 	run-zer eval serve connect-llm superuser backup migrate deploy logs release
